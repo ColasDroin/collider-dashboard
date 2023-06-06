@@ -13,16 +13,16 @@ import json
 import yaml
 
 # Import plotting functions
-import dashboard_functions
+import functions
 
 # Import layout functions
-import layout.configuration.return_configuration_layout as return_configuration_layout
-import layout.filling.return_filling_scheme_layout as return_filling_scheme_layout
-import layout.optics.return_optics_layout as return_optics_layout
-import layout.sanity.return_sanity_layout as return_sanity_layout
-import layout.survey.return_survey_layout as return_survey_layout
-import layout.header.return_header_layout as return_header_layout
-import layout.tables.return_tables_layout as return_tables_layout
+from layout.configuration import return_configuration_layout
+from layout.filling import return_filling_scheme_layout
+from layout.optics import return_optics_layout
+from layout.sanity import return_sanity_layout
+from layout.survey import return_survey_layout
+from layout.header import return_header_layout
+from layout.tables import return_tables_layout
 
 #################### Load global variables ####################
 
@@ -33,8 +33,8 @@ path_configuration = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master
 with open(path_configuration, "r") as fid:
     configuration = yaml.safe_load(fid)["config_collider"]
     num_particles_per_bunch = float(configuration["config_beambeam"]["num_particles_per_bunch"])
-    nemitt_x = configuration["config_beambeam"]["nemitt_x"] 
-    nemitt_y = configuration["config_beambeam"]["nemitt_y"] 
+    nemitt_x = configuration["config_beambeam"]["nemitt_x"]
+    nemitt_y = configuration["config_beambeam"]["nemitt_y"]
     sigma_z = configuration["config_beambeam"]["sigma_z"]
 
 # Load the filling scheme
@@ -50,19 +50,19 @@ assert len(array_b1) == len(array_b2) == 3564
 n_collisions_ip1_and_5 = array_b1 @ array_b2
 n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
 n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
-
+l_ncollisions = [n_collisions_ip1_and_5, n_collisions_ip2, n_collisions_ip8]
 # Get collider variables
 collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
-    dashboard_functions.return_all_loaded_variables(
+    functions.return_all_loaded_variables(
         collider_path="/afs/cern.ch/work/c/cdroin/private/comparison_pymask_xmask/xmask/xsuite_lines/collider_03_tuned_and_leveled_bb_off.json"
     )
 )
 
 # Get corresponding data tables
-table_sv_b1 = dashboard_functions.return_data_table(df_sv_b1, "id-df-sv-b1", twiss=False)
-table_tw_b1 = dashboard_functions.return_data_table(df_tw_b1, "id-df-tw-b1", twiss=True)
-table_sv_b2 = dashboard_functions.return_data_table(df_sv_b2, "id-df-sv-b2", twiss=False)
-table_tw_b2 = dashboard_functions.return_data_table(df_tw_b2, "id-df-tw-b2", twiss=True)
+table_sv_b1 = functions.return_data_table(df_sv_b1, "id-df-sv-b1", twiss=False)
+table_tw_b1 = functions.return_data_table(df_tw_b1, "id-df-tw-b1", twiss=True)
+table_sv_b2 = functions.return_data_table(df_sv_b2, "id-df-sv-b2", twiss=False)
+table_tw_b2 = functions.return_data_table(df_tw_b2, "id-df-tw-b2", twiss=True)
 
 
 #################### App ####################
@@ -78,481 +78,9 @@ server = app.server
 
 #################### App Layout ####################
 
-
-def return_header_layout():
-    def create_header_link(icon, href, size=22, color="cyan"):
-        return dmc.Anchor(
-            dmc.ThemeIcon(
-                DashIconify(
-                    icon=icon,
-                    width=size,
-                ),
-                variant="outline",
-                radius=30,
-                size=36,
-                color=color,
-            ),
-            href=href,
-            target="_blank",
-        )
-
-    header = dmc.Header(
-        height=70,
-        fixed=True,
-        px=25,
-        children=[
-            dmc.Stack(
-                justify="center",
-                style={"height": 70, "width": "100%"},
-                children=dmc.Group(
-                    position="apart",
-                    style={"width": "100%"},
-                    children=[
-                        dmc.Text(
-                            "Simulation dashboard",
-                            size=30,
-                            color="cyan",
-                        ),
-                        dmc.SegmentedControl(
-                            id="tab-titles",
-                            value="display-configuration",
-                            data=[
-                                {"value": "display-configuration", "label": "Configuration"},
-                                {"value": "display-twiss", "label": "Twiss tables"},
-                                {"value": "display-scheme", "label": "Filling scheme"},
-                                {"value": "display-sanity", "label": "Sanity checks"},
-                                {"value": "display-optics", "label": "Optics"},
-                                {"value": "display-survey", "label": "Survey"},
-                            ],
-                            # color="cyan",
-                            style={"margin-right": "10%"},
-                        ),
-                        dmc.Group(
-                            position="right",
-                            spacing="xl",
-                            children=[
-                                create_header_link(
-                                    "radix-icons:github-logo",
-                                    "https://github.com/ColasDroin/example_DA_study",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ),
-        ],
-    )
-    return header
-
-
-def return_configuration_layout(path_configuration):
-    # Load configuration file
-    with open(path_configuration, "r") as file:
-        configuration_str = file.read()
-
-    configuration_layout = dmc.Center(
-        dmc.Prism(
-            language="yaml",
-            children=configuration_str,
-            style={"height": "90vh", "overflowY": "auto", "width": "80%"},
-        )
-    )
-
-    return configuration_layout
-
-
-def return_tables_layout():
-    layout = html.Div(
-        children=[
-            dmc.Center(
-                dmc.Alert(
-                    (
-                        "The datatables are slow as they are"
-                        " heavy to download from the server. If"
-                        " we want to keep this feature, I will"
-                        " try to implement a lazy loading,"
-                        " sorting and filtering in the backend"
-                        " to speed things up."
-                    ),
-                    title="Alert!",
-                    style={
-                        "width": "70%",
-                        "margin-top": "10px",
-                    },
-                ),
-            ),
-            dmc.Center(
-                dmc.SegmentedControl(
-                    id="segmented-data-table",
-                    data=[
-                        "Twiss table beam 1",
-                        "Survey table beam 1",
-                        "Twiss table beam 2",
-                        "Survey table beam 2",
-                    ],
-                    radius="md",
-                    mt=10,
-                    value="Twiss table beam 1",
-                    color="cyan",
-                ),
-            ),
-            html.Div(id="placeholder-data-table"),
-        ],
-        style={"width": "90%", "margin": "auto"},
-    )
-    return layout
-
-
-def return_sanity_layout():
-    # Check general observables (tune, chroma, etc.)
-    header_1 = [
-        html.Thead(
-            html.Tr(
-                [
-                    html.Th("Beam"),
-                    html.Th("Tune"),
-                    html.Th("Chromaticity"),
-                    html.Th("Linear coupling"),
-                    html.Th("Momentum compaction factor"),
-                ]
-            )
-        )
-    ]
-
-    row1 = html.Tr(
-        [
-            html.Td("1"),
-            html.Td(f'{tw_b1["qx"]:.5f}'),
-            html.Td(f'{tw_b1["dqx"]:.2f}'),
-            html.Td(f'{tw_b1["c_minus"]:.2f}'),
-            html.Td(f'{tw_b1["momentum_compaction_factor"]:.2f}'),
-        ]
-    )
-    row2 = html.Tr(
-        [
-            html.Td("2"),
-            html.Td(f'{tw_b2["qx"]:.5f}'),
-            html.Td(f'{tw_b2["dqx"]:.2f}'),
-            html.Td(f'{tw_b2["c_minus"]:.2f}'),
-            html.Td(f'{tw_b2["momentum_compaction_factor"]:.2f}'),
-        ]
-    )
-    body_1 = [html.Tbody([row1, row2])]
-    table_1 = dmc.Table(header_1 + body_1)
-
-    # Check IP-specific observables (crossing angle, beta functions, etc.)
-    header_2 = [
-        html.Thead(
-            html.Tr(
-                [
-                    html.Th("IP"),
-                    html.Th("s"),
-                    html.Th("x"),
-                    html.Th("px"),
-                    html.Th("y"),
-                    html.Th("py"),
-                    html.Th("betx"),
-                    html.Th("bety"),
-                ]
-            )
-        )
-    ]
-    l_rows_1 = []
-    l_rows_2 = []
-    for ip in [1, 2, 5, 8]:
-        row_values_1 = (
-            tw_b1.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety"]
-            .to_pandas()
-            .to_numpy()
-            .squeeze()
-        )
-
-        row_values_2 = (
-            tw_b2.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety"]
-            .to_pandas()
-            .to_numpy()
-            .squeeze()
-        )
-
-        l_rows_1.append(
-            html.Tr(
-                [
-                    html.Td(row_values_1[0]),
-                    html.Td(f"{row_values_1[1]:.3f}"),
-                    html.Td(f"{row_values_1[2]:.4f}"),
-                    html.Td(f"{row_values_1[3]:.5f}"),
-                    html.Td(f"{row_values_1[4]:.4f}"),
-                    html.Td(f"{row_values_1[5]:.5f}"),
-                    html.Td(f"{row_values_1[6]:.3f}"),
-                    html.Td(f"{row_values_1[7]:.3f}"),
-                ]
-            )
-        )
-
-        l_rows_2.append(
-            html.Tr(
-                [
-                    html.Td(row_values_2[0]),
-                    html.Td(f"{row_values_2[1]:.3f}"),
-                    html.Td(f"{row_values_2[2]:.4f}"),
-                    html.Td(f"{row_values_2[3]:.5f}"),
-                    html.Td(f"{row_values_2[4]:.4f}"),
-                    html.Td(f"{row_values_2[5]:.5f}"),
-                    html.Td(f"{row_values_2[6]:.3f}"),
-                    html.Td(f"{row_values_2[7]:.3f}"),
-                ]
-            )
-        )
-
-    body_2 = [html.Tbody(l_rows_1)]
-    body_3 = [html.Tbody(l_rows_2)]
-    table_2 = dmc.Table(header_2 + body_2)
-    table_3 = dmc.Table(header_2 + body_3)
-
-    # Luminosities
-    header_3 = [
-        html.Thead(
-            html.Tr(
-                [
-                    html.Th("IP 1"),
-                    html.Th("IP 2"),
-                    html.Th("IP 5"),
-                    html.Th("IP 8"),
-                ]
-            )
-        )
-    ]
-
-    l_lumi = []
-    for ip, n_col in zip(
-        [1, 2, 5, 8],
-        [n_collisions_ip1_and_5, n_collisions_ip2, n_collisions_ip1_and_5, n_collisions_ip8],
-    ):
-        l_lumi.append(
-            xt.lumi.luminosity_from_twiss(
-                n_colliding_bunches=n_col,
-                num_particles_per_bunch=num_particles_per_bunch,
-                ip_name="ip" + str(ip),
-                nemitt_x=nemitt_x,
-                nemitt_y=nemitt_y,
-                sigma_z=sigma_z,
-                twiss_b1=tw_b1,
-                twiss_b2=tw_b2,
-                crab=False,
-            )
-        )
-    row_lumi = html.Tr(
-        [
-            html.Td(f"{l_lumi[0]:.3e}"),
-            html.Td(f"{l_lumi[1]:.3e}"),
-            html.Td(f"{l_lumi[2]:.3e}"),
-            html.Td(f"{l_lumi[3]:.3e}"),
-        ]
-    )
-    body_4 = [html.Tbody([row_lumi])]
-    table_4 = dmc.Table(header_3 + body_4)
-
-    return dmc.Stack(
-        children=[
-            dmc.Group(
-                children=[
-                    dmc.Text("General observables", size="xl", style={"margin": "auto"}),
-                    table_1,
-                ],
-                mb=10,
-                style={"width": "100%"},
-            ),
-            dmc.Group(
-                children=[
-                    dmc.Text("Beam 1 observables at IPs", size="xl", style={"margin": "auto"}),
-                    table_2,
-                ],
-                mb=10,
-                style={"width": "100%"},
-            ),
-            dmc.Group(
-                children=[
-                    dmc.Text("Beam 2 observables at IPs", size="xl", style={"margin": "auto"}),
-                    table_3,
-                ],
-                mb=10,
-                style={"width": "100%"},
-            ),
-            dmc.Group(
-                children=[
-                    dmc.Text("Luminosities", size="xl", style={"margin": "auto"}),
-                    table_4,
-                ],
-                mb=10,
-                style={"width": "100%"},
-            ),
-        ],
-        style={"width": "90%", "margin": "auto"},
-    )
-
-
-def return_survey_layout():
-    survey_layout = html.Div(
-        children=[
-            dmc.Center(
-                dmc.Stack(
-                    children=[
-                        dmc.Center(
-                            children=[
-                                dmc.Group(
-                                    children=[
-                                        dmc.Text("Sectors to display: "),
-                                        dmc.ChipGroup(
-                                            [
-                                                dmc.Chip(
-                                                    x,
-                                                    value=x,
-                                                    variant="outline",
-                                                    color="cyan",
-                                                )
-                                                for x in ["8-2", "2-4", "4-6", "6-8"]
-                                            ],
-                                            id="chips-ip",
-                                            value=["4-6"],
-                                            multiple=True,
-                                            mb=0,
-                                        ),
-                                    ],
-                                    pt=10,
-                                ),
-                            ],
-                        ),
-                        dcc.Loading(
-                            children=dcc.Graph(
-                                id="LHC-layout",
-                                mathjax=True,
-                                config={
-                                    "displayModeBar": False,
-                                    "scrollZoom": True,
-                                    "responsive": True,
-                                    "displaylogo": False,
-                                },
-                                style={"height": "90vh", "width": "100%", "margin": "auto"},
-                            ),
-                            type="circle",
-                        ),
-                    ],
-                    style={"width": "100%", "margin": "auto"},
-                )
-            ),
-            dmc.Drawer(
-                title="Element information",
-                id="drawer-magnets",
-                padding="md",
-                transition="rotate-left",
-                transitionDuration=20,
-                zIndex=10000,
-                transitionTimingFunction="ease",
-                children=dmc.Card(
-                    children=[
-                        dmc.Group(
-                            [
-                                dmc.Text(
-                                    id="title-element",
-                                    children="Element",
-                                    weight=500,
-                                ),
-                                dmc.Badge(
-                                    id="type-element",
-                                    children="Dipole",
-                                    color="blue",
-                                    variant="light",
-                                ),
-                            ],
-                            position="apart",
-                            mt="md",
-                            mb="xs",
-                        ),
-                        html.Div(
-                            id="text-element",
-                            children=[
-                                dmc.Text(
-                                    id="initial-text",
-                                    children=(
-                                        "Please click on a multipole or an"
-                                        " interaction point to get the"
-                                        " corresponding knob information."
-                                    ),
-                                    size="sm",
-                                    color="dimmed",
-                                ),
-                            ],
-                        ),
-                    ],
-                    withBorder=True,
-                    shadow="sm",
-                    radius="md",
-                    style={"width": "100%"},
-                ),
-            ),
-        ],
-        style={"width": "100%", "margin": "auto"},
-    )
-    return survey_layout
-
-
-def return_filling_scheme_layout():
-    scheme_layout = dmc.Stack(
-        children=[
-            dmc.Center(
-                dmc.Alert(
-                    (
-                        "I may add a plot displaying the number of long-ranges and head-on"
-                        " interaction for each bunch is it's deemed relevant."
-                    ),
-                    title="Alert!",
-                    style={"width": "70%", "margin-top": "10px"},
-                ),
-            ),
-            dcc.Graph(
-                id="filling-scheme-graph",
-                mathjax=True,
-                config={
-                    "displayModeBar": False,
-                    "scrollZoom": True,
-                    "responsive": True,
-                    "displaylogo": False,
-                },
-                figure=dashboard_functions.return_plot_filling_scheme(array_b1, array_b2),
-                style={"height": "30vh", "width": "100%", "margin": "10 auto"},
-            ),
-        ]
-    )
-    return scheme_layout
-
-
-def return_optics_layout():
-    optics_layout = dmc.Center(
-        dcc.Graph(
-            id="LHC-2D-near-IP",
-            mathjax=True,
-            config={
-                "displayModeBar": False,
-                "scrollZoom": True,
-                "responsive": True,
-                "displaylogo": False,
-            },
-            figure=dashboard_functions.return_plot_optics(
-                tw_b1, tw_b2, df_sv_b1, df_elements_corrected
-            ),
-            style={"height": "90vh", "width": "100%", "margin": "auto"},
-        ),
-    )
-    return optics_layout
-
-
 layout = html.Div(
     style={"width": "90%", "margin": "auto"},
     children=[
-        # Interval for the logging handler
-        # dcc.Interval(id="interval1", interval=5 * 1000, n_intervals=0),
         return_header_layout(),
         dmc.Center(
             children=[
@@ -590,11 +118,13 @@ def select_tab(value):
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
-            return return_filling_scheme_layout()
+            return return_filling_scheme_layout(array_b1, array_b2)
         case "display-sanity":
-            return return_sanity_layout()
+            return return_sanity_layout(
+                tw_b1, tw_b2, l_ncollisions, num_particles_per_bunch, nemitt_x, nemitt_y, sigma_z
+            )
         case "display-optics":
-            return return_optics_layout()
+            return return_optics_layout(tw_b1, tw_b2, df_sv_b1, df_elements_corrected)
         case "display-survey":
             return return_survey_layout()
         case _:
@@ -626,12 +156,10 @@ def update_graph_LHC_layout(l_values):
         str_ind_1, str_ind_2 = val.split("-")
         # Get indices of elements to keep (# ! implemented only for beam 1)
         l_indices_to_keep.extend(
-            dashboard_functions.get_indices_of_interest(
-                df_tw_b1, "ip" + str_ind_1, "ip" + str_ind_2
-            )
+            functions.get_indices_of_interest(df_tw_b1, "ip" + str_ind_1, "ip" + str_ind_2)
         )
 
-    fig = dashboard_functions.return_plot_lattice_with_tracking(
+    fig = functions.return_plot_lattice_with_tracking(
         df_sv_b1,
         df_elements_corrected,
         df_tw_b1,
