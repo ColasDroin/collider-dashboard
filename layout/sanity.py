@@ -7,15 +7,10 @@ from dash import html
 import xtrack as xt
 
 
-
 #################### Sanity checks Layout ####################
 
-def return_sanity_layout(tw_b1, tw_b2, l_ncollisions, num_particles_per_bunch, nemitt_x, nemitt_y, sigma_z):
-    
-    # Get number of collisions per IP
-    n_collisions_ip1_and_5, n_collisions_ip2, n_collisions_ip8 = l_ncollisions
-    
-    
+
+def return_sanity_layout(tw_b1, tw_b2, l_lumi):
     # Check general observables (tune, chroma, etc.)
     header_1 = [
         html.Thead(
@@ -137,24 +132,6 @@ def return_sanity_layout(tw_b1, tw_b2, l_ncollisions, num_particles_per_bunch, n
         )
     ]
 
-    l_lumi = []
-    for ip, n_col in zip(
-        [1, 2, 5, 8],
-        [n_collisions_ip1_and_5, n_collisions_ip2, n_collisions_ip1_and_5, n_collisions_ip8],
-    ):
-        l_lumi.append(
-            xt.lumi.luminosity_from_twiss(
-                n_colliding_bunches=n_col,
-                num_particles_per_bunch=num_particles_per_bunch,
-                ip_name="ip" + str(ip),
-                nemitt_x=nemitt_x,
-                nemitt_y=nemitt_y,
-                sigma_z=sigma_z,
-                twiss_b1=tw_b1,
-                twiss_b2=tw_b2,
-                crab=False,
-            )
-        )
     row_lumi = html.Tr(
         [
             html.Td(f"{l_lumi[0]:.3e}"),
@@ -203,4 +180,3 @@ def return_sanity_layout(tw_b1, tw_b2, l_ncollisions, num_particles_per_bunch, n
         ],
         style={"width": "90%", "margin": "auto"},
     )
-

@@ -82,12 +82,11 @@ def return_all_loaded_variables(collider_path=None, collider=None):
     if collider is None and collider_path is not None:
         # Rebuild line (can't be pickled, most likely because of struct and multiprocessing)
         collider = xt.Multiline.from_json(collider_path)
+        # Build tracker (assume it is already loaded if collider is provided)
+        collider.build_trackers()
 
     elif collider is None and collider_path is None:
         raise ValueError("Either collider or collider_path must be provided")
-
-    # Build tracker
-    collider.build_trackers()
 
     # Get elements of the line (only done for b1, should be identical for b2)
     df_elements = return_dataframe_elements_from_line(collider.lhcb1)
@@ -1185,4 +1184,3 @@ def return_data_table(df, id_table, twiss=True):
         ),
     )
     return table
-

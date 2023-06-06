@@ -2,15 +2,7 @@
 
 # Import standard libraries
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-from dash import Dash, html, dcc, Input, Output, State, ctx
-import dash
-import numpy as np
-import base64
-import xtrack as xt
-import io
-import json
-import yaml
+from dash import Dash, html, Input, Output
 
 # Import plotting functions
 import functions
@@ -24,38 +16,29 @@ from layout.survey import return_survey_layout
 from layout.header import return_header_layout
 from layout.tables import return_tables_layout
 
+# Import collider and twiss functions
+from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
+
 #################### Load global variables ####################
 
-# Path to configuration file
-path_configuration = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0002/config.yaml"
+# Load collider
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0001/config.yaml"
+build_collider = BuildCollider(path_config)
 
-# Load configuration file
-with open(path_configuration, "r") as fid:
-    configuration = yaml.safe_load(fid)["config_collider"]
-    num_particles_per_bunch = float(configuration["config_beambeam"]["num_particles_per_bunch"])
-    nemitt_x = configuration["config_beambeam"]["nemitt_x"]
-    nemitt_y = configuration["config_beambeam"]["nemitt_y"]
-    sigma_z = configuration["config_beambeam"]["sigma_z"]
+# Dump collider
+path_collider = build_collider.dump_collider(prefix="temp/")
 
-# Load the filling scheme
-path_filling_scheme = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/master_jobs/filling_scheme/8b4e_1972b_1960_1178_1886_224bpi_12inj_800ns_bs200ns.json"
-with open(path_filling_scheme) as fid:
-    filling_scheme = json.load(fid)
+# Do Twiss check
+twiss_check = TwissCheck(
+    path_config, collider=build_collider.collider
+)  # path_collider=path_collider)
 
-array_b1 = np.array(filling_scheme["beam1"])
-array_b2 = np.array(filling_scheme["beam2"])
+# Get luminosity at each IP
+l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
-# Assert that the arrays have the required length, and do the convolution
-assert len(array_b1) == len(array_b2) == 3564
-n_collisions_ip1_and_5 = array_b1 @ array_b2
-n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
-n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
-l_ncollisions = [n_collisions_ip1_and_5, n_collisions_ip2, n_collisions_ip8]
-# Get collider variables
+# Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
 collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
-    functions.return_all_loaded_variables(
-        collider_path="/afs/cern.ch/work/c/cdroin/private/comparison_pymask_xmask/xmask/xsuite_lines/collider_03_tuned_and_leveled_bb_off.json"
-    )
+    functions.return_all_loaded_variables(collider=twiss_check.collider)
 )
 
 # Get corresponding data tables
@@ -114,21 +97,23 @@ app.layout = layout
 def select_tab(value):
     match value:
         case "display-configuration":
-            return return_configuration_layout(path_configuration)
+            return return_configuration_layout(path_config)
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
-            return return_filling_scheme_layout(array_b1, array_b2)
+            return return_filling_scheme_layout(twiss_check.array_b1, twiss_check.array_b2)
         case "display-sanity":
             return return_sanity_layout(
-                tw_b1, tw_b2, l_ncollisions, num_particles_per_bunch, nemitt_x, nemitt_y, sigma_z
+                tw_b1,
+                tw_b2,
+                l_lumi,
             )
         case "display-optics":
             return return_optics_layout(tw_b1, tw_b2, df_sv_b1, df_elements_corrected)
         case "display-survey":
             return return_survey_layout()
         case _:
-            return return_configuration_layout(path_configuration)
+            return return_configuration_layout(path_config)
 
 
 @app.callback(Output("placeholder-data-table", "children"), Input("segmented-data-table", "value"))
