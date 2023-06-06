@@ -11,6 +11,62 @@ from plotly.subplots import make_subplots
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme, Trim
 
+# Import collider and twiss functions
+from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
+
+
+# ==================================================================================================
+# --- Functions initialize all global variables
+# ==================================================================================================
+def initialize_global_variables(path_config, path_collider, build_collider=True):
+    if build_collider:
+        build_collider = BuildCollider(path_config)
+
+        # Dump collider
+        path_collider = build_collider.dump_collider(prefix="temp/")
+
+        print(
+            "Warning: path_collider is being overwritten by the output of"
+            " build_collider.dump_collider()"
+        )
+
+    # Do Twiss check
+    twiss_check = TwissCheck(
+        path_config,  # , collider=build_collider.collider
+        path_collider=path_collider,
+    )
+
+    # Get luminosity at each IP
+    l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+
+    # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
+    collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
+        return_all_loaded_variables(collider=twiss_check.collider)
+    )
+
+    # Get corresponding data tables
+    table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1", twiss=False)
+    table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1", twiss=True)
+    table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2", twiss=False)
+    table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2", twiss=True)
+
+    return (
+        twiss_check,
+        l_lumi,
+        collider,
+        tw_b1,
+        df_sv_b1,
+        df_tw_b1,
+        tw_b2,
+        df_sv_b2,
+        df_tw_b2,
+        df_elements_corrected,
+        table_sv_b1,
+        table_tw_b1,
+        table_sv_b2,
+        table_tw_b2,
+    )
+
 
 # ==================================================================================================
 # --- Functions to load dashboard variables

@@ -20,34 +20,26 @@ from layout.tables import return_tables_layout
 from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 
 #################### Load global variables ####################
-
-# Load collider
 path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0001/config.yaml"
-# build_collider = BuildCollider(path_config)
-
-# Dump collider
-# path_collider = build_collider.dump_collider(prefix="temp/")
-
-# Do Twiss check
-twiss_check = TwissCheck(
-    path_config,  # , collider=build_collider.collider
-    path_collider="temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json",
+path_collider = (
+    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json"
 )
-
-# Get luminosity at each IP
-l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
-
-# Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
-collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
-    functions.return_all_loaded_variables(collider=twiss_check.collider)
-)
-
-# Get corresponding data tables
-table_sv_b1 = functions.return_data_table(df_sv_b1, "id-df-sv-b1", twiss=False)
-table_tw_b1 = functions.return_data_table(df_tw_b1, "id-df-tw-b1", twiss=True)
-table_sv_b2 = functions.return_data_table(df_sv_b2, "id-df-sv-b2", twiss=False)
-table_tw_b2 = functions.return_data_table(df_tw_b2, "id-df-tw-b2", twiss=True)
-
+(
+    twiss_check,
+    l_lumi,
+    collider,
+    tw_b1,
+    df_sv_b1,
+    df_tw_b1,
+    tw_b2,
+    df_sv_b2,
+    df_tw_b2,
+    df_elements_corrected,
+    table_sv_b1,
+    table_tw_b1,
+    table_sv_b2,
+    table_tw_b2,
+) = functions.load_global_variables(path_config, path_collider, build_collider=False)
 
 #################### App ####################
 app = Dash(
