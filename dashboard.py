@@ -23,15 +23,16 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 
 # Load collider
 path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0001/config.yaml"
-build_collider = BuildCollider(path_config)
+# build_collider = BuildCollider(path_config)
 
 # Dump collider
-path_collider = build_collider.dump_collider(prefix="temp/")
+# path_collider = build_collider.dump_collider(prefix="temp/")
 
 # Do Twiss check
 twiss_check = TwissCheck(
-    path_config, collider=build_collider.collider
-)  # path_collider=path_collider)
+    path_config,  # , collider=build_collider.collider
+    path_collider="temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json",
+)
 
 # Get luminosity at each IP
 l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]

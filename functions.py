@@ -1022,47 +1022,47 @@ def return_plot_optics(
         annotation_position="top right",
     )
 
-    # Update overall layout
-    title_1 = (
-        r"$q_{x_{1}} = "
-        + f'{tw_b1["qx"]:.5f}'
-        + r"\hspace{0.5cm}"
-        + r" q_{y_{1}} = "
-        + f'{tw_b1["qy"]:.5f}'
-        + r"\hspace{0.5cm}"
-        + r"Q'_{x_{1}} = "
-        + f'{tw_b1["dqx"]:.2f}'
-        + r"\hspace{0.5cm}"
-        + r" Q'_{y_{1}} = "
-        + f'{tw_b1["dqy"]:.2f}'
-        + r"\hspace{0.5cm}"
-        # + r" \gamma_{tr_{1}} = "
-        # + f'{1/np.sqrt(tw_b1["momentum_compaction_factor"]):.2f}'
-    )
-    title_2 = (
-        r"\\ "
-        + r"q_{x_{2}} = "
-        + f'{tw_b2["qx"]:.5f}'
-        + r"\hspace{0.5cm}"
-        + r" q_{y_{2}} = "
-        + f'{tw_b2["qy"]:.5f}'
-        + r"\hspace{0.5cm}"
-        + r"Q'_{x_{2}} = "
-        + f'{tw_b2["dqx"]:.2f}'
-        + r"\hspace{0.5cm}"
-        + r" Q'_{y_{2}} = "
-        + f'{tw_b2["dqy"]:.2f}'
-        + r"\hspace{0.5cm}"
-        # + r" \gamma_{tr_{2}} = "
-        # + f'{1/np.sqrt(tw_b2["momentum_compaction_factor"]):.2f}'
-        + r"\\ $"
-    )
-    title = title_1 + title_2
+    # # Update overall layout
+    # title_1 = (
+    #     r"$q_{x_{1}} = "
+    #     + f'{tw_b1["qx"]:.5f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r" q_{y_{1}} = "
+    #     + f'{tw_b1["qy"]:.5f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r"Q'_{x_{1}} = "
+    #     + f'{tw_b1["dqx"]:.2f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r" Q'_{y_{1}} = "
+    #     + f'{tw_b1["dqy"]:.2f}'
+    #     + r"\hspace{0.5cm}"
+    #     # + r" \gamma_{tr_{1}} = "
+    #     # + f'{1/np.sqrt(tw_b1["momentum_compaction_factor"]):.2f}'
+    # )
+    # title_2 = (
+    #     r"\\ "
+    #     + r"q_{x_{2}} = "
+    #     + f'{tw_b2["qx"]:.5f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r" q_{y_{2}} = "
+    #     + f'{tw_b2["qy"]:.5f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r"Q'_{x_{2}} = "
+    #     + f'{tw_b2["dqx"]:.2f}'
+    #     + r"\hspace{0.5cm}"
+    #     + r" Q'_{y_{2}} = "
+    #     + f'{tw_b2["dqy"]:.2f}'
+    #     + r"\hspace{0.5cm}"
+    #     # + r" \gamma_{tr_{2}} = "
+    #     # + f'{1/np.sqrt(tw_b2["momentum_compaction_factor"]):.2f}'
+    #     + r"\\ $"
+    # )
+    # title = title_1 + title_2
 
     fig.update_layout(
-        title_text=title,
-        title_x=0.5,
-        title_xanchor="center",
+        # title_text=title,
+        # title_x=0.5,
+        # title_xanchor="center",
         showlegend=True,
         xaxis_showgrid=True,
         yaxis_showgrid=True,
@@ -1073,6 +1073,7 @@ def return_plot_optics(
         legend_tracegroupgap=30,
         dragmode="pan",
         uirevision="Don't change",
+        margin=dict(l=10, r=10, b=10, t=10, pad=10),
     )
 
     # Make background transparent
@@ -1166,7 +1167,7 @@ def return_data_table(df, id_table, twiss=True):
             # fixed_rows={"headers": True, "data": 0},
             # fixed_columns={"headers": True, "data": 1},
             virtualization=False,
-            page_size=30,
+            page_size=25,
             style_table={
                 # "height": "100%",
                 "maxHeight": "75vh",
