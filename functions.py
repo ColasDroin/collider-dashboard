@@ -1059,66 +1059,18 @@ def return_plot_optics(
         dashed=True,
     )
 
-    # Add horizontal lines for ip1 and ip5
-    fig.add_vline(
-        x=float(tw_b1.rows["ip1"].cols["s"].to_pandas().s),
-        line_width=1,
-        line_dash="dash",
-        line_color="pink",
-        annotation_text="IP 1",
-        annotation_position="top right",
-    )
-
-    fig.add_vline(
-        x=float(tw_b1.rows["ip5"].cols["s"].to_pandas().s),
-        line_width=1,
-        line_dash="dash",
-        line_color="pink",
-        annotation_text="IP 5",
-        annotation_position="top right",
-    )
-
-    # # Update overall layout
-    # title_1 = (
-    #     r"$q_{x_{1}} = "
-    #     + f'{tw_b1["qx"]:.5f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r" q_{y_{1}} = "
-    #     + f'{tw_b1["qy"]:.5f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r"Q'_{x_{1}} = "
-    #     + f'{tw_b1["dqx"]:.2f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r" Q'_{y_{1}} = "
-    #     + f'{tw_b1["dqy"]:.2f}'
-    #     + r"\hspace{0.5cm}"
-    #     # + r" \gamma_{tr_{1}} = "
-    #     # + f'{1/np.sqrt(tw_b1["momentum_compaction_factor"]):.2f}'
-    # )
-    # title_2 = (
-    #     r"\\ "
-    #     + r"q_{x_{2}} = "
-    #     + f'{tw_b2["qx"]:.5f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r" q_{y_{2}} = "
-    #     + f'{tw_b2["qy"]:.5f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r"Q'_{x_{2}} = "
-    #     + f'{tw_b2["dqx"]:.2f}'
-    #     + r"\hspace{0.5cm}"
-    #     + r" Q'_{y_{2}} = "
-    #     + f'{tw_b2["dqy"]:.2f}'
-    #     + r"\hspace{0.5cm}"
-    #     # + r" \gamma_{tr_{2}} = "
-    #     # + f'{1/np.sqrt(tw_b2["momentum_compaction_factor"]):.2f}'
-    #     + r"\\ $"
-    # )
-    # title = title_1 + title_2
+    # Add horizontal lines for all ips
+    for ip in [1, 2, 5, 8]:
+        fig.add_vline(
+            x=float(tw_b1.rows["ip" + str(ip)].cols["s"].to_pandas().s),
+            line_width=1,
+            line_dash="dash",
+            line_color="pink",
+            annotation_text=f"IP {ip}",
+            annotation_position="top right",
+        )
 
     fig.update_layout(
-        # title_text=title,
-        # title_x=0.5,
-        # title_xanchor="center",
         showlegend=True,
         xaxis_showgrid=True,
         yaxis_showgrid=True,
