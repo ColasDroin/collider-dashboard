@@ -24,17 +24,20 @@ def return_filling_scheme_layout(array_b1, array_b2):
                     style={"width": "70%", "margin-top": "10px"},
                 ),
             ),
-            dcc.Graph(
-                id="filling-scheme-graph",
-                mathjax=True,
-                config={
-                    "displayModeBar": False,
-                    "scrollZoom": True,
-                    "responsive": True,
-                    "displaylogo": False,
-                },
-                figure=functions.return_plot_filling_scheme(array_b1, array_b2),
-                style={"height": "30vh", "width": "100%", "margin": "10 auto"},
+            dcc.Loading(
+                dcc.Graph(
+                    id="filling-scheme-graph",
+                    mathjax=True,
+                    config={
+                        "displayModeBar": False,
+                        "scrollZoom": True,
+                        "responsive": True,
+                        "displaylogo": False,
+                    },
+                    figure=functions.return_plot_filling_scheme(array_b1, array_b2),
+                    style={"height": "30vh", "width": "100%", "margin": "10 auto"},
+                ),
+                type="circle",
             ),
         ]
     )

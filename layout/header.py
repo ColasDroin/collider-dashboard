@@ -6,6 +6,7 @@ from dash_iconify import DashIconify
 
 #################### Header Layout ####################
 
+
 def return_header_layout():
     def create_header_link(icon, href, size=22, color="cyan"):
         return dmc.Anchor(
@@ -60,7 +61,7 @@ def return_header_layout():
                             children=[
                                 create_header_link(
                                     "radix-icons:github-logo",
-                                    "https://github.com/ColasDroin/example_DA_study",
+                                    "https://github.com/ColasDroin/simulation-dashboard",
                                 ),
                             ],
                         ),
@@ -70,4 +71,3 @@ def return_header_layout():
         ],
     )
     return header
-

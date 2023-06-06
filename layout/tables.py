@@ -2,9 +2,10 @@
 
 # Import standard libraries
 import dash_mantine_components as dmc
-from dash import  html
+from dash import html, dcc
 
 #################### Tables Layout ####################
+
 
 def return_tables_layout():
     layout = html.Div(
@@ -41,9 +42,8 @@ def return_tables_layout():
                     color="cyan",
                 ),
             ),
-            html.Div(id="placeholder-data-table"),
+            dcc.Loading(html.Div(id="placeholder-data-table"), type="circle"),
         ],
         style={"width": "90%", "margin": "auto"},
     )
     return layout
-

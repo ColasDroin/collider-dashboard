@@ -16,8 +16,6 @@ from layout.survey import return_survey_layout
 from layout.header import return_header_layout
 from layout.tables import return_tables_layout
 
-# Import collider and twiss functions
-from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 
 #################### Load global variables ####################
 path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0001/config.yaml"
@@ -39,7 +37,7 @@ path_collider = (
     table_tw_b1,
     table_sv_b2,
     table_tw_b2,
-) = functions.load_global_variables(path_config, path_collider, build_collider=False)
+) = functions.initialize_global_variables(path_config, path_collider, build_collider=False)
 
 #################### App ####################
 app = Dash(

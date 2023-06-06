@@ -1181,6 +1181,7 @@ def return_plot_filling_scheme(array_b1, array_b2):
         title_text="Filling scheme for the current simulation",
         title_x=0.5,
         title_xanchor="center",
+        dragmode="pan",
     )
 
     return fig
