@@ -12,12 +12,17 @@ import io
 import json
 import yaml
 
-# Import functions
+# Import plotting functions
 import dashboard_functions
 
-
-#################### Build CSS ####################
-dashboard_functions.build_CSS()
+# Import layout functions
+import layout.configuration.return_configuration_layout as return_configuration_layout
+import layout.filling.return_filling_scheme_layout as return_filling_scheme_layout
+import layout.optics.return_optics_layout as return_optics_layout
+import layout.sanity.return_sanity_layout as return_sanity_layout
+import layout.survey.return_survey_layout as return_survey_layout
+import layout.header.return_header_layout as return_header_layout
+import layout.tables.return_tables_layout as return_tables_layout
 
 #################### Load global variables ####################
 
@@ -28,8 +33,8 @@ path_configuration = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master
 with open(path_configuration, "r") as fid:
     configuration = yaml.safe_load(fid)["config_collider"]
     num_particles_per_bunch = float(configuration["config_beambeam"]["num_particles_per_bunch"])
-    nemitt_x = configuration["config_beambeam"]["nemitt_x"] * 1e-6
-    nemitt_y = configuration["config_beambeam"]["nemitt_y"] * 1e-6
+    nemitt_x = configuration["config_beambeam"]["nemitt_x"] 
+    nemitt_y = configuration["config_beambeam"]["nemitt_y"] 
     sigma_z = configuration["config_beambeam"]["sigma_z"]
 
 # Load the filling scheme
