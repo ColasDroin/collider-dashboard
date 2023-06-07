@@ -18,7 +18,7 @@ from layout.tables import return_tables_layout
 
 
 #################### Load global variables ####################
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan/base_collider/xtrack_0001/config.yaml"
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/old/opt_flathv_75_1500_withBB_chroma5_1p4_eol/base_collider/xtrack_0004/config.yaml"
 path_collider = (
     "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json"
 )
