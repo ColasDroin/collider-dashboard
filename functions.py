@@ -1104,11 +1104,11 @@ def return_plot_optics(
 
     # Update yaxis properties
     fig.update_xaxes(range=[0, tw_b1["s"][-1] + 1])
-    fig.update_yaxes(title_text=r"$\beta_{x,y}$ [m]", range=[0, 10000], row=2, col=1)
-    fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}$ [m]", range=[-0.03, 0.03], row=3, col=1)
-    fig.update_yaxes(title_text=r"$D_{x,y}$ [m]", range=[-3, 3], row=4, col=1)
-    fig.update_xaxes(title_text=r"$s$ [m]", row=4, col=1)
-    fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(title_text=r"$\beta_{x,y}[m]$", range=[0, 10000], row=2, col=1)
+    fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}[m]$", range=[-0.03, 0.03], row=3, col=1)
+    fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3, 3], row=4, col=1)
+    fig.update_xaxes(title_text=r"$s[m]$", row=4, col=1)
+    # fig.update_yaxes(fixedrange=True)
 
     return fig
 
@@ -1171,7 +1171,7 @@ def return_data_table(df, id_table, twiss=True):
                         "id": i,
                         "deletable": False,
                         "type": "numeric",
-                        "format": Format(precision=2, scheme=Scheme.decimal_si_prefix),
+                        "format": Format(precision=6, scheme=Scheme.decimal_si_prefix),
                     }
                     if idx != idx_column_name
                     else {"name": i, "id": i, "deletable": False}

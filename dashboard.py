@@ -28,7 +28,7 @@ else:
 
 # Define a path to the config file or to the collider object
 path_collider = (
-    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json"
+    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2374_base_collider_xtrack_collider.json"
 )
 
 # Load the global variables (if build_collider is True in above function, a collider object is stored in temp folder)

@@ -46,8 +46,8 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
             html.Td(f'{tw_b2["qy"]:.5f}'),
             html.Td(f'{tw_b2["dqx"]:.2f}'),
             html.Td(f'{tw_b2["dqy"]:.2f}'),
-            html.Td(f'{tw_b2["c_minus"]:.2f}'),
-            html.Td(f'{tw_b2["momentum_compaction_factor"]:.2f}'),
+            html.Td(f'{tw_b2["c_minus"]:.4f}'),
+            html.Td(f'{tw_b2["momentum_compaction_factor"]:.4f}'),
         ]
     )
     body_1 = [html.Tbody([row1, row2])]
