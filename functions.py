@@ -19,28 +19,35 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 # --- Functions initialize all global variables
 # ==================================================================================================
 def initialize_global_variables(path_config, path_collider=None, build_collider=True):
+    """Initialize all global variables."""
     if build_collider:
-        build_collider = BuildCollider(path_config)
-
-        # Dump collider
-        path_collider = build_collider.dump_collider(prefix="temp/")
-
         if path_collider is not None:
             print(
                 "Warning: path_collider is being overwritten by the output of"
                 " build_collider.dump_collider() since build_collider is set to True."
             )
 
+        # Build collider from config file
+        build_collider = BuildCollider(path_config)
+
+        # Dump collider
+        path_collider = build_collider.dump_collider(prefix="temp/")
+
+        # Do Twiss check directly with the collider built previously
+        twiss_check = TwissCheck(
+            path_config,  # , collider=build_collider.collider
+            collider=build_collider.collider,
+        )
+
     elif path_collider is not None:
         print("The provided path to a collider will be used instead of building a new one.")
+        # Do Twiss check, reloading the collider from a json file
+        twiss_check = TwissCheck(
+            path_config,  # , collider=build_collider.collider
+            path_collider=path_collider,
+        )
     else:
         raise ValueError("Either build_collider or path_collider must be provided")
-
-    # Do Twiss check
-    twiss_check = TwissCheck(
-        path_config,  # , collider=build_collider.collider
-        path_collider=path_collider,
-    )
 
     # Get luminosity at each IP
     l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
@@ -1100,7 +1107,7 @@ def return_plot_optics(
     fig.update_yaxes(title_text=r"$\beta_{x,y}$ [m]", range=[0, 10000], row=2, col=1)
     fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}$ [m]", range=[-0.03, 0.03], row=3, col=1)
     fig.update_yaxes(title_text=r"$D_{x,y}$ [m]", range=[-3, 3], row=4, col=1)
-    fig.update_xaxes(title_text=r"$s$", row=4, col=1)
+    fig.update_xaxes(title_text=r"$s$ [m]", row=4, col=1)
     fig.update_yaxes(fixedrange=True)
 
     return fig

@@ -17,8 +17,10 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
             html.Tr(
                 [
                     html.Th("Beam"),
-                    html.Th("Tune"),
-                    html.Th("Chromaticity"),
+                    html.Th("Qx"),
+                    html.Th("Qy"),
+                    html.Th("dQx"),
+                    html.Th("dQy"),
                     html.Th("Linear coupling"),
                     html.Th("Momentum compaction factor"),
                 ]
@@ -30,16 +32,20 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
         [
             html.Td("1"),
             html.Td(f'{tw_b1["qx"]:.5f}'),
+            html.Td(f'{tw_b1["qy"]:.5f}'),
             html.Td(f'{tw_b1["dqx"]:.2f}'),
-            html.Td(f'{tw_b1["c_minus"]:.2f}'),
-            html.Td(f'{tw_b1["momentum_compaction_factor"]:.2f}'),
+            html.Td(f'{tw_b1["dqy"]:.2f}'),
+            html.Td(f'{tw_b1["c_minus"]:.4f}'),
+            html.Td(f'{tw_b1["momentum_compaction_factor"]:.4f}'),
         ]
     )
     row2 = html.Tr(
         [
             html.Td("2"),
             html.Td(f'{tw_b2["qx"]:.5f}'),
+            html.Td(f'{tw_b2["qy"]:.5f}'),
             html.Td(f'{tw_b2["dqx"]:.2f}'),
+            html.Td(f'{tw_b2["dqy"]:.2f}'),
             html.Td(f'{tw_b2["c_minus"]:.2f}'),
             html.Td(f'{tw_b2["momentum_compaction_factor"]:.2f}'),
         ]
@@ -53,13 +59,13 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
             html.Tr(
                 [
                     html.Th("IP"),
-                    html.Th("s"),
-                    html.Th("x"),
+                    html.Th("s [m]"),
+                    html.Th("x [m]"),
                     html.Th("px"),
-                    html.Th("y"),
+                    html.Th("y [m]"),
                     html.Th("py"),
-                    html.Th("betx"),
-                    html.Th("bety"),
+                    html.Th("betx [m]"),
+                    html.Th("bety [m]"),
                 ]
             )
         )
@@ -88,12 +94,12 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
                 [
                     html.Td(row_values_1[0]),
                     html.Td(f"{row_values_1[1]:.3f}"),
-                    html.Td(f"{row_values_1[2]:.4f}"),
-                    html.Td(f"{row_values_1[3]:.5f}"),
-                    html.Td(f"{row_values_1[4]:.4f}"),
-                    html.Td(f"{row_values_1[5]:.5f}"),
-                    html.Td(f"{row_values_1[6]:.3f}"),
-                    html.Td(f"{row_values_1[7]:.3f}"),
+                    html.Td(f"{row_values_1[2]:.4e}"),
+                    html.Td(f"{row_values_1[3]:.4e}"),
+                    html.Td(f"{row_values_1[4]:.4e}"),
+                    html.Td(f"{row_values_1[5]:.4e}"),
+                    html.Td(f"{row_values_1[6]:.4e}"),
+                    html.Td(f"{row_values_1[7]:.4e}"),
                 ]
             )
         )
@@ -103,12 +109,12 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
                 [
                     html.Td(row_values_2[0]),
                     html.Td(f"{row_values_2[1]:.3f}"),
-                    html.Td(f"{row_values_2[2]:.4f}"),
-                    html.Td(f"{row_values_2[3]:.5f}"),
-                    html.Td(f"{row_values_2[4]:.4f}"),
-                    html.Td(f"{row_values_2[5]:.5f}"),
-                    html.Td(f"{row_values_2[6]:.3f}"),
-                    html.Td(f"{row_values_2[7]:.3f}"),
+                    html.Td(f"{row_values_2[2]:.4e}"),
+                    html.Td(f"{row_values_2[3]:.4e}"),
+                    html.Td(f"{row_values_2[4]:.4e}"),
+                    html.Td(f"{row_values_2[5]:.4e}"),
+                    html.Td(f"{row_values_2[6]:.4e}"),
+                    html.Td(f"{row_values_2[7]:.4e}"),
                 ]
             )
         )
@@ -123,10 +129,10 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
         html.Thead(
             html.Tr(
                 [
-                    html.Th("IP 1"),
-                    html.Th("IP 2"),
-                    html.Th("IP 5"),
-                    html.Th("IP 8"),
+                    html.Th("IP 1 [cm-2 s-1]"),
+                    html.Th("IP 2 [cm-2 s-1]"),
+                    html.Th("IP 5 [cm-2 s-1]"),
+                    html.Th("IP 8 [cm-2 s-1]"),
                 ]
             )
         )

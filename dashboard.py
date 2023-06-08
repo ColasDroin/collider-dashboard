@@ -3,6 +3,7 @@
 # Import standard libraries
 import dash_mantine_components as dmc
 from dash import Dash, html, Input, Output
+import sys
 
 # Import plotting functions
 import functions
@@ -18,10 +19,19 @@ from layout.tables import return_tables_layout
 
 
 #################### Load global variables ####################
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/old/opt_flathv_75_1500_withBB_chroma5_1p4_eol/base_collider/xtrack_0004/config.yaml"
+
+# Get the path to the config file from the command line, or use the default one
+if len(sys.argv) > 1:
+    path_config = sys.argv[1]
+else:
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2076/base_collider/xtrack_0000/config.yaml"
+
+# Define a path to the config file or to the collider object
 path_collider = (
     "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bunch_scan_base_collider_xtrack_collider.json"
 )
+
+# Load the global variables (if build_collider is True in above function, a collider object is stored in temp folder)
 (
     twiss_check,
     l_lumi,
@@ -37,8 +47,10 @@ path_collider = (
     table_tw_b1,
     table_sv_b2,
     table_tw_b2,
-) = functions.initialize_global_variables(path_config, path_collider=None, build_collider=True)
-# If build_collider is True in above function, a collider object is stored in temp folder
+) = functions.initialize_global_variables(
+    path_config, path_collider=path_collider, build_collider=False
+)
+
 
 #################### App ####################
 app = Dash(
