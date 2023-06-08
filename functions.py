@@ -18,17 +18,23 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 # ==================================================================================================
 # --- Functions initialize all global variables
 # ==================================================================================================
-def initialize_global_variables(path_config, path_collider, build_collider=True):
+def initialize_global_variables(path_config, path_collider=None, build_collider=True):
     if build_collider:
         build_collider = BuildCollider(path_config)
 
         # Dump collider
         path_collider = build_collider.dump_collider(prefix="temp/")
 
-        print(
-            "Warning: path_collider is being overwritten by the output of"
-            " build_collider.dump_collider()"
-        )
+        if path_collider is not None:
+            print(
+                "Warning: path_collider is being overwritten by the output of"
+                " build_collider.dump_collider() since build_collider is set to True."
+            )
+
+    elif path_collider is not None:
+        print("The provided path to a collider will be used instead of building a new one.")
+    else:
+        raise ValueError("Either build_collider or path_collider must be provided")
 
     # Do Twiss check
     twiss_check = TwissCheck(

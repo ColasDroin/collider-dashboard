@@ -37,7 +37,8 @@ path_collider = (
     table_tw_b1,
     table_sv_b2,
     table_tw_b2,
-) = functions.initialize_global_variables(path_config, path_collider, build_collider=False)
+) = functions.initialize_global_variables(path_config, path_collider=None, build_collider=True)
+# If build_collider is True in above function, a collider object is stored in temp folder
 
 #################### App ####################
 app = Dash(
