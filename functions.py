@@ -20,7 +20,7 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 # ==================================================================================================
 
 
-def initialize_twiss_check(path_config, path_collider=None, build_collider=True):
+def initialize_twiss_check(path_config, path_collider=None, path_twiss = None, build_collider=True):
     """Initialize all twiss_check object from a collider/path to a collider/twiss tables."""
     if build_collider:
         if path_collider is not None:
@@ -40,7 +40,7 @@ def initialize_twiss_check(path_config, path_collider=None, build_collider=True)
 
         # Dump collider
         path_collider, path_twiss = build_collider.dump_collider(
-            prefix="temp/", save_twiss_beffore_bb=True
+            prefix="temp/", save_twiss=True
         )
 
         # Do Twiss check directly with the collider built previously
@@ -77,7 +77,10 @@ def initialize_twiss_check(path_config, path_collider=None, build_collider=True)
 
     # Finally, return the twiss_check object (with or without a collider set)
     if twiss_check is not None:
-        return twiss_check
+        if path_twiss is not None:
+            return twiss_check, path_twiss
+        else:
+            return twiss_check
     else:
         raise ValueError("Something went wrong while initializing the TwissCheck object.")
 

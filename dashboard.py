@@ -29,27 +29,46 @@ else:
 # Define a path to the config file or to the collider object
 path_collider = None
 
-# Load the global variables (if build_collider is True in above function, a collider object is stored in temp folder)
-(
-    twiss_check,
-    l_lumi,
-    collider,
-    tw_b1,
-    df_sv_b1,
-    df_tw_b1,
-    tw_b2,
-    df_sv_b2,
-    df_tw_b2,
-    df_elements_corrected,
-    table_sv_b1,
-    table_tw_b1,
-    table_sv_b2,
-    table_tw_b2,
-) = functions.initialize_global_variables(
-    path_config, path_collider=path_collider, build_collider=True
+# Load the global variables for the final collider
+# (if build_collider is True in above function, a collider object is stored in temp folder)
+twiss_check_after_beam_beam, path_twiss = functions.initialize_twiss_check(
+    path_config, path_collider=path_collider, path_twiss=None, build_collider=True
+)
+twiss_check_before_beam_beam = functions.initialize_twiss_check(
+    path_twiss=path_twiss, build_collider=False
 )
 
-# Get the twiss before beam-beam
+# Get the global variables after the beam-beam (corresponding to the current collider file)
+(
+    l_lumi_after_beam_beam,
+    collider_after_beam_beam,
+    tw_b1_after_beam_beam,
+    df_sv_b1_after_beam_beam,
+    df_tw_b1_after_beam_beam,
+    tw_b2_after_beam_beam,
+    df_sv_b2_after_beam_beam,
+    df_tw_b2_after_beam_beam,
+    df_elements_corrected_after_beam_beam,
+    table_sv_b1_after_beam_beam,
+    table_tw_b1_after_beam_beam,
+    table_sv_b2_after_beam_beam,
+    table_tw_b2_after_beam_beam,
+) = functions.initialize_global_variables_after_beam_beam(twiss_check_after_beam_beam)
+
+# Get the global variables before the beam-beam (saved along the way when building the collider)
+(
+    l_lumi_before_beam_beam,
+    tw_b1_before_beam_beam,
+    df_sv_b1_before_beam_beam,
+    df_tw_b1_before_beam_beam,
+    tw_b2_before_beam_beam,
+    df_sv_b2_before_beam_beam,
+    df_tw_b2_before_beam_beam,
+    table_sv_b1_before_beam_beam,
+    table_tw_b1_before_beam_beam,
+    table_sv_b2_before_beam_beam,
+    table_tw_b2_before_beam_beam,
+) = functions.initialize_global_variables_before_beam_beam(twiss_check_before_beam_beam)
 
 
 #################### App ####################
