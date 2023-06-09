@@ -24,11 +24,12 @@ from layout.tables import return_tables_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972/base_collider/xtrack_0000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
 # Define a path to the config file or to the collider object
-path_collider = None
-path_collider_before_bb = None
+path_collider = None  # "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider.json"
+
+path_collider_before_bb = None  # "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider_before_bb.json"
 
 # Load the global variables for the final collider
 # (if build_collider is True in above function, a collider object is stored in temp folder)
@@ -54,7 +55,7 @@ twiss_check_after_beam_beam, twiss_check_before_beam_beam = functions.initialize
     table_tw_b1_after_beam_beam,
     table_sv_b2_after_beam_beam,
     table_tw_b2_after_beam_beam,
-) = functions.initialize_global_variables_after_beam_beam(twiss_check_after_beam_beam)
+) = functions.initialize_global_variables(twiss_check_after_beam_beam)
 
 # Same before beam_beam
 (
@@ -71,7 +72,7 @@ twiss_check_after_beam_beam, twiss_check_before_beam_beam = functions.initialize
     table_tw_b1_before_beam_beam,
     table_sv_b2_before_beam_beam,
     table_tw_b2_before_beam_beam,
-) = functions.initialize_global_variables_before_beam_beam(twiss_check_before_beam_beam)
+) = functions.initialize_global_variables(twiss_check_before_beam_beam)
 
 
 #################### App ####################
@@ -131,12 +132,12 @@ def select_tab(value):
                 twiss_check_after_beam_beam.array_b1, twiss_check_after_beam_beam.array_b2
             )
         case "display-sanity":
-            sanity_before_beam_beam = return_sanity_layout(
+            sanity_after_beam_beam = return_sanity_layout(
                 tw_b1_after_beam_beam,
                 tw_b2_after_beam_beam,
                 l_lumi_after_beam_beam,
             )
-            sanity_after_beam_beam = return_sanity_layout(
+            sanity_before_beam_beam = return_sanity_layout(
                 tw_b1_before_beam_beam,
                 tw_b2_before_beam_beam,
                 l_lumi_before_beam_beam,
@@ -152,10 +153,12 @@ def select_tab(value):
                     dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
                     dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
                 ],
-                color="teal",
+                color="cyan",
+                position="center",
+                value="sanity-after-beam-beam",
             )
+            return tabs_sanity
 
-            return
         case "display-optics":
             return return_optics_layout(
                 tw_b1_after_beam_beam,
@@ -323,7 +326,7 @@ def update_text_graph_LHC_2D(clickData):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8051)
+    app.run_server(debug=False, host="0.0.0.0", port=8050)
 
 
 # Run with gunicorn app:server -b :8000
