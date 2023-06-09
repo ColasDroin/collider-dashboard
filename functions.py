@@ -18,27 +18,45 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 # ==================================================================================================
 # --- Functions initialize all global variables
 # ==================================================================================================
-def initialize_global_variables(path_config, path_collider=None, build_collider=True):
-    """Initialize all global variables."""
+
+
+def initialize_twiss_check(path_config, path_collider=None, build_collider=True):
+    """Initialize all twiss_check object from a collider/path to a collider/twiss tables."""
     if build_collider:
         if path_collider is not None:
-            print(
-                "Warning: path_collider is being overwritten by the output of"
-                " build_collider.dump_collider() since build_collider is set to True."
+            raise ValueError(
+                "If build_collider is True, path_collider must not be provided. "
+                "If you want to use a collider from a json file, set build_collider to False."
+            )
+        if path_twiss is not None:
+            raise ValueError(
+                "If build_collider is True, path_twiss must not be provided as the Twiss will be"
+                " computed from the newly built collider. If you want to use different Twiss files"
+                " for the check, set build_collider to False."
             )
 
         # Build collider from config file
         build_collider = BuildCollider(path_config)
 
         # Dump collider
-        path_collider = build_collider.dump_collider(prefix="temp/")
+        path_collider, path_twiss = build_collider.dump_collider(
+            prefix="temp/", save_twiss_beffore_bb=True
+        )
 
         # Do Twiss check directly with the collider built previously
         twiss_check = TwissCheck(
-            path_config,  # , collider=build_collider.collider
+            path_config,
+            path_dic_twiss=None,
+            path_collider=None,
             collider=build_collider.collider,
         )
 
+    elif path_collider is not None and path_twiss is not None:
+        raise ValueError(
+            "If path_collider is provided, path_twiss must not be provided as the Twiss will be"
+            " computed from the collider. If you want to use different Twiss files for the"
+            " check, set path_collider to None."
+        )
     elif path_collider is not None:
         print(
             "The provided path to a collider will be used instead of building a new one. Ensure"
@@ -46,28 +64,86 @@ def initialize_global_variables(path_config, path_collider=None, build_collider=
         )
         # Do Twiss check, reloading the collider from a json file
         twiss_check = TwissCheck(
-            path_config,  # , collider=build_collider.collider
-            path_collider=path_collider,
+            path_config, path_dic_twiss=None, path_collider=path_collider, collider=None
         )
+    elif path_twiss is not None:
+        # Do Twiss check, without a collider
+        twiss_check = TwissCheck(
+            path_config,
+            path_dic_twiss=path_twiss,
+            path_collider=None,
+            collider=None,
+        )
+
+    # Finally, return the twiss_check object (with or without a collider set)
+    if twiss_check is not None:
+        return twiss_check
     else:
-        raise ValueError("Either build_collider or path_collider must be provided")
+        raise ValueError("Something went wrong while initializing the TwissCheck object.")
+
+
+def initialize_global_variables_before_beam_beam(twiss_check_before_beam_beam):
+    """Initialize global variables, from a set of Twiss tables computed before setting beam-beam."""
 
     # Get luminosity at each IP
-    l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+    l_lumi = [twiss_check_before_beam_beam.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+
+    # Get Twiss variables
+    tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2 = (
+        twiss_check_before_beam_beam.tw_b1,
+        twiss_check_before_beam_beam.df_sv_b1,
+        twiss_check_before_beam_beam.df_tw_b1,
+        twiss_check_before_beam_beam.tw_b2,
+        twiss_check_before_beam_beam.df_sv_b2,
+        twiss_check_before_beam_beam.df_tw_b2,
+    )
+
+    # Apply correction for beam 1
+    df_sv_b1["X"] = -df_sv_b1["X"]
+    df_tw_b1["x"] = -df_tw_b1["x"]
+
+    # Get corresponding data tables
+    table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-before-bb", twiss=False)
+    table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-before-bb", twiss=True)
+    table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-before-bb", twiss=False)
+    table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-before-bb", twiss=True)
+
+    # Return all variables
+    return (
+        l_lumi,
+        tw_b1,
+        df_sv_b1,
+        df_tw_b1,
+        tw_b2,
+        df_sv_b2,
+        df_tw_b2,
+        table_sv_b1,
+        table_tw_b1,
+        table_sv_b2,
+        table_tw_b2,
+    )
+
+
+def initialize_global_variables_after_beam_beam(twiss_check_after_beam_beam):
+    """Initialize global variables, from a collider with beam-beam set."""
+    if twiss_check_after_beam_beam.collider is None:
+        raise ValueError("The collider must be provided in the twiss_check_after_beam_beam object.")
+
+    # Get luminosity at each IP
+    l_lumi = [twiss_check_after_beam_beam.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
     # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
     collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
-        return_all_loaded_variables(collider=twiss_check.collider)
+        return_all_loaded_variables(collider=twiss_check_after_beam_beam.collider)
     )
 
     # Get corresponding data tables
-    table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1", twiss=False)
-    table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1", twiss=True)
-    table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2", twiss=False)
-    table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2", twiss=True)
+    table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
+    table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-after-bb", twiss=True)
+    table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
+    table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
 
     return (
-        twiss_check,
         l_lumi,
         collider,
         tw_b1,

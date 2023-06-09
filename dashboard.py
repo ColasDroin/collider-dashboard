@@ -24,12 +24,10 @@ from layout.tables import return_tables_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2374/base_collider/xtrack_0000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972/base_collider/xtrack_0000/config.yaml"
 
 # Define a path to the config file or to the collider object
-path_collider = (
-    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2374_base_collider_xtrack_collider.json"
-)
+path_collider = None
 
 # Load the global variables (if build_collider is True in above function, a collider object is stored in temp folder)
 (
@@ -48,8 +46,10 @@ path_collider = (
     table_sv_b2,
     table_tw_b2,
 ) = functions.initialize_global_variables(
-    path_config, path_collider=path_collider, build_collider=False
+    path_config, path_collider=path_collider, build_collider=True
 )
+
+# Get the twiss before beam-beam
 
 
 #################### App ####################
@@ -246,7 +246,7 @@ def update_text_graph_LHC_2D(clickData):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8050)
+    app.run_server(debug=False, host="0.0.0.0", port=8051)
 
 
 # Run with gunicorn app:server -b :8000
