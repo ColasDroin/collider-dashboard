@@ -40,7 +40,10 @@ def initialize_global_variables(path_config, path_collider=None, build_collider=
         )
 
     elif path_collider is not None:
-        print("The provided path to a collider will be used instead of building a new one.")
+        print(
+            "The provided path to a collider will be used instead of building a new one. Ensure"
+            " that the config you proided is consistent."
+        )
         # Do Twiss check, reloading the collider from a json file
         twiss_check = TwissCheck(
             path_config,  # , collider=build_collider.collider

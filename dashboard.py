@@ -24,7 +24,7 @@ from layout.tables import return_tables_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2076/base_collider/xtrack_0000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2374/base_collider/xtrack_0000/config.yaml"
 
 # Define a path to the config file or to the collider object
 path_collider = (
