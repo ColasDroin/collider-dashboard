@@ -26,10 +26,16 @@ if len(sys.argv) > 1:
 else:
     path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-# Define a path to the config file or to the collider object
-path_collider = None  # "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider.json"
+# Define a path to the collider object
+path_collider = (
+    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider.json"
+)
 
-path_collider_before_bb = None  # "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider_before_bb.json"
+# Also get a path to the collider after beam-beam object
+if path_collider is not None:
+    path_collider_before_bb = path_collider.replace(".json", "_before_bb.json")
+else:
+    path_collider_before_bb = None
 
 # Load the global variables for the final collider
 # (if build_collider is True in above function, a collider object is stored in temp folder)
@@ -37,7 +43,7 @@ twiss_check_after_beam_beam, twiss_check_before_beam_beam = functions.initialize
     path_config,
     path_collider=path_collider,
     path_collider_before_bb=path_collider_before_bb,
-    build_collider=True,
+    build_collider=False,
 )
 
 # Get the global variables after the beam-beam
@@ -148,13 +154,13 @@ def select_tab(value):
                         [
                             dmc.Tab("Before beam-beam", value="sanity-before-beam-beam"),
                             dmc.Tab("After beam beam", value="sanity-after-beam-beam"),
-                        ]
+                        ],
+                        position="center",
                     ),
                     dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
                     dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
                 ],
                 color="cyan",
-                position="center",
                 value="sanity-after-beam-beam",
             )
             return tabs_sanity
@@ -326,7 +332,7 @@ def update_text_graph_LHC_2D(clickData):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8050)
+    app.run_server(debug=False, host="0.0.0.0", port=8051)
 
 
 # Run with gunicorn app:server -b :8000
