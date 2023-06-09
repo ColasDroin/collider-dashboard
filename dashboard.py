@@ -28,17 +28,18 @@ else:
 
 # Define a path to the config file or to the collider object
 path_collider = None
+path_collider_before_bb = None
 
 # Load the global variables for the final collider
 # (if build_collider is True in above function, a collider object is stored in temp folder)
-twiss_check_after_beam_beam, path_twiss = functions.initialize_twiss_check(
-    path_config, path_collider=path_collider, path_twiss=None, build_collider=True
-)
-twiss_check_before_beam_beam = functions.initialize_twiss_check(
-    path_twiss=path_twiss, build_collider=False
+twiss_check_after_beam_beam, twiss_check_before_beam_beam = functions.initialize_both_twiss_checks(
+    path_config,
+    path_collider=path_collider,
+    path_collider_before_bb=path_collider_before_bb,
+    build_collider=True,
 )
 
-# Get the global variables after the beam-beam (corresponding to the current collider file)
+# Get the global variables after the beam-beam
 (
     l_lumi_after_beam_beam,
     collider_after_beam_beam,
@@ -55,15 +56,17 @@ twiss_check_before_beam_beam = functions.initialize_twiss_check(
     table_tw_b2_after_beam_beam,
 ) = functions.initialize_global_variables_after_beam_beam(twiss_check_after_beam_beam)
 
-# Get the global variables before the beam-beam (saved along the way when building the collider)
+# Same before beam_beam
 (
     l_lumi_before_beam_beam,
+    collider_before_beam_beam,
     tw_b1_before_beam_beam,
     df_sv_b1_before_beam_beam,
     df_tw_b1_before_beam_beam,
     tw_b2_before_beam_beam,
     df_sv_b2_before_beam_beam,
     df_tw_b2_before_beam_beam,
+    df_elements_corrected_before_beam_beam,
     table_sv_b1_before_beam_beam,
     table_tw_b1_before_beam_beam,
     table_sv_b2_before_beam_beam,
@@ -124,15 +127,42 @@ def select_tab(value):
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
-            return return_filling_scheme_layout(twiss_check.array_b1, twiss_check.array_b2)
-        case "display-sanity":
-            return return_sanity_layout(
-                tw_b1,
-                tw_b2,
-                l_lumi,
+            return return_filling_scheme_layout(
+                twiss_check_after_beam_beam.array_b1, twiss_check_after_beam_beam.array_b2
             )
+        case "display-sanity":
+            sanity_before_beam_beam = return_sanity_layout(
+                tw_b1_after_beam_beam,
+                tw_b2_after_beam_beam,
+                l_lumi_after_beam_beam,
+            )
+            sanity_after_beam_beam = return_sanity_layout(
+                tw_b1_before_beam_beam,
+                tw_b2_before_beam_beam,
+                l_lumi_before_beam_beam,
+            )
+            tabs_sanity = dmc.Tabs(
+                [
+                    dmc.TabsList(
+                        [
+                            dmc.Tab("Before beam-beam", value="sanity-before-beam-beam"),
+                            dmc.Tab("After beam beam", value="sanity-after-beam-beam"),
+                        ]
+                    ),
+                    dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
+                    dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
+                ],
+                color="teal",
+            )
+
+            return
         case "display-optics":
-            return return_optics_layout(tw_b1, tw_b2, df_sv_b1, df_elements_corrected)
+            return return_optics_layout(
+                tw_b1_after_beam_beam,
+                tw_b2_after_beam_beam,
+                df_sv_b1_after_beam_beam,
+                df_elements_corrected_after_beam_beam,
+            )
         case "display-survey":
             return return_survey_layout()
         case _:
@@ -143,15 +173,15 @@ def select_tab(value):
 def select_data_table(value):
     match value:
         case "Twiss table beam 1":
-            return table_tw_b1
+            return table_tw_b1_after_beam_beam
         case "Survey table beam 1":
-            return table_sv_b1
+            return table_sv_b1_after_beam_beam
         case "Twiss table beam 2":
-            return table_tw_b2
+            return table_tw_b2_after_beam_beam
         case "Survey table beam 2":
-            return table_sv_b2
+            return table_sv_b2_after_beam_beam
         case _:
-            return table_tw_b1
+            return table_tw_b1_after_beam_beam
 
 
 @app.callback(
@@ -164,15 +194,17 @@ def update_graph_LHC_layout(l_values):
         str_ind_1, str_ind_2 = val.split("-")
         # Get indices of elements to keep (# ! implemented only for beam 1)
         l_indices_to_keep.extend(
-            functions.get_indices_of_interest(df_tw_b1, "ip" + str_ind_1, "ip" + str_ind_2)
+            functions.get_indices_of_interest(
+                df_tw_b1_after_beam_beam, "ip" + str_ind_1, "ip" + str_ind_2
+            )
         )
 
     fig = functions.return_plot_lattice_with_tracking(
-        df_sv_b1,
-        df_elements_corrected,
-        df_tw_b1,
-        df_sv_2=df_sv_b2,
-        df_tw_2=df_tw_b2,
+        df_sv_b1_after_beam_beam,
+        df_elements_corrected_after_beam_beam,
+        df_tw_b1_after_beam_beam,
+        df_sv_2=df_sv_b2_after_beam_beam,
+        df_tw_2=df_tw_b2_after_beam_beam,
         l_indices_to_keep=l_indices_to_keep,
     )
 
@@ -194,47 +226,73 @@ def update_text_graph_LHC_2D(clickData):
             if name.startswith("mb"):
                 type_text = "Dipole"
                 try:
-                    set_var = collider.lhcb1.element_refs[name].knl[0]._expr._get_dependencies()
+                    set_var = (
+                        collider_after_beam_beam.lhcb1.element_refs[name]
+                        .knl[0]
+                        ._expr._get_dependencies()
+                    )
                 except:
                     set_var = (
-                        collider.lhcb1.element_refs[name + "..1"].knl[0]._expr._get_dependencies()
+                        collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
+                        .knl[0]
+                        ._expr._get_dependencies()
                     )
             elif name.startswith("mq"):
                 type_text = "Quadrupole"
                 try:
-                    set_var = collider.lhcb1.element_refs[name].knl[1]._expr._get_dependencies()
+                    set_var = (
+                        collider_after_beam_beam.lhcb1.element_refs[name]
+                        .knl[1]
+                        ._expr._get_dependencies()
+                    )
                 except:
                     set_var = (
-                        collider.lhcb1.element_refs[name + "..1"].knl[1]._expr._get_dependencies()
+                        collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
+                        .knl[1]
+                        ._expr._get_dependencies()
                     )
             elif name.startswith("ms"):
                 type_text = "Sextupole"
                 try:
-                    set_var = collider.lhcb1.element_refs[name].knl[2]._expr._get_dependencies()
+                    set_var = (
+                        collider_after_beam_beam.lhcb1.element_refs[name]
+                        .knl[2]
+                        ._expr._get_dependencies()
+                    )
                 except:
                     set_var = (
-                        collider.lhcb1.element_refs[name + "..1"].knl[2]._expr._get_dependencies()
+                        collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
+                        .knl[2]
+                        ._expr._get_dependencies()
                     )
             elif name.startswith("mo"):
                 type_text = "Octupole"
                 try:
-                    set_var = collider.lhcb1.element_refs[name].knl[3]._expr._get_dependencies()
+                    set_var = (
+                        collider_after_beam_beam.lhcb1.element_refs[name]
+                        .knl[3]
+                        ._expr._get_dependencies()
+                    )
                 except:
                     set_var = (
-                        collider.lhcb1.element_refs[name + "..1"].knl[3]._expr._get_dependencies()
+                        collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
+                        .knl[3]
+                        ._expr._get_dependencies()
                     )
 
             text = []
             for var in set_var:
                 name_var = str(var).split("'")[1]
-                val = collider.lhcb1.vars[name_var]._get_value()
-                expr = collider.lhcb1.vars[name_var]._expr
+                val = collider_after_beam_beam.lhcb1.vars[name_var]._get_value()
+                expr = collider_after_beam_beam.lhcb1.vars[name_var]._expr
                 if expr is not None:
-                    dependencies = collider.lhcb1.vars[name_var]._expr._get_dependencies()
+                    dependencies = collider_after_beam_beam.lhcb1.vars[
+                        name_var
+                    ]._expr._get_dependencies()
                 else:
                     dependencies = "No dependencies"
                     expr = "No expression"
-                targets = collider.lhcb1.vars[name_var]._find_dependant_targets()
+                targets = collider_after_beam_beam.lhcb1.vars[name_var]._find_dependant_targets()
 
                 text.append(dmc.Text("Name: ", weight=500))
                 text.append(dmc.Text(name_var, size="sm"))
