@@ -36,7 +36,7 @@ def initialize_both_twiss_checks(
         build_collider = BuildCollider(path_config)
 
         # Dump collider
-        path_collider_after_bb, path_collider_before_bb = build_collider.dump_collider(
+        path_collider, path_collider_before_bb = build_collider.dump_collider(
             prefix="temp/", dump_before_bb=True
         )
 
