@@ -83,9 +83,18 @@ def initialize_global_variables(twiss_check):
     l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
     # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
-    collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected = (
-        return_all_loaded_variables(collider=twiss_check.collider)
-    )
+    (
+        collider,
+        tw_b1,
+        sv_b1,
+        df_sv_b1,
+        df_tw_b1,
+        tw_b2,
+        sv_b2,
+        df_sv_b2,
+        df_tw_b2,
+        df_elements_corrected,
+    ) = return_all_loaded_variables(collider=twiss_check.collider)
 
     # Get corresponding data tables
     table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
@@ -97,9 +106,11 @@ def initialize_global_variables(twiss_check):
         l_lumi,
         collider,
         tw_b1,
+        sv_b1,
         df_sv_b1,
         df_tw_b1,
         tw_b2,
+        sv_b2,
         df_sv_b2,
         df_tw_b2,
         df_elements_corrected,
@@ -119,21 +130,23 @@ def return_dataframe_elements_from_line(line):
     return df_elements
 
 
-def return_survey_and_twiss_dataframes_from_line(line, correct_x_axis=True):
+def return_survey_and_twiss_dataframes_from_line(line, correct_s_axis=False):
     """Return the survey and twiss dataframes from a line."""
-    # Get survey dataframes
-    df_sv = line.survey().to_pandas()
 
-    # Get Twiss dataframes
+    # Get Twiss and survey
     tw = line.twiss()
+    sv = line.survey()
+
+    # Correct s-axis if required
+    if correct_s_axis:
+        tw = tw.reverse()
+        sv = sv.reverse()
+
+    # Convert to dataframe
     df_tw = tw.to_pandas()
+    df_sv = sv.to_pandas()
 
-    # Reverse x-axis if requested
-    if correct_x_axis:
-        df_sv["X"] = -df_sv["X"]
-        df_tw["x"] = -df_tw["x"]
-
-    return tw, df_sv, df_tw
+    return tw, sv, df_sv, df_tw
 
 
 def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
@@ -190,18 +203,19 @@ def return_all_loaded_variables(collider_path=None, collider=None):
     df_elements = return_dataframe_elements_from_line(collider.lhcb1)
 
     # Compute twiss and survey for both lines
-    tw_b1, df_sv_b1, df_tw_b1 = return_survey_and_twiss_dataframes_from_line(
-        collider.lhcb1, correct_x_axis=True
+    tw_b1, sv_b1, df_sv_b1, df_tw_b1 = return_survey_and_twiss_dataframes_from_line(
+        collider.lhcb1, correct_s_axis=False
     )
-    tw_b2, df_sv_b2, df_tw_b2 = return_survey_and_twiss_dataframes_from_line(
-        collider.lhcb2, correct_x_axis=False
+
+    tw_b2, sv_b2, df_sv_b2, df_tw_b2 = return_survey_and_twiss_dataframes_from_line(
+        collider.lhcb2, correct_s_axis=True
     )
 
     # Correct df elements for thin lens approximation
     df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
 
     # Return all variables
-    return collider, tw_b1, df_sv_b1, df_tw_b1, tw_b2, df_sv_b2, df_tw_b2, df_elements_corrected
+    return collider, tw_b1, sv_b1, df_sv_b1, df_tw_b1, tw_b2, sv_b2, df_sv_b2, df_tw_b2, df_elements_corrected
 
 
 def get_indices_of_interest(df_tw, element_1, element_2):
