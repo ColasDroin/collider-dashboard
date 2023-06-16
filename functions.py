@@ -215,7 +215,18 @@ def return_all_loaded_variables(collider_path=None, collider=None):
     df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
 
     # Return all variables
-    return collider, tw_b1, sv_b1, df_sv_b1, df_tw_b1, tw_b2, sv_b2, df_sv_b2, df_tw_b2, df_elements_corrected
+    return (
+        collider,
+        tw_b1,
+        sv_b1,
+        df_sv_b1,
+        df_tw_b1,
+        tw_b2,
+        sv_b2,
+        df_sv_b2,
+        df_tw_b2,
+        df_elements_corrected,
+    )
 
 
 def get_indices_of_interest(df_tw, element_1, element_2):
@@ -1151,7 +1162,7 @@ def return_plot_optics(
     fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}[m]$", range=[-0.03, 0.03], row=3, col=1)
     fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3, 3], row=4, col=1)
     fig.update_xaxes(title_text=r"$s[m]$", row=4, col=1)
-    # fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(fixedrange=True)
 
     return fig
 

@@ -24,11 +24,11 @@ from layout.tables import return_tables_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972/base_collider/xtrack_0000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
 # Define a path to the collider object
 path_collider = (
-    "temp/opt_flathv_75_1500_withBB_chroma5_1p4_eol_bbb_1972_base_collider_xtrack_collider.json"
+    "temp/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228_base_collider_xtrack_collider.json"
 )
 
 # Also get a path to the collider after beam-beam object
