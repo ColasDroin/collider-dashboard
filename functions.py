@@ -376,13 +376,13 @@ def return_circular_multipole_trace(
                 [row["X"], row["X"] + s_knl[i] * np.cos(row["theta"]), None]
             )
             dic_trace[width]["y"].extend(
-                [row["Z"], row["Z"] + s_knl[i] * np.sin(row["theta"]), None]
+                [row["Z"], row["Z"] - s_knl[i] * np.sin(row["theta"]), None]
             )
             dic_trace[width]["customdata"].extend([row["name"], row["name"], None])
         else:
             dic_trace[width] = {
                 "x": [row["X"], row["X"] + s_knl[i] * np.cos(row["theta"]), None],
-                "y": [row["Z"], row["Z"] + s_knl[i] * np.sin(row["theta"]), None],
+                "y": [row["Z"], row["Z"] - s_knl[i] * np.sin(row["theta"]), None],
                 "customdata": [row["name"], row["name"], None],
                 "mode": "lines",
                 "line": dict(
@@ -642,7 +642,7 @@ def return_optic_trace(
         x=[None]
         + list(
             df_sv_temp["X"]
-            - df_tw_temp[tw_name] ** exponent
+            + df_tw_temp[tw_name] ** exponent
             * correction
             * magnification_factor
             * np.cos(df_sv_temp["theta"])
