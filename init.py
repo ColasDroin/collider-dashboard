@@ -33,7 +33,7 @@ def init(path_config, build_collider=False):
         path_collider_before_bb = path_collider.replace(".json", "_before_bb.json")
 
     # Load the global variables for the final collider
-    # (if build_collider is True in above function, a collider object is stored in temp folder)
+    # (if build_collider is True, a collider object is stored in temp folder)
     twiss_check_after_beam_beam, twiss_check_before_beam_beam = initialize_both_twiss_checks(
         path_config,
         path_collider=path_collider,
@@ -224,16 +224,10 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     return df_elements_corrected
 
 
-def return_all_loaded_variables(collider_path=None, collider=None):
+def return_all_loaded_variables(collider):
     """Return all loaded variables if they are not already loaded."""
 
-    if collider is None and collider_path is not None:
-        # Rebuild line (can't be pickled, most likely because of struct and multiprocessing)
-        collider = xt.Multiline.from_json(collider_path)
-        # Build tracker (assume it is already loaded if collider is provided)
-        collider.build_trackers()
-
-    elif collider is None and collider_path is None:
+    if collider is None:
         raise ValueError("Either collider or collider_path must be provided")
 
     # Get elements of the line (only done for b1, should be identical for b2)
@@ -271,6 +265,7 @@ def return_twiss_dic(tw):
     dic_tw = {}
 
     # Load main observables
+    # ! TO DEBUG HERE
     dic_tw["qx"] = tw["qx"]
     dic_tw["qy"] = tw["qy"]
     dic_tw["dqx"] = tw["dqx"]
