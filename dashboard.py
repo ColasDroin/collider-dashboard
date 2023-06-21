@@ -85,13 +85,13 @@ def select_tab(value):
             return return_filling_scheme_layout(dic_after_bb["array_b1"], dic_after_bb["array_b2"])
         case "display-sanity":
             sanity_after_beam_beam = return_sanity_layout(
-                dic_after_bb["tw_b1"],
-                dic_after_bb["tw_b2"],
+                dic_after_bb["dic_tw_b1"],
+                dic_after_bb["dic_tw_b2"],
                 dic_after_bb["l_lumi"],
             )
             sanity_before_beam_beam = return_sanity_layout(
-                dic_before_bb["tw_b1"],
-                dic_before_bb["tw_b2"],
+                dic_before_bb["dic_tw_b1"],
+                dic_before_bb["dic_tw_b2"],
                 dic_before_bb["l_lumi"],
             )
             tabs_sanity = dmc.Tabs(
@@ -113,8 +113,8 @@ def select_tab(value):
 
         case "display-optics":
             return return_optics_layout(
-                dic_after_bb["tw_b1"],
-                dic_after_bb["tw_b2"],
+                dic_after_bb["df_tw_b1"],
+                dic_after_bb["df_tw_b2"],
                 dic_after_bb["df_sv_b1"],
                 dic_after_bb["df_elements_corrected"],
             )

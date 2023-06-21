@@ -10,7 +10,7 @@ import xtrack as xt
 #################### Sanity checks Layout ####################
 
 
-def return_sanity_layout(tw_b1, tw_b2, l_lumi):
+def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi):
     # Check general observables (tune, chroma, etc.)
     header_1 = [
         html.Thead(
@@ -31,23 +31,23 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
     row1 = html.Tr(
         [
             html.Td("1"),
-            html.Td(f'{tw_b1["qx"]:.5f}'),
-            html.Td(f'{tw_b1["qy"]:.5f}'),
-            html.Td(f'{tw_b1["dqx"]:.2f}'),
-            html.Td(f'{tw_b1["dqy"]:.2f}'),
-            html.Td(f'{tw_b1["c_minus"]:.4f}'),
-            html.Td(f'{tw_b1["momentum_compaction_factor"]:.4f}'),
+            html.Td(f'{dic_tw_b1["qx"]:.5f}'),
+            html.Td(f'{dic_tw_b1["qy"]:.5f}'),
+            html.Td(f'{dic_tw_b1["dqx"]:.2f}'),
+            html.Td(f'{dic_tw_b1["dqy"]:.2f}'),
+            html.Td(f'{dic_tw_b1["c_minus"]:.4f}'),
+            html.Td(f'{dic_tw_b1["momentum_compaction_factor"]:.4f}'),
         ]
     )
     row2 = html.Tr(
         [
             html.Td("2"),
-            html.Td(f'{tw_b2["qx"]:.5f}'),
-            html.Td(f'{tw_b2["qy"]:.5f}'),
-            html.Td(f'{tw_b2["dqx"]:.2f}'),
-            html.Td(f'{tw_b2["dqy"]:.2f}'),
-            html.Td(f'{tw_b2["c_minus"]:.4f}'),
-            html.Td(f'{tw_b2["momentum_compaction_factor"]:.4f}'),
+            html.Td(f'{dic_tw_b2["qx"]:.5f}'),
+            html.Td(f'{dic_tw_b2["qy"]:.5f}'),
+            html.Td(f'{dic_tw_b2["dqx"]:.2f}'),
+            html.Td(f'{dic_tw_b2["dqy"]:.2f}'),
+            html.Td(f'{dic_tw_b2["c_minus"]:.4f}'),
+            html.Td(f'{dic_tw_b2["momentum_compaction_factor"]:.4f}'),
         ]
     )
     body_1 = [html.Tbody([row1, row2])]
@@ -73,21 +73,8 @@ def return_sanity_layout(tw_b1, tw_b2, l_lumi):
     l_rows_1 = []
     l_rows_2 = []
     for ip in [1, 2, 5, 8]:
-        row_values_1 = (
-            tw_b1.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety"]
-            .to_pandas()
-            .to_numpy()
-            .squeeze()
-        )
-
-        row_values_2 = (
-            tw_b2.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety"]
-            .to_pandas()
-            .to_numpy()
-            .squeeze()
-        )
+        row_values_1 = dic_tw_b1.rows[f"ip{ip}"]
+        row_values_2 = dic_tw_b2.rows[f"ip{ip}"]
 
         l_rows_1.append(
             html.Tr(

@@ -1,3 +1,4 @@
+# ! This class needs to be cleaned up and documented !
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================import numpy as np
@@ -84,10 +85,6 @@ def initialize_both_twiss_checks(
         )
 
     elif path_collider is not None and path_collider_before_bb is not None:
-        print(
-            "The provided paths to a collider and collider_before_bb will be used instead of"
-            " building a new one. Ensure that the config you provided is consistent."
-        )
         # Do Twiss check, reloading the collider from a json file
         twiss_check_after_bb = TwissCheck(path_config, path_collider=path_collider, collider=None)
         twiss_check_before_bb = TwissCheck(
@@ -131,6 +128,10 @@ def initialize_global_variables(twiss_check):
     table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
     table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
 
+    # Get the twiss dictionnary (tune, chroma, etc + twiss at IPs)
+    dic_tw_b1 = return_twiss_dic(tw_b1)
+    dic_tw_b2 = return_twiss_dic(tw_b2)
+
     # Get the beams schemes
     array_b1 = twiss_check.array_b1
     array_b2 = twiss_check.array_b2
@@ -139,10 +140,8 @@ def initialize_global_variables(twiss_check):
     dic_global_var = {
         "l_lumi": l_lumi,
         "collider": collider,
-        "tw_b1": tw_b1,
-        "tw_b2": tw_b2,
-        "sv_b1": sv_b1,
-        "sv_b2": sv_b2,
+        "dic_tw_b1": dic_tw_b1,
+        "dic_tw_b2": dic_tw_b2,
         "df_sv_b1": df_sv_b1,
         "df_sv_b2": df_sv_b2,
         "df_tw_b1": df_tw_b1,
@@ -265,6 +264,29 @@ def return_all_loaded_variables(collider_path=None, collider=None):
         df_tw_b2,
         df_elements_corrected,
     )
+
+
+def return_twiss_dic(tw):
+    # Init empty dic
+    dic_tw = {}
+
+    # Load main observables
+    dic_tw["qx"] = tw["qx"]
+    dic_tw["qy"] = tw["qy"]
+    dic_tw["dqx"] = tw["dqx"]
+    dic_tw["dqy"] = tw["dqy"]
+    dic_tw["c_minus"] = tw["c_minus"]
+    dic_tw["momentum_compaction_factor"] = tw["momentum_compaction_factor"]
+
+    # Load observables at IPs
+    for ip in [1, 2, 5, 8]:
+        dic_tw["ip" + str(ip)] = (
+            tw.rows[f"ip{ip}"]
+            .cols["s", "x", "px", "y", "py", "betx", "bety"]
+            .to_pandas()
+            .to_numpy()
+            .squeeze()
+        )
 
 
 # ==================================================================================================

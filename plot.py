@@ -705,8 +705,8 @@ def add_scatter_trace(
 
 
 def return_plot_optics(
-    tw_b1,
-    tw_b2,
+    df_tw_b1,
+    df_tw_b2,
     df_sv,
     df_elements,
 ):
@@ -733,8 +733,8 @@ def return_plot_optics(
     # Add traces for beta functions
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["betx"],
+        df_tw_b1["s"],
+        df_tw_b1["betx"],
         r"$\beta_{x_1}$",
         2,
         1,
@@ -745,8 +745,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["bety"],
+        df_tw_b1["s"],
+        df_tw_b1["bety"],
         r"$\beta_{y_1}$",
         2,
         1,
@@ -759,8 +759,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["betx"],
+        df_tw_b2["s"],
+        df_tw_b2["betx"],
         r"$\beta_{x_2}$",
         2,
         1,
@@ -772,8 +772,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["bety"],
+        df_tw_b2["s"],
+        df_tw_b2["bety"],
         r"$\beta_{y_2}$",
         2,
         1,
@@ -788,8 +788,8 @@ def return_plot_optics(
     # Add traces for position functions
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["x"],
+        df_tw_b1["s"],
+        df_tw_b1["x"],
         r"$x_1$",
         3,
         1,
@@ -800,8 +800,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["y"],
+        df_tw_b1["s"],
+        df_tw_b1["y"],
         r"$y_1$",
         3,
         1,
@@ -814,8 +814,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["x"],
+        df_tw_b2["s"],
+        df_tw_b2["x"],
         r"$x_2$",
         3,
         1,
@@ -827,8 +827,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["y"],
+        df_tw_b2["s"],
+        df_tw_b2["y"],
         r"$y_2$",
         3,
         1,
@@ -843,8 +843,8 @@ def return_plot_optics(
     # Add traces for dispersion functions
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["dx"],
+        df_tw_b1["s"],
+        df_tw_b1["dx"],
         r"$D_{x_1}$",
         4,
         1,
@@ -855,8 +855,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b1["s"],
-        tw_b1["dy"],
+        df_tw_b1["s"],
+        df_tw_b1["dy"],
         r"$D_{y_1}$",
         4,
         1,
@@ -869,8 +869,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["dx"],
+        df_tw_b2["s"],
+        df_tw_b2["dx"],
         r"$D_{x_2}$",
         4,
         1,
@@ -882,8 +882,8 @@ def return_plot_optics(
     )
     fig = add_scatter_trace(
         fig,
-        tw_b2["s"],
-        tw_b2["dy"],
+        df_tw_b2["s"],
+        df_tw_b2["dy"],
         r"$D_{y_2}$",
         4,
         1,
@@ -898,7 +898,7 @@ def return_plot_optics(
     # Add horizontal lines for all ips
     for ip in [1, 2, 5, 8]:
         fig.add_vline(
-            x=float(tw_b1.rows["ip" + str(ip)].cols["s"].to_pandas().s),
+            x=float(df_tw_b1[df_tw_b1["name"] == "ip" + str(ip)]["s"].iloc[0]),
             line_width=1,
             line_dash="dash",
             line_color="pink",
@@ -926,7 +926,7 @@ def return_plot_optics(
     )
 
     # Update yaxis properties
-    fig.update_xaxes(range=[0, tw_b1["s"][-1] + 1])
+    fig.update_xaxes(range=[0, df_tw_b1["s"].iloc[-1] + 1])
     fig.update_yaxes(title_text=r"$\beta_{x,y}[m]$", range=[0, 10000], row=2, col=1)
     fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}[m]$", range=[-0.03, 0.03], row=3, col=1)
     fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3, 3], row=4, col=1)
