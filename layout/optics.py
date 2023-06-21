@@ -5,7 +5,7 @@ import dash_mantine_components as dmc
 from dash import dcc
 
 # Import functions
-import functions
+import plot
 
 #################### Optics Layout ####################
 
@@ -22,7 +22,7 @@ def return_optics_layout(tw_b1, tw_b2, df_sv_b1, df_elements_corrected):
                     "responsive": True,
                     "displaylogo": False,
                 },
-                figure=functions.return_plot_optics(tw_b1, tw_b2, df_sv_b1, df_elements_corrected),
+                figure=plot.return_plot_optics(tw_b1, tw_b2, df_sv_b1, df_elements_corrected),
                 style={"height": "90vh", "width": "100%", "margin": "auto"},
             ),
             type="circle",
