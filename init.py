@@ -7,6 +7,8 @@ import xtrack as xt
 import numpy as np
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme
+import pickle
+import os
 
 # Import collider and twiss functions
 from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
@@ -15,39 +17,64 @@ from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 # ==================================================================================================
 # --- Functions initialize all global variables
 # ==================================================================================================
-def init(path_config, build_collider=False):
+def init(path_config, build_collider=False, load_from_pickle=False):
     """Initialize the app variables from a given collider configuration file."""
 
-    # If a collider is being built, explictely set the paths to None
-    if build_collider:
-        path_collider = None
-        path_collider_before_bb = None
-    else:
-        # Get the path to the collider object
-        path_collider = (
-            "temp/"
-            + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
-            + "collider.json"
-        )
-        # Also get a path to the collider after beam-beam object
-        path_collider_before_bb = path_collider.replace(".json", "_before_bb.json")
-
-    # Load the global variables for the final collider
-    # (if build_collider is True, a collider object is stored in temp folder)
-    twiss_check_after_beam_beam, twiss_check_before_beam_beam = initialize_both_twiss_checks(
-        path_config,
-        path_collider=path_collider,
-        path_collider_before_bb=path_collider_before_bb,
-        build_collider=build_collider,
+    # Path to the pickle dictionnaries (for loading and saving)
+    path_pickle = (
+        "temp/"
+        + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
+        + "t_dic_var.pkl"
     )
 
-    # Get the global variables after the beam-beam
-    dic_after_bb = initialize_global_variables(twiss_check_after_beam_beam)
+    # Try to load the dictionnaries of variables from pickle
+    if load_from_pickle:
+        # Raise error if a collider must be built
+        if build_collider:
+            raise ValueError("If load_from_pickle is True, build_collider must be False.")
 
-    # Same before beam_beam
-    dic_before_bb = initialize_global_variables(twiss_check_before_beam_beam)
+        # Check that the pickle file exists
+        if not os.path.isfile(path_pickle):
+            raise ValueError("The pickle file does not exist.")
+        with open(path_pickle, "rb") as f:
+            dic_after_bb, dic_before_bb = pickle.load(f)
+        print("Returning global variables from pickle file.")
+        return dic_after_bb, dic_before_bb
 
-    return dic_after_bb, dic_before_bb
+    else:
+        # If a collider is being built, explictely set the paths to None
+        if build_collider:
+            path_collider = None
+            path_collider_before_bb = None
+        else:
+            # Get the path to the collider object
+            path_collider = (
+                "temp/"
+                + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
+                + "collider.json"
+            )
+            # Also get a path to the collider after beam-beam object
+            path_collider_before_bb = path_collider.replace(".json", "_before_bb.json")
+
+        # Load the global variables for the final collider
+        # (if build_collider is True, a collider object is stored in temp folder)
+        twiss_check_after_beam_beam, twiss_check_before_beam_beam = initialize_both_twiss_checks(
+            path_config,
+            path_collider=path_collider,
+            path_collider_before_bb=path_collider_before_bb,
+            build_collider=build_collider,
+        )
+
+        # Get the global variables before and after the beam-beam
+        dic_after_bb = initialize_global_variables(twiss_check_after_beam_beam)
+        dic_before_bb = initialize_global_variables(twiss_check_before_beam_beam)
+
+        # Dump the dictionnaries in a pickle file
+        print("Dumping global variables in a pickle file.")
+        with open(path_pickle, "wb") as f:
+            pickle.dump((dic_before_bb, dic_after_bb), f)
+
+        return dic_after_bb, dic_before_bb
 
 
 def initialize_both_twiss_checks(
@@ -139,7 +166,6 @@ def initialize_global_variables(twiss_check):
     # Store everything in a dictionnary
     dic_global_var = {
         "l_lumi": l_lumi,
-        "collider": collider,
         "dic_tw_b1": dic_tw_b1,
         "dic_tw_b2": dic_tw_b2,
         "df_sv_b1": df_sv_b1,
@@ -265,13 +291,13 @@ def return_twiss_dic(tw):
     dic_tw = {}
 
     # Load main observables
-    # ! TO DEBUG HERE
     dic_tw["qx"] = tw["qx"]
     dic_tw["qy"] = tw["qy"]
     dic_tw["dqx"] = tw["dqx"]
     dic_tw["dqy"] = tw["dqy"]
     dic_tw["c_minus"] = tw["c_minus"]
     dic_tw["momentum_compaction_factor"] = tw["momentum_compaction_factor"]
+    dic_tw["T_rev0"] = tw["T_rev0"]
 
     # Load observables at IPs
     for ip in [1, 2, 5, 8]:
@@ -282,6 +308,8 @@ def return_twiss_dic(tw):
             .to_numpy()
             .squeeze()
         )
+
+    return dic_tw
 
 
 # ==================================================================================================

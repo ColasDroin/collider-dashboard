@@ -3,14 +3,14 @@
 # Import standard libraries
 import dash_mantine_components as dmc
 from dash import html
-
+import numpy as np
 import xtrack as xt
 
 
 #################### Sanity checks Layout ####################
 
 
-def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi):
+def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
     # Check general observables (tune, chroma, etc.)
     header_1 = [
         html.Thead(
@@ -73,8 +73,8 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi):
     l_rows_1 = []
     l_rows_2 = []
     for ip in [1, 2, 5, 8]:
-        row_values_1 = dic_tw_b1.rows[f"ip{ip}"]
-        row_values_2 = dic_tw_b2.rows[f"ip{ip}"]
+        row_values_1 = dic_tw_b1[f"ip{ip}"]
+        row_values_2 = dic_tw_b2[f"ip{ip}"]
 
         l_rows_1.append(
             html.Tr(
@@ -127,14 +127,61 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi):
 
     row_lumi = html.Tr(
         [
-            html.Td(f"{l_lumi[0]:.3e}"),
+            (
+                html.Td(f"{l_lumi[0]:.3e}", style={"font-weight": "bold", "color": "red"})
+                if l_lumi[0] > 5e34
+                else html.Td(f"{l_lumi[0]:.3e}")
+            ),
             html.Td(f"{l_lumi[1]:.3e}"),
-            html.Td(f"{l_lumi[2]:.3e}"),
+            (
+                html.Td(f"{l_lumi[2]:.3e}", style={"font-weight": "bold", "color": "red"})
+                if l_lumi[2] > 5e34
+                else html.Td(f"{l_lumi[2]:.3e}")
+            ),
             html.Td(f"{l_lumi[3]:.3e}"),
         ]
     )
     body_4 = [html.Tbody([row_lumi])]
     table_4 = dmc.Table(header_3 + body_4)
+
+    # Pile-up
+    cross_section = 81e-27
+    # Assert that the arrays have the required length, and do the convolution to get number of collisions
+    assert len(array_b1) == len(array_b2) == 3564
+    n_collisions_ip1_and_5 = array_b1 @ array_b2
+    n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
+    n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
+    l_n_collisions = [
+        n_collisions_ip1_and_5,
+        n_collisions_ip2,
+        n_collisions_ip1_and_5,
+        n_collisions_ip8,
+    ]
+    n_turn_per_second = 1 / dic_tw_b1["T_rev0"]
+    l_PU = [
+        lumi / n_col * cross_section / n_turn_per_second
+        for lumi, n_col in zip(l_lumi, l_n_collisions)
+    ]
+
+    # Table
+    row_PU = html.Tr(
+        [
+            (
+                html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
+                if l_PU[0] > 140
+                else html.Td(f"{l_PU[0]:.1f}")
+            ),
+            html.Td(f"{l_PU[1]:.3e}"),
+            (
+                html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
+                if l_PU[2] > 140
+                else html.Td(f"{l_PU[2]:.1f}")
+            ),
+            html.Td(f"{l_PU[3]:.3e}"),
+        ]
+    )
+    body_5 = [html.Tbody([row_PU])]
+    table_5 = dmc.Table(header_3 + body_5)
 
     return dmc.Stack(
         children=[
@@ -166,6 +213,14 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi):
                 children=[
                     dmc.Text("Luminosities", size="xl", style={"margin": "auto"}),
                     table_4,
+                ],
+                mb=10,
+                style={"width": "100%"},
+            ),
+            dmc.Group(
+                children=[
+                    dmc.Text("Pile-up", size="xl", style={"margin": "auto"}),
+                    table_5,
                 ],
                 mb=10,
                 style={"width": "100%"},

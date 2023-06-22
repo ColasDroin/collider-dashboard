@@ -27,7 +27,7 @@ if len(sys.argv) > 1:
 else:
     path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-dic_after_bb, dic_before_bb = init.init(path_config)
+dic_after_bb, dic_before_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
 
 #################### App ####################
 app = Dash(
@@ -88,11 +88,15 @@ def select_tab(value):
                 dic_after_bb["dic_tw_b1"],
                 dic_after_bb["dic_tw_b2"],
                 dic_after_bb["l_lumi"],
+                dic_after_bb["array_b1"],
+                dic_after_bb["array_b2"],
             )
             sanity_before_beam_beam = return_sanity_layout(
                 dic_before_bb["dic_tw_b1"],
                 dic_before_bb["dic_tw_b2"],
                 dic_before_bb["l_lumi"],
+                dic_after_bb["array_b1"],
+                dic_after_bb["array_b2"],
             )
             tabs_sanity = dmc.Tabs(
                 [
