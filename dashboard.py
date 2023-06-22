@@ -17,6 +17,7 @@ from layout.sanity import return_sanity_layout
 from layout.survey import return_survey_layout
 from layout.header import return_header_layout
 from layout.tables import return_tables_layout
+from layout.separation import return_separation_layout
 
 
 #################### Load global variables ####################
@@ -25,9 +26,9 @@ from layout.tables import return_tables_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_1000/config.yaml"
 
-dic_after_bb, dic_before_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=False)
 
 #################### App ####################
 app = Dash(
@@ -83,6 +84,8 @@ def select_tab(value):
             return return_tables_layout()
         case "display-scheme":
             return return_filling_scheme_layout(dic_after_bb["array_b1"], dic_after_bb["array_b2"])
+        case "display-separation":
+            return return_separation_layout(dic_before_bb["dic_sep_IPs"])
         case "display-sanity":
             sanity_after_beam_beam = return_sanity_layout(
                 dic_after_bb["dic_tw_b1"],
@@ -95,8 +98,8 @@ def select_tab(value):
                 dic_before_bb["dic_tw_b1"],
                 dic_before_bb["dic_tw_b2"],
                 dic_before_bb["l_lumi"],
-                dic_after_bb["array_b1"],
-                dic_after_bb["array_b2"],
+                dic_before_bb["array_b1"],
+                dic_before_bb["array_b2"],
             )
             tabs_sanity = dmc.Tabs(
                 [

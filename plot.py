@@ -982,3 +982,86 @@ def get_indices_of_interest(df_tw, element_1, element_2):
     if idx_2 < idx_1:
         return list(range(0, idx_2)) + list(range(idx_1, len(df_tw)))
     return list(range(idx_1, idx_2))
+
+
+def return_plot_separation(dic_sep_IPs):
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
+        specs=[
+            [{"secondary_y": True}, {"secondary_y": True}],
+            [{"secondary_y": True}, {"secondary_y": True}],
+        ],
+    )
+    for idx, n_ip in enumerate([1, 2, 5, 8]):
+        s = dic_sep_IPs[f"ip{n_ip}"]["s"]
+        x = dic_sep_IPs[f"ip{n_ip}"]["x"]
+        sep = dic_sep_IPs[f"ip{n_ip}"]["sep"]
+        sep_survey = dic_sep_IPs[f"ip{n_ip}"]["sep_survey"]
+        sigma = dic_sep_IPs[f"ip{n_ip}"]["sigma"]
+
+        # Do the plot
+        fig.add_trace(
+            go.Scatter(
+                x=s,
+                y=x + sep_survey,
+                name="Separation at ip " + str(n_ip),
+                legendgroup=" IP " + str(n_ip),
+                mode="lines+markers",
+            ),
+            row=idx // 2 + 1,
+            col=idx % 2 + 1,
+            secondary_y=False,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=s,
+                y=(x + sep_survey) / sigma,
+                name="Normalized separation at ip " + str(n_ip),
+                legendgroup=" IP " + str(n_ip),
+                mode="lines+markers",
+            ),
+            row=idx // 2 + 1,
+            col=idx % 2 + 1,
+            secondary_y=True,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=s,
+                y=[sep] * len(s),
+                name="Inner normalized separation at ip " + str(n_ip),
+                legendgroup=" IP " + str(n_ip),
+                line=dict(color="firebrick", width=1, dash="dash"),
+            ),
+            row=idx // 2 + 1,
+            col=idx % 2 + 1,
+            secondary_y=True,
+        )
+
+    for row in range(1, 3):
+        for column in range(1, 3):
+            fig.update_yaxes(
+                title_text=r"$\textrm{B-B separation }[m]$", row=row, col=column, secondary_y=False
+            )
+            fig.update_yaxes(
+                title_text=r"$\textrm{B-B separation }[\sigma]$",
+                row=row,
+                col=column,
+                secondary_y=True,
+            )
+            fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
+
+    # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
+    # Use white theme for graph, centered title
+    fig.update_layout(
+        template="plotly_dark",
+        title="Beam-beam separation at the different IPs",
+        title_x=0.5,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+
+    return fig

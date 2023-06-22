@@ -49,6 +49,7 @@ def return_header_layout():
                                 {"value": "display-twiss", "label": "Twiss tables"},
                                 {"value": "display-scheme", "label": "Filling scheme"},
                                 {"value": "display-sanity", "label": "Sanity checks"},
+                                {"value": "display-separation", "label": "Beam-beam separation"},
                                 {"value": "display-optics", "label": "Optics"},
                                 {"value": "display-survey", "label": "Survey"},
                             ],
