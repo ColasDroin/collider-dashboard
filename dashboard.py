@@ -26,9 +26,9 @@ from layout.separation import return_separation_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_1000/config.yaml"
+    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=False)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
 
 #################### App ####################
 app = Dash(

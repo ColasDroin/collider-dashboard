@@ -107,8 +107,15 @@ def return_circular_multipole_trace(
         name = "Octupoles"
         strength_magnification_factor = strength_magnification_factor / 10
 
+    # Function to filter magnet strength
+    def return_correct_strength(x):
+        try:
+            return x[order]
+        except:
+            return float(x)
+
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements.order == order]["knl"].apply(lambda x: x[order])
+    s_knl = df_elements[df_elements.order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
@@ -198,8 +205,15 @@ def return_flat_multipole_trace(
         name = "Octupoles"
         strength_magnification_factor = strength_magnification_factor / 2
 
+    # Function to filter magnet strength
+    def return_correct_strength(x):
+        try:
+            return x[order]
+        except:
+            return float(x)
+
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements.order == order]["knl"].apply(lambda x: x[order])
+    s_knl = df_elements[df_elements.order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
