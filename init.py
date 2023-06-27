@@ -431,38 +431,49 @@ def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
 
 
 def return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1):
-    dic_sep_IPs = {}
+    dic_sep_IPs = {"v": {}, "h": {}}
     for idx, n_ip in enumerate([1, 2, 5, 8]):
-        if n_ip == 1:  # or n_ip == 2:
-            x = abs(
-                dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
-                - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
-            )
-            n_emitt = twiss_check.nemitt_x / 7000
-            sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
-            xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
-            beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
-            sep_survey = abs(
-                dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].X
-                - dic_bb_ho_IPs["lhcb2"]["sv"][f"ip{n_ip}"].X.to_numpy()
-            )
-        elif n_ip == 5 or n_ip == 8 or n_ip == 2:
-            x = abs(
-                dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].y
-                - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].y.to_numpy()
-            )
-            n_emitt = twiss_check.nemitt_y / 7000
-            sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].bety * n_emitt) ** 0.5
-            xing = abs(float(tw_b1.rows[f"ip{n_ip}"]["py"]))
-            beta = float(tw_b1.rows[f"ip{n_ip}"]["bety"])
-            sep_survey = 0
-        # In all cases, these formulas are the same
-
+        # s doesn't depend on plane
         s = dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].s
+
+        # Horizontal separation
+        x = abs(
+            dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
+            - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
+        )
+        n_emitt = twiss_check.nemitt_x / 7000
+        sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
+        xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
+        beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
+        sep_survey = abs(
+            dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].X
+            - dic_bb_ho_IPs["lhcb2"]["sv"][f"ip{n_ip}"].X.to_numpy()
+        )
         sep = xing * 2 * np.sqrt(beta / n_emitt)
 
         # Store everyting in dic
-        dic_sep_IPs[f"ip{n_ip}"] = {
+        dic_sep_IPs["h"][f"ip{n_ip}"] = {
+            "s": s,
+            "x": x,
+            "sep": sep,
+            "sep_survey": sep_survey,
+            "sigma": sigma,
+        }
+
+        # Vertical separation
+        x = abs(
+            dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].y
+            - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].y.to_numpy()
+        )
+        n_emitt = twiss_check.nemitt_y / 7000
+        sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].bety * n_emitt) ** 0.5
+        xing = abs(float(tw_b1.rows[f"ip{n_ip}"]["py"]))
+        beta = float(tw_b1.rows[f"ip{n_ip}"]["bety"])
+        sep_survey = 0
+        sep = xing * 2 * np.sqrt(beta / n_emitt)
+
+        # Store everyting in dic
+        dic_sep_IPs["v"][f"ip{n_ip}"] = {
             "s": s,
             "x": x,
             "sep": sep,

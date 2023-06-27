@@ -85,7 +85,7 @@ def select_tab(value):
         case "display-scheme":
             return return_filling_scheme_layout(dic_after_bb["array_b1"], dic_after_bb["array_b2"])
         case "display-separation":
-            return return_separation_layout(dic_before_bb["dic_sep_IPs"])
+            return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])
         case "display-sanity":
             sanity_after_beam_beam = return_sanity_layout(
                 dic_after_bb["dic_tw_b1"],
@@ -170,6 +170,15 @@ def update_graph_LHC_layout(l_values):
         l_indices_to_keep=l_indices_to_keep,
     )
 
+    return fig
+
+
+@app.callback(
+    Output("beam-separation", "figure"),
+    Input("chips-sep", "value"),
+)
+def update_graph_LHC_layout(value):
+    fig = plot.return_plot_separation(dic_before_bb["dic_sep_IPs"][value])
     return fig
 
 
