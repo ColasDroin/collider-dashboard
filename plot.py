@@ -1136,6 +1136,7 @@ def return_plot_separation(dic_sep_IPs):
             [{"secondary_y": True}, {"secondary_y": True}],
             [{"secondary_y": True}, {"secondary_y": True}],
         ],
+        horizontal_spacing=0.1,
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_sep_IPs[f"ip{n_ip}"]["s"]
@@ -1177,7 +1178,7 @@ def return_plot_separation(dic_sep_IPs):
                 y=[sep] * len(s),
                 name="Inner normalized separation at ip " + str(n_ip),
                 legendgroup=" IP " + str(n_ip),
-                line=dict(color="firebrick", width=1, dash="dash"),
+                line=dict(color="white", width=1, dash="dash"),
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
@@ -1205,6 +1206,7 @@ def return_plot_separation(dic_sep_IPs):
         title_x=0.5,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        dragmode="pan",
     )
 
     return fig
