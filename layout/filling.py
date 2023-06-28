@@ -11,7 +11,7 @@ import plot
 #################### Filling scheme Layout ####################
 
 
-def return_filling_scheme_layout(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
+def return_filling_scheme_layout(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule):
     scheme_layout = dmc.Stack(
         children=[
             dcc.Loading(
@@ -25,9 +25,9 @@ def return_filling_scheme_layout(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
                         "displaylogo": False,
                     },
                     figure=plot.return_plot_filling_scheme(
-                        array_b1, array_b2, i_bunch_b1, i_bunch_b2
+                        array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule
                     ),
-                    style={"height": "20vh", "width": "100%", "margin": "auto"},
+                    style={"height": "90vh", "width": "100%", "margin": "auto"},
                 ),
                 type="circle",
             ),

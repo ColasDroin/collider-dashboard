@@ -89,6 +89,7 @@ def select_tab(value):
                 dic_after_bb["array_b2"],
                 dic_after_bb["i_bunch_b1"],
                 dic_after_bb["i_bunch_b2"],
+                dic_after_bb["bbs"],
             )
         case "display-separation":
             return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])

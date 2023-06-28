@@ -11,6 +11,9 @@ import pickle
 import os
 import copy
 
+# Module to compute beam-beam schedule
+import fillingpatterns as fp
+
 # Import collider and twiss functions
 from modules.twiss_check.twiss_check import TwissCheck, BuildCollider
 
@@ -173,6 +176,9 @@ def initialize_global_variables(twiss_check):
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1)
 
     # Get the beam-beam schedule
+    patt = fp.FillingPattern.from_json(twiss_check.path_filling_scheme)
+    patt.compute_beam_beam_schedule(n_lr_per_side=26)
+    bbs = patt.b1.bb_schedule
 
     # Store everything in a dictionnary
     dic_global_var = {
@@ -193,6 +199,7 @@ def initialize_global_variables(twiss_check):
         "array_b2": array_b2,
         "i_bunch_b1": i_bunch_b1,
         "i_bunch_b2": i_bunch_b2,
+        "bbs": bbs,
     }
 
     return dic_global_var

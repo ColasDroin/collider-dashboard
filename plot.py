@@ -950,34 +950,128 @@ def return_plot_optics(
     return fig
 
 
-def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
+def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule):
     # ! i_bunch_b2 is not used for now
 
+    # Get indices of slots filled with bunches
     non_zero_indices_b1 = np.nonzero(array_b1)[0]
     non_zero_indices_b2 = np.nonzero(array_b2)[0]
 
-    fig = go.Figure()
-    fig.add_trace(
+    fig = make_subplots(rows=4, cols=1, shared_xaxes=True)
+
+    # Add the filling scheme for beam 1
+    fig.append_trace(
         go.Scattergl(
             x=non_zero_indices_b1,
             y=array_b1[non_zero_indices_b1],
             mode="markers",
-            marker=dict(color="cyan", size=10),
+            marker=dict(color="cyan", size=5),
             # name="Beam 1",
-            marker_symbol="diamond-wide",
-        )
+            xaxis="x",
+            yaxis="y",
+            showlegend=False,
+        ),
+        row=1,
+        col=1,
     )
-    fig.add_trace(
+
+    # Add the filling scheme for beam 2
+    fig.append_trace(
         go.Scattergl(
             x=non_zero_indices_b2,
             y=array_b2[non_zero_indices_b2] * 2,
             mode="markers",
-            marker=dict(color="tomato", size=10),
+            marker=dict(color="tomato", size=5),
             # name="Beam 2",
-            marker_symbol="diamond-wide",
-        )
+            xaxis="x",
+            yaxis="y",
+            showlegend=False,
+        ),
+        row=1,
+        col=1,
     )
 
+    # Compute the number of LR in each experiment
+    bbs = beam_beam_schedule
+    series_collide_atlas_cms = bbs[bbs["collides in ATLAS/CMS"]]["# of LR in ATLAS/CMS"]
+    series_not_collide_atlas_cms = bbs[~bbs["collides in ATLAS/CMS"]]["# of LR in ATLAS/CMS"]
+    series_collide_lhcb = bbs[bbs["collides in LHCB"]]["# of LR in LHCB"]
+    series_not_collide_lhcb = bbs[~bbs["collides in LHCB"]]["# of LR in LHCB"]
+    series_collide_alice = bbs[bbs["collides in ALICE"]]["# of LR in ALICE"]
+    series_not_collide_alice = bbs[~bbs["collides in ALICE"]]["# of LR in ALICE"]
+
+    # Add the plot for the number of LR in each experiment
+    for row, series_collide, series_not_collide in zip(
+        [2, 3, 4],
+        [series_collide_atlas_cms, series_collide_lhcb, series_collide_alice],
+        [series_not_collide_atlas_cms, series_not_collide_lhcb, series_not_collide_alice],
+    ):
+        fig.append_trace(
+            go.Scattergl(
+                x=series_collide.index,
+                y=series_collide,
+                xaxis="x",
+                yaxis="y2",
+                mode="markers",
+                marker=dict(
+                    color="orange",
+                    size=5,
+                ),
+                legendgroup="colliding",
+                showlegend=False,
+            ),
+            row=row,
+            col=1,
+        )
+        fig.append_trace(
+            go.Scattergl(
+                x=series_not_collide.index,
+                y=series_not_collide,
+                xaxis="x",
+                yaxis="y2",
+                mode="markers",
+                marker=dict(
+                    color="teal",
+                    size=5,
+                ),
+                legendgroup="not_colliding",
+                showlegend=False,
+            ),
+            row=row,
+            col=1,
+        )
+
+    # Traces for legend
+    fig.append_trace(
+        go.Scattergl(
+            x=series_collide_atlas_cms.index[:1],
+            y=series_collide_atlas_cms.values[:1],
+            xaxis="x",
+            yaxis="y2",
+            mode="markers",
+            marker=dict(color="orange", size=5),
+            legendgroup="colliding",
+            name="Colliding in IP",
+        ),
+        row=2,
+        col=1,
+    )
+    fig.append_trace(
+        go.Scattergl(
+            x=series_not_collide_atlas_cms.index[:1],
+            y=series_not_collide_atlas_cms.values[:1],
+            xaxis="x",
+            yaxis="y2",
+            mode="markers",
+            marker=dict(color="teal", size=5),
+            legendgroup="not_colliding",
+            name="Not colliding in IP",
+        ),
+        row=2,
+        col=1,
+    )
+
+    # Add a vertical line (in all subplots) to indicate the bunch selected for tracking
     fig.add_vline(
         x=i_bunch_b1,
         line_width=1,
@@ -986,30 +1080,41 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
         annotation_text="Selected bunch",
         annotation_position="top right",
     )
-    fig.update_yaxes(range=[0.7, 2.3], fixedrange=True)
 
-    fig.update_layout(
-        xaxis=dict(
-            title="Bucket number",
-            #    rangeslider=dict(visible=True),
-        ),
-        yaxis=dict(title="Beam"),
-        # title="Filling scheme",
-        # width=2000,
-        # height=400,
+    # Update yaxis properties
+    fig.update_xaxes(range=[0, non_zero_indices_b1[-1] + 1])
+    fig.update_yaxes(
+        title_text=r"Beam",
+        range=[0.7, 2.3],
+        row=1,
+        col=1,
+        tickmode="linear",
+        tick0=1,
+        dtick=1,
+        fixedrange=True,
     )
-    fig.update_layout(yaxis=dict(tickmode="linear", tick0=1, dtick=1))
+    fig.update_yaxes(title_text=r"#LR in Atlas/CMS", range=[0, 52], row=2, col=1, fixedrange=True)
+    fig.update_yaxes(title_text=r"#LR in LHCb", range=[0, 52], row=3, col=1, fixedrange=True)
+    fig.update_yaxes(title_text=r"#LR in ALice", range=[0, 52], row=4, col=1, fixedrange=True)
+    fig.update_xaxes(title_text=r"25ns slot", row=4, col=1)
+    fig.update_yaxes(fixedrange=True)
+
+    # Update layout
     fig.update_layout(
-        showlegend=False,
+        showlegend=True,
+        xaxis_showgrid=True,
+        yaxis_showgrid=True,
+        dragmode="pan",
+        uirevision="Don't change",
+        margin=dict(l=20, r=20, b=10, t=30, pad=10),
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        title_text="Filling scheme for the current simulation",
-        title_x=0.5,
-        title_xanchor="center",
-        dragmode="pan",
-        margin=dict(l=20, r=20, b=10, t=30, pad=10),
+        legend_x=1,
+        legend_y=0.5,
     )
+    # fig.update_layout(yaxis=dict(tickmode="linear", tick0=1, dtick=1))
+
     return fig
 
 
