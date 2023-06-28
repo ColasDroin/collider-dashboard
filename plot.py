@@ -924,19 +924,13 @@ def return_plot_optics(
         showlegend=True,
         xaxis_showgrid=True,
         yaxis_showgrid=True,
-        # xaxis_title=r'$s$',
-        # yaxis_title=r'$[m]$',
-        # width=1000,
-        # height=1000,
         legend_tracegroupgap=30,
         dragmode="pan",
         uirevision="Don't change",
         margin=dict(l=10, r=10, b=10, t=10, pad=10),
-    )
-
-    # Make background transparent
-    fig.update_layout(
-        template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)"
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
     )
 
     # Update yaxis properties

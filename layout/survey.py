@@ -7,6 +7,7 @@ from dash import html, dcc
 
 #################### Survey Layout ####################
 
+
 def return_survey_layout():
     survey_layout = html.Div(
         children=[
@@ -51,6 +52,7 @@ def return_survey_layout():
                                 style={"height": "90vh", "width": "100%", "margin": "auto"},
                             ),
                             type="circle",
+                            color="cyan",
                         ),
                     ],
                     style={"width": "100%", "margin": "auto"},
@@ -110,4 +112,3 @@ def return_survey_layout():
         style={"width": "100%", "margin": "auto"},
     )
     return survey_layout
-

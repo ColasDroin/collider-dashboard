@@ -2,7 +2,7 @@
 
 # Import standard libraries
 import dash_mantine_components as dmc
-from dash import Dash, html, Input, Output
+from dash import Dash, html, Input, Output, no_update
 import sys
 
 # Import initialization and plotting functions
@@ -84,13 +84,7 @@ def select_tab(value):
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
-            return return_filling_scheme_layout(
-                dic_after_bb["array_b1"],
-                dic_after_bb["array_b2"],
-                dic_after_bb["i_bunch_b1"],
-                dic_after_bb["i_bunch_b2"],
-                dic_after_bb["bbs"],
-            )
+            return return_filling_scheme_layout()
         case "display-separation":
             return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])
         case "display-sanity":
@@ -112,8 +106,16 @@ def select_tab(value):
                 [
                     dmc.TabsList(
                         [
-                            dmc.Tab("Before beam-beam", value="sanity-before-beam-beam"),
-                            dmc.Tab("After beam beam", value="sanity-after-beam-beam"),
+                            dmc.Tab(
+                                "Before beam-beam",
+                                value="sanity-before-beam-beam",
+                                style={"font-size": "1.1rem"},
+                            ),
+                            dmc.Tab(
+                                "After beam beam",
+                                value="sanity-after-beam-beam",
+                                style={"font-size": "1.1rem"},
+                            ),
                         ],
                         position="center",
                     ),
@@ -126,12 +128,7 @@ def select_tab(value):
             return tabs_sanity
 
         case "display-optics":
-            return return_optics_layout(
-                dic_after_bb["df_tw_b1"],
-                dic_after_bb["df_tw_b2"],
-                dic_after_bb["df_sv_b1"],
-                dic_after_bb["df_elements_corrected"],
-            )
+            return return_optics_layout()
         case "display-survey":
             return return_survey_layout()
         case _:
@@ -178,6 +175,34 @@ def update_graph_LHC_layout(l_values):
     )
 
     return fig
+
+
+@app.callback(Output("filling-scheme-graph", "figure"), Input("tab-titles", "value"))
+def update_graph_filling(value):
+    if value == "display-scheme":
+        return plot.return_plot_filling_scheme(
+            dic_after_bb["array_b1"],
+            dic_after_bb["array_b2"],
+            dic_after_bb["i_bunch_b1"],
+            dic_after_bb["i_bunch_b2"],
+            dic_after_bb["bbs"],
+        )
+
+    else:
+        return no_update
+
+
+@app.callback(Output("LHC-2D-near-IP", "figure"), Input("tab-titles", "value"))
+def update_graph_optics(value):
+    if value == "display-optics":
+        return plot.return_plot_optics(
+            dic_after_bb["df_tw_b1"],
+            dic_after_bb["df_tw_b2"],
+            dic_after_bb["df_sv_b1"],
+            dic_after_bb["df_elements_corrected"],
+        )
+    else:
+        return no_update
 
 
 @app.callback(

@@ -40,6 +40,7 @@ def return_header_layout():
                             "Simulation dashboard",
                             size=30,
                             color="cyan",
+                            weight="bold",
                         ),
                         dmc.SegmentedControl(
                             id="tab-titles",
@@ -55,6 +56,9 @@ def return_header_layout():
                             ],
                             # color="cyan",
                             style={"margin-right": "10%"},
+                            fullWidth=True,
+                            size="lg",
+                            color="cyan",
                         ),
                         dmc.Group(
                             position="right",
