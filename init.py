@@ -172,7 +172,7 @@ def initialize_global_variables(twiss_check):
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1)
 
-    # Get the indices of the selected bunches
+    # Get the beam-beam schedule
 
     # Store everything in a dictionnary
     dic_global_var = {

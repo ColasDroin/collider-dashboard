@@ -14,16 +14,6 @@ import plot
 def return_filling_scheme_layout(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
     scheme_layout = dmc.Stack(
         children=[
-            dmc.Center(
-                dmc.Alert(
-                    (
-                        "I may add a plot displaying the number of long-ranges and head-on"
-                        " interaction for each bunch is it's deemed relevant."
-                    ),
-                    title="Alert!",
-                    style={"width": "70%", "margin-top": "10px"},
-                ),
-            ),
             dcc.Loading(
                 dcc.Graph(
                     id="filling-scheme-graph",
@@ -37,7 +27,7 @@ def return_filling_scheme_layout(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
                     figure=plot.return_plot_filling_scheme(
                         array_b1, array_b2, i_bunch_b1, i_bunch_b2
                     ),
-                    style={"height": "30vh", "width": "100%", "margin": "10 auto"},
+                    style={"height": "20vh", "width": "100%", "margin": "auto"},
                 ),
                 type="circle",
             ),

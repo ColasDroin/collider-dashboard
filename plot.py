@@ -995,8 +995,8 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
         ),
         yaxis=dict(title="Beam"),
         # title="Filling scheme",
-        width=2000,
-        height=400,
+        # width=2000,
+        # height=400,
     )
     fig.update_layout(yaxis=dict(tickmode="linear", tick0=1, dtick=1))
     fig.update_layout(
@@ -1008,6 +1008,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
         title_x=0.5,
         title_xanchor="center",
         dragmode="pan",
+        margin=dict(l=20, r=20, b=10, t=30, pad=10),
     )
     return fig
 
