@@ -164,9 +164,15 @@ def initialize_global_variables(twiss_check):
     array_b1 = twiss_check.array_b1
     array_b2 = twiss_check.array_b2
 
+    # get the bunches selected for tracking
+    i_bunch_b1 = twiss_check.i_bunch_b1
+    i_bunch_b2 = twiss_check.i_bunch_b2
+
     # Get the dictionnary to plot separation
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1)
+
+    # Get the indices of the selected bunches
 
     # Store everything in a dictionnary
     dic_global_var = {
@@ -185,6 +191,8 @@ def initialize_global_variables(twiss_check):
         "table_tw_b2": table_tw_b2,
         "array_b1": array_b1,
         "array_b2": array_b2,
+        "i_bunch_b1": i_bunch_b1,
+        "i_bunch_b2": i_bunch_b2,
     }
 
     return dic_global_var

@@ -950,42 +950,65 @@ def return_plot_optics(
     return fig
 
 
-def return_plot_filling_scheme(array_b1, array_b2):
-    # Color filling scheme with blue and red
-    array_b1_colored = np.array(
-        [[30, 144, 255, 200] if x != 0 else [255, 255, 255, 0] for x in array_b1], dtype=np.uint8
+def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2):
+    # ! i_bunch_b2 is not used for now
+
+    non_zero_indices_b1 = np.nonzero(array_b1)[0]
+    non_zero_indices_b2 = np.nonzero(array_b2)[0]
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scattergl(
+            x=non_zero_indices_b1,
+            y=array_b1[non_zero_indices_b1],
+            mode="markers",
+            marker=dict(color="cyan", size=10),
+            # name="Beam 1",
+            marker_symbol="diamond-wide",
+        )
     )
-    array_b2_colored = np.array(
-        [[238, 75, 43, 200] if x != 0 else [255, 255, 255, 0] for x in array_b2], dtype=np.uint8
+    fig.add_trace(
+        go.Scattergl(
+            x=non_zero_indices_b2,
+            y=array_b2[non_zero_indices_b2] * 2,
+            mode="markers",
+            marker=dict(color="tomato", size=10),
+            # name="Beam 2",
+            marker_symbol="diamond-wide",
+        )
     )
 
-    # Convert to matrix
-    mat = np.stack((array_b1_colored, array_b2_colored), dtype=np.uint8)
-
-    # Plot filling scheme with plotly
-    fig = go.Figure(go.Image(z=mat, colormodel="rgba256"))
-
-    fig.update_yaxes(
-        scaleanchor="x",
-        scaleratio=200,
-        tickvals=[0, 1],
-        ticktext=["Beam 1 ", "Beam 2 "],
-        constrain="domain",
-        range=[0, 1],
+    fig.add_vline(
+        x=i_bunch_b1,
+        line_width=1,
+        line_dash="dash",
+        line_color="white",
+        annotation_text="Selected bunch",
+        annotation_position="top right",
     )
+    fig.update_yaxes(range=[0.7, 2.3], fixedrange=True)
 
     fig.update_layout(
-        xaxis=dict(title="Bucket number"),
+        xaxis=dict(
+            title="Bucket number",
+            #    rangeslider=dict(visible=True),
+        ),
+        yaxis=dict(title="Beam"),
+        # title="Filling scheme",
+        width=2000,
+        height=400,
+    )
+    fig.update_layout(yaxis=dict(tickmode="linear", tick0=1, dtick=1))
+    fig.update_layout(
+        showlegend=False,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        # dragmode="zoom",
         title_text="Filling scheme for the current simulation",
         title_x=0.5,
         title_xanchor="center",
         dragmode="pan",
     )
-
     return fig
 
 

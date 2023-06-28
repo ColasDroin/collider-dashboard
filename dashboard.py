@@ -26,9 +26,10 @@ from layout.separation import return_separation_layout
 if len(sys.argv) > 1:
     path_config = sys.argv[1]
 else:
+    # path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_test/base_collider/xtrack_0004/config.yaml"
     path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=False)
 
 #################### App ####################
 app = Dash(
@@ -83,7 +84,12 @@ def select_tab(value):
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
-            return return_filling_scheme_layout(dic_after_bb["array_b1"], dic_after_bb["array_b2"])
+            return return_filling_scheme_layout(
+                dic_after_bb["array_b1"],
+                dic_after_bb["array_b2"],
+                dic_after_bb["i_bunch_b1"],
+                dic_after_bb["i_bunch_b2"],
+            )
         case "display-separation":
             return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])
         case "display-sanity":
