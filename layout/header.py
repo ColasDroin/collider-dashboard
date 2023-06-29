@@ -55,9 +55,9 @@ def return_header_layout():
                                 {"value": "display-survey", "label": "Survey"},
                             ],
                             # color="cyan",
-                            style={"margin-right": "10%"},
+                            # style={"margin-right": "10%"},
                             fullWidth=True,
-                            size="lg",
+                            size="md",
                             color="cyan",
                         ),
                         dmc.Group(

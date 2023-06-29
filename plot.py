@@ -105,7 +105,7 @@ def return_circular_multipole_trace(
     elif order == 3:
         color = px.colors.qualitative.Plotly[2]
         name = "Octupoles"
-        strength_magnification_factor = strength_magnification_factor / 10
+        strength_magnification_factor = strength_magnification_factor / 20
 
     # Function to filter magnet strength
     def return_correct_strength(x):
@@ -203,7 +203,7 @@ def return_flat_multipole_trace(
     elif order == 3:
         color = px.colors.qualitative.Plotly[2]
         name = "Octupoles"
-        strength_magnification_factor = strength_magnification_factor / 2
+        strength_magnification_factor = strength_magnification_factor / 4
 
     # Function to filter magnet strength
     def return_correct_strength(x):
@@ -1130,7 +1130,7 @@ def return_plot_separation(dic_sep_IPs):
             [{"secondary_y": True}, {"secondary_y": True}],
             [{"secondary_y": True}, {"secondary_y": True}],
         ],
-        horizontal_spacing=0.1,
+        horizontal_spacing=0.2,
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_sep_IPs[f"ip{n_ip}"]["s"]
