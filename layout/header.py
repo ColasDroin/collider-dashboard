@@ -55,7 +55,7 @@ def return_header_layout():
                                 {"value": "display-survey", "label": "Survey"},
                             ],
                             # color="cyan",
-                            # style={"margin-right": "10%"},
+                            style={"margin-right": "5%"},
                             fullWidth=True,
                             size="md",
                             color="cyan",

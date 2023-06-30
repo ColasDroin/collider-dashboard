@@ -507,6 +507,10 @@ def return_data_table(df, id_table, twiss=True):
         idx_column_name = 0
     else:
         idx_column_name = 6
+
+    # Change order of columns such that name is first
+    df = df[["name"] + [col for col in df.columns if col != "name"]]
+
     table = (
         dash_table.DataTable(
             id=id_table,

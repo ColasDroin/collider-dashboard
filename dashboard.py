@@ -29,7 +29,7 @@ else:
     path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_test/base_collider/xtrack_0004/config.yaml"
     # path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=True, load_from_pickle=False)
 
 #################### App ####################
 app = Dash(

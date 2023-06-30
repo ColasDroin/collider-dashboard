@@ -1147,6 +1147,7 @@ def return_plot_separation(dic_sep_IPs):
                 name="Separation at ip " + str(n_ip),
                 legendgroup=" IP " + str(n_ip),
                 mode="lines+markers",
+                line=dict(color="coral", width=1),
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
@@ -1160,6 +1161,7 @@ def return_plot_separation(dic_sep_IPs):
                 name="Normalized separation at ip " + str(n_ip),
                 legendgroup=" IP " + str(n_ip),
                 mode="lines+markers",
+                line=dict(color="cyan", width=1),
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
@@ -1172,7 +1174,10 @@ def return_plot_separation(dic_sep_IPs):
                 y=[sep] * len(s),
                 name="Inner normalized separation at ip " + str(n_ip),
                 legendgroup=" IP " + str(n_ip),
+                mode="lines+text",
+                textposition="top left",
                 line=dict(color="white", width=1, dash="dash"),
+                text=[""] * (len(s) - 1) + ["Inner normalized separation"],
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
@@ -1182,12 +1187,17 @@ def return_plot_separation(dic_sep_IPs):
     for row in range(1, 3):
         for column in range(1, 3):
             fig.update_yaxes(
-                title_text=r"$\textrm{B-B separation }[m]$", row=row, col=column, secondary_y=False
+                title_text=r"$\textrm{B-B separation }[m]$",
+                row=row,
+                col=column,
+                linecolor="coral",
+                secondary_y=False,
             )
             fig.update_yaxes(
                 title_text=r"$\textrm{B-B separation }[\sigma]$",
                 row=row,
                 col=column,
+                linecolor="cyan",
                 secondary_y=True,
             )
             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
@@ -1201,6 +1211,7 @@ def return_plot_separation(dic_sep_IPs):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         dragmode="pan",
+        showlegend=False,
     )
 
     return fig
