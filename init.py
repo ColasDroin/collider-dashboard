@@ -242,7 +242,11 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         # Correct for thin lens approximation and weird duplicates
         if ".." in row["name"] and "f" not in row["name"].split("..")[1]:
             name = row["name"].split("..")[0]
-            index = df_tw[df_tw.name == name].index[0]
+            try:
+                index = df_tw[df_tw.name == name].index[0]
+            except IndexError:
+                print(f"IndexError for {name}")
+                continue
 
             # Add length
             if np.isnan(df_elements_corrected.loc[index]["length"]):
@@ -262,8 +266,11 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
                 else df_elements.loc[i]["knl"]
             )
 
+            # print(df_elements)
+            # print(df_elements_corrected)
+
             # Replace order
-            df_elements_corrected.at[index, "order"] = df_elements.loc[i]["order"]
+            df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
 
             # Drop row
             df_elements_corrected.drop(i, inplace=True)
@@ -349,8 +356,6 @@ def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
             # Change element name for current beam
             el_start = el_start + "." + beam[3:]
             el_end = el_end + "." + beam[3:]
-
-            print(el_start, el_end)
 
             # # Recompute survey from ip
             if beam == "lhcb1":

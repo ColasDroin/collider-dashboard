@@ -23,13 +23,13 @@ from layout.separation import return_separation_layout
 #################### Load global variables ####################
 
 # Get the path to the config file from the command line, or use the default one
-if len(sys.argv) > 1:
-    path_config = sys.argv[1]
-else:
-    path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_test/base_collider/xtrack_0004/config.yaml"
-    # path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
+# if len(sys.argv) > 1:
+#     path_config = sys.argv[1]
+# else:
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_test/base_collider/xtrack_0004/config.yaml"
+# path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
 
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=True, load_from_pickle=False)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
 
 #################### App ####################
 app = Dash(
@@ -327,9 +327,9 @@ def update_graph_LHC_layout(value):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8080)
+    app.run_server(debug=False, host="0.0.0.0", port=8081)
 
 
-# Run with gunicorn app:server -b :8000
-# Run silently with nohup gunicorn app:server -b :8000 &
+# Run with gunicorn dashboard:server -b :8000
+# Run silently with nohup gunicorn dashboard:server -b :8080 &
 # Kill with pkill gunicorn

@@ -1,0 +1,99 @@
+[2023-06-30 17:03:16 +0200] [727352] [INFO] Starting gunicorn 20.1.0
+[2023-06-30 17:03:16 +0200] [727352] [INFO] Listening at: http://0.0.0.0:8080 (727352)
+[2023-06-30 17:03:16 +0200] [727352] [INFO] Using worker: sync
+[2023-06-30 17:03:16 +0200] [727354] [INFO] Booting worker with pid: 727354
+[2023-06-30 17:03:16 +0200] [727354] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/util.py", line 359, in import_app
+    mod = importlib.import_module(module)
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1004, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'app'
+[2023-06-30 17:03:16 +0200] [727354] [INFO] Worker exiting (pid: 727354)
+[2023-06-30 17:03:16 +0200] [727352] [INFO] Shutting down: Master
+[2023-06-30 17:03:16 +0200] [727352] [INFO] Reason: Worker failed to boot.
+[2023-06-30 17:03:55 +0200] [727500] [INFO] Starting gunicorn 20.1.0
+[2023-06-30 17:03:55 +0200] [727500] [INFO] Listening at: http://0.0.0.0:8080 (727500)
+[2023-06-30 17:03:55 +0200] [727500] [INFO] Using worker: sync
+[2023-06-30 17:03:55 +0200] [727502] [INFO] Booting worker with pid: 727502
+[2023-06-30 17:04:25 +0200] [727500] [CRITICAL] WORKER TIMEOUT (pid:727502)
+[2023-06-30 17:04:25 +0200] [727502] [INFO] Worker exiting (pid: 727502)
+[2023-06-30 17:04:26 +0200] [727723] [INFO] Booting worker with pid: 727723
+[2023-06-30 17:04:32 +0200] [727723] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+    worker.init_process()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/workers/base.py", line 134, in init_process
+    self.load_wsgi()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+    self.wsgi = self.app.wsgi()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/base.py", line 67, in wsgi
+    self.callable = self.load()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+    return self.load_wsgiapp()
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+    return util.import_app(self.app_uri)
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/gunicorn/util.py", line 359, in import_app
+    mod = importlib.import_module(module)
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/afs/cern.ch/work/c/cdroin/private/dashboard/dashboard.py", line 32, in <module>
+    dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+  File "/afs/cern.ch/work/c/cdroin/private/dashboard/init.py", line 30, in init
+    + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
+IndexError: list index out of range
+[2023-06-30 17:04:32 +0200] [727723] [INFO] Worker exiting (pid: 727723)
+[2023-06-30 17:04:32 +0200] [727500] [INFO] Shutting down: Master
+[2023-06-30 17:04:32 +0200] [727500] [INFO] Reason: Worker failed to boot.
+[2023-07-03 09:25:15 +0200] [1655191] [INFO] Starting gunicorn 20.1.0
+[2023-07-03 09:25:15 +0200] [1655191] [INFO] Listening at: http://0.0.0.0:8080 (1655191)
+[2023-07-03 09:25:15 +0200] [1655191] [INFO] Using worker: sync
+[2023-07-03 09:25:15 +0200] [1655193] [INFO] Booting worker with pid: 1655193
+[2023-07-03 09:25:45 +0200] [1655191] [CRITICAL] WORKER TIMEOUT (pid:1655193)
+[2023-07-03 09:25:46 +0200] [1655193] [INFO] Worker exiting (pid: 1655193)
+[2023-07-03 09:25:46 +0200] [1655320] [INFO] Booting worker with pid: 1655320
+[2023-07-03 09:26:39 +0200] [1655191] [INFO] Handling signal: term
+[2023-07-03 09:26:39 +0200] [1655320] [INFO] Worker exiting (pid: 1655320)
+Returning global variables from pickle file.
+[2023-07-03 09:26:39 +0200] [1655191] [INFO] Shutting down: Master
+[2023-07-03 09:27:10 +0200] [1655764] [INFO] Starting gunicorn 20.1.0
+[2023-07-03 09:27:10 +0200] [1655764] [INFO] Listening at: http://0.0.0.0:8080 (1655764)
+[2023-07-03 09:27:10 +0200] [1655764] [INFO] Using worker: sync
+[2023-07-03 09:27:10 +0200] [1655766] [INFO] Booting worker with pid: 1655766
+[2023-07-03 09:31:04 +0200] [1656676] [INFO] Starting gunicorn 20.1.0
+[2023-07-03 09:31:04 +0200] [1656676] [ERROR] Connection in use: ('', 8080)
+[2023-07-03 09:31:04 +0200] [1656676] [ERROR] Retrying in 1 second.
+[2023-07-03 09:31:05 +0200] [1656676] [ERROR] Connection in use: ('', 8080)
+[2023-07-03 09:31:05 +0200] [1656676] [ERROR] Retrying in 1 second.
+[2023-07-03 09:31:06 +0200] [1656676] [ERROR] Connection in use: ('', 8080)
+[2023-07-03 09:31:06 +0200] [1656676] [ERROR] Retrying in 1 second.
+[2023-07-03 09:31:07 +0200] [1656676] [ERROR] Connection in use: ('', 8080)
+[2023-07-03 09:31:07 +0200] [1656676] [ERROR] Retrying in 1 second.
+[2023-07-03 09:31:08 +0200] [1656676] [ERROR] Connection in use: ('', 8080)
+[2023-07-03 09:31:08 +0200] [1656676] [ERROR] Retrying in 1 second.
+[2023-07-03 09:31:09 +0200] [1656676] [ERROR] Can't connect to ('', 8080)
+[2023-07-03 09:31:12 +0200] [1655766] [INFO] Worker exiting (pid: 1655766)
+[2023-07-03 09:31:12 +0200] [1655764] [INFO] Handling signal: term
+Returning global variables from pickle file.
+[2023-07-03 09:31:12 +0200] [1655764] [INFO] Shutting down: Master

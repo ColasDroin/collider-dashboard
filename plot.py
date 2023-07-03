@@ -115,7 +115,7 @@ def return_circular_multipole_trace(
             return float(x)
 
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements.order == order]["knl"].apply(return_correct_strength)
+    s_knl = df_elements[df_elements._order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
@@ -213,7 +213,7 @@ def return_flat_multipole_trace(
             return float(x)
 
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements.order == order]["knl"].apply(return_correct_strength)
+    s_knl = df_elements[df_elements._order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
