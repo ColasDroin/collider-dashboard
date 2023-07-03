@@ -718,207 +718,203 @@ def add_scatter_trace(
     return fig
 
 
-def return_plot_optics(
-    df_tw_b1,
-    df_tw_b2,
-    df_sv,
-    df_elements,
-):
+def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
     # Build figure
     fig = make_subplots(rows=4, cols=1, shared_xaxes=True)
 
-    # Add traces for magnets
-    fig = add_multipoles_to_fig(
-        fig,
-        df_elements,
-        df_sv,
-        l_indices_to_keep=None,
-        add_dipoles=True,
-        add_quadrupoles=True,
-        add_sextupoles=True,
-        add_octupoles=True,
-        flat=True,
-        row=1,
-        col=1,
-        xaxis="x",
-        yaxis="y",
-    )
-
-    # Add traces for beta functions
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["betx"],
-        r"$\beta_{x_1}$",
-        2,
-        1,
-        "x",
-        "y",
-        color="cyan",
-        legendgroup="beta-1",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["bety"],
-        r"$\beta_{y_1}$",
-        2,
-        1,
-        "x",
-        "y",
-        # visible="legendonly",
-        color="cyan",
-        legendgroup="beta-2",
-        dashed=True,
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["betx"],
-        r"$\beta_{x_2}$",
-        2,
-        1,
-        "x",
-        "y",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="beta-3",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["bety"],
-        r"$\beta_{y_2}$",
-        2,
-        1,
-        "x",
-        "y",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="beta-4",
-        dashed=True,
-    )
-
-    # Add traces for position functions
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["x"],
-        r"$x_1$",
-        3,
-        1,
-        "x",
-        "y2",
-        color="cyan",
-        legendgroup="position-1",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["y"],
-        r"$y_1$",
-        3,
-        1,
-        "x",
-        "y2",
-        # visible="legendonly",
-        color="cyan",
-        legendgroup="position-2",
-        dashed=True,
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["x"],
-        r"$x_2$",
-        3,
-        1,
-        "x",
-        "y2",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="position-3",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["y"],
-        r"$y_2$",
-        3,
-        1,
-        "x",
-        "y2",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="position-4",
-        dashed=True,
-    )
-
-    # Add traces for dispersion functions
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["dx"],
-        r"$D_{x_1}$",
-        4,
-        1,
-        "x",
-        "y3",
-        color="cyan",
-        legendgroup="dispersion-1",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b1["s"],
-        df_tw_b1["dy"],
-        r"$D_{y_1}$",
-        4,
-        1,
-        "x",
-        "y3",
-        # visible="legendonly",
-        color="cyan",
-        legendgroup="dispersion-2",
-        dashed=True,
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["dx"],
-        r"$D_{x_2}$",
-        4,
-        1,
-        "x",
-        "y3",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="dispersion-3",
-    )
-    fig = add_scatter_trace(
-        fig,
-        df_tw_b2["s"],
-        df_tw_b2["dy"],
-        r"$D_{y_2}$",
-        4,
-        1,
-        "x",
-        "y3",
-        # visible="legendonly",
-        color="tomato",
-        legendgroup="dispersion-4",
-        dashed=True,
-    )
-
-    # Add horizontal lines for all ips
-    for ip in [1, 2, 5, 8]:
-        fig.add_vline(
-            x=float(df_tw_b1[df_tw_b1["name"] == "ip" + str(ip)]["s"].iloc[0]),
-            line_width=1,
-            line_dash="dash",
-            line_color="pink",
-            annotation_text=f"IP {ip}",
-            annotation_position="top right",
+    if not empty:
+        # Add traces for magnets
+        fig = add_multipoles_to_fig(
+            fig,
+            df_elements,
+            df_sv,
+            l_indices_to_keep=None,
+            add_dipoles=True,
+            add_quadrupoles=True,
+            add_sextupoles=True,
+            add_octupoles=True,
+            flat=True,
+            row=1,
+            col=1,
+            xaxis="x",
+            yaxis="y",
         )
+
+        # Add traces for beta functions
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["betx"],
+            r"$\beta_{x_1}$",
+            2,
+            1,
+            "x",
+            "y",
+            color="cyan",
+            legendgroup="beta-1",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["bety"],
+            r"$\beta_{y_1}$",
+            2,
+            1,
+            "x",
+            "y",
+            # visible="legendonly",
+            color="cyan",
+            legendgroup="beta-2",
+            dashed=True,
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["betx"],
+            r"$\beta_{x_2}$",
+            2,
+            1,
+            "x",
+            "y",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="beta-3",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["bety"],
+            r"$\beta_{y_2}$",
+            2,
+            1,
+            "x",
+            "y",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="beta-4",
+            dashed=True,
+        )
+
+        # Add traces for position functions
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["x"],
+            r"$x_1$",
+            3,
+            1,
+            "x",
+            "y2",
+            color="cyan",
+            legendgroup="position-1",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["y"],
+            r"$y_1$",
+            3,
+            1,
+            "x",
+            "y2",
+            # visible="legendonly",
+            color="cyan",
+            legendgroup="position-2",
+            dashed=True,
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["x"],
+            r"$x_2$",
+            3,
+            1,
+            "x",
+            "y2",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="position-3",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["y"],
+            r"$y_2$",
+            3,
+            1,
+            "x",
+            "y2",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="position-4",
+            dashed=True,
+        )
+
+        # Add traces for dispersion functions
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["dx"],
+            r"$D_{x_1}$",
+            4,
+            1,
+            "x",
+            "y3",
+            color="cyan",
+            legendgroup="dispersion-1",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b1["s"],
+            df_tw_b1["dy"],
+            r"$D_{y_1}$",
+            4,
+            1,
+            "x",
+            "y3",
+            # visible="legendonly",
+            color="cyan",
+            legendgroup="dispersion-2",
+            dashed=True,
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["dx"],
+            r"$D_{x_2}$",
+            4,
+            1,
+            "x",
+            "y3",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="dispersion-3",
+        )
+        fig = add_scatter_trace(
+            fig,
+            df_tw_b2["s"],
+            df_tw_b2["dy"],
+            r"$D_{y_2}$",
+            4,
+            1,
+            "x",
+            "y3",
+            # visible="legendonly",
+            color="tomato",
+            legendgroup="dispersion-4",
+            dashed=True,
+        )
+
+        # Add horizontal lines for all ips
+        for ip in [1, 2, 5, 8]:
+            fig.add_vline(
+                x=float(df_tw_b1[df_tw_b1["name"] == "ip" + str(ip)]["s"].iloc[0]),
+                line_width=1,
+                line_dash="dash",
+                line_color="pink",
+                annotation_text=f"IP {ip}",
+                annotation_position="top right",
+            )
 
     fig.update_layout(
         showlegend=True,

@@ -128,7 +128,7 @@ def select_tab(value):
             return tabs_sanity
 
         case "display-optics":
-            return return_optics_layout()
+            return return_optics_layout(dic_after_bb)
         case "display-survey":
             return return_survey_layout()
         case _:
