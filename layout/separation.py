@@ -28,7 +28,7 @@ def return_separation_layout(dic_sep_IPs):
                                                 variant="outline",
                                                 color="cyan",
                                             )
-                                            for x in ["v", "h"]
+                                            for x in ["v", "h", "||v+h||"]
                                         ],
                                         id="chips-sep",
                                         value="v",

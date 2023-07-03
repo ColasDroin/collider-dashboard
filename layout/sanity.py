@@ -163,6 +163,20 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
         for lumi, n_col in zip(l_lumi, l_n_collisions)
     ]
 
+    # Luminosities
+    header_4 = [
+        html.Thead(
+            html.Tr(
+                [
+                    html.Th("IP 1 [counts]"),
+                    html.Th("IP 2 [counts]"),
+                    html.Th("IP 5 [counts]"),
+                    html.Th("IP 8 [counts]"),
+                ]
+            )
+        )
+    ]
+
     # Table
     row_PU = html.Tr(
         [
@@ -181,7 +195,7 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
         ]
     )
     body_5 = [html.Tbody([row_PU])]
-    table_5 = dmc.Table(header_3 + body_5)
+    table_5 = dmc.Table(header_4 + body_5)
 
     return dmc.Stack(
         children=[

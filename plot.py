@@ -1211,3 +1211,85 @@ def return_plot_separation(dic_sep_IPs):
     )
 
     return fig
+
+
+def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
+        # specs=[
+        #    [{"secondary_y": True}, {"secondary_y": True}],
+        #    [{"secondary_y": True}, {"secondary_y": True}],
+        # ],
+        horizontal_spacing=0.2,
+    )
+    for idx, n_ip in enumerate([1, 2, 5, 8]):
+        s = dic_sep_IPs_x[f"ip{n_ip}"]["s"]
+        x_x = dic_sep_IPs_x[f"ip{n_ip}"]["x"]
+        sep_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep"]
+        sep_survey_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep_survey"]
+        sigma_x = dic_sep_IPs_x[f"ip{n_ip}"]["sigma"]
+
+        x_y = dic_sep_IPs_y[f"ip{n_ip}"]["x"]
+        sep_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep"]
+        sep_survey_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep_survey"]
+        sigma_y = dic_sep_IPs_y[f"ip{n_ip}"]["sigma"]
+
+        # Do the plot
+        fig.add_trace(
+            go.Scatter(
+                x=s,
+                y=np.sqrt(
+                    ((x_x + sep_survey_x) / sigma_x) ** 2 + ((x_y + sep_survey_y) / sigma_y) ** 2
+                ),
+                name="Normalized separation at ip " + str(n_ip),
+                legendgroup=" IP " + str(n_ip),
+                mode="lines+markers",
+                line=dict(color="cyan", width=1),
+            ),
+            row=idx // 2 + 1,
+            col=idx % 2 + 1,
+            # secondary_y=True,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=s,
+                y=[np.sqrt(sep_x**2 + sep_y**2)] * len(s),
+                name="Inner normalized separation at ip " + str(n_ip),
+                legendgroup=" IP " + str(n_ip),
+                mode="lines+text",
+                textposition="top left",
+                line=dict(color="white", width=1, dash="dash"),
+                text=[""] * (len(s) - 1) + ["Inner normalized separation"],
+            ),
+            row=idx // 2 + 1,
+            col=idx % 2 + 1,
+            # secondary_y=True,
+        )
+
+    for row in range(1, 3):
+        for column in range(1, 3):
+            fig.update_yaxes(
+                title_text=r"$\textrm{B-B separation }[\sigma]$",
+                row=row,
+                col=column,
+                linecolor="cyan",
+                # secondary_y=True,
+            )
+            fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
+
+    # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
+    # Use white theme for graph, centered title
+    fig.update_layout(
+        template="plotly_dark",
+        title="Beam-beam separation at the different IPs",
+        title_x=0.5,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        dragmode="pan",
+        showlegend=False,
+    )
+
+    return fig

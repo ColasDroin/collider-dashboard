@@ -26,9 +26,7 @@ from layout.separation import return_separation_layout
 # if len(sys.argv) > 1:
 #     path_config = sys.argv[1]
 # else:
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_test/base_collider/xtrack_0004/config.yaml"
-# path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_flathv_75_1500_withBB_chroma15_eol_bbb_2228/base_collider/xtrack_0000/config.yaml"
-
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024/base_collider/xtrack_0000/config.yaml"
 dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
 
 #################### App ####################
@@ -210,7 +208,12 @@ def update_graph_optics(value):
     Input("chips-sep", "value"),
 )
 def update_graph_LHC_layout(value):
-    fig = plot.return_plot_separation(dic_before_bb["dic_sep_IPs"][value])
+    if value == "v" or value == "h":
+        fig = plot.return_plot_separation(dic_before_bb["dic_sep_IPs"][value])
+    else:
+        fig = plot.return_plot_separation_both_planes(
+            dic_before_bb["dic_sep_IPs"]["v"], dic_before_bb["dic_sep_IPs"]["h"]
+        )
     return fig
 
 
