@@ -1293,3 +1293,50 @@ def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
     )
 
     return fig
+
+
+def return_plot_footprint(t_array_footprint, i_bunch_b1):
+    array_qx, array_qy = t_array_footprint
+    fig = go.Figure()
+
+    for x, y in zip(array_qx, array_qy):
+        # Insert additional None when dx or dy is too big
+        # to avoid connecting the lines
+        x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="teal"))
+    for x, y in zip(array_qx.T, array_qy.T):
+        x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="teal"))
+
+    fig.update_yaxes(
+        scaleanchor="x",
+        scaleratio=1,
+    )
+
+    fig.update_layout(
+        title="Tune footprint for beam 1 and bunch " + str(i_bunch_b1),
+        title_x=0.5,
+        xaxis_title="Qx",
+        yaxis_title="Qy",
+        xaxis=dict(
+            range=[np.min(array_qx) - 0.001, np.max(array_qy) + 0.001],
+        ),
+        yaxis=dict(
+            range=[np.min(array_qx) - 0.001, np.max(array_qy) + 0.001],
+        ),
+        # width=500,
+        # height=500,
+        showlegend=False,
+        margin=dict(l=20, r=20, b=10, t=30, pad=10),
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+
+    return fig

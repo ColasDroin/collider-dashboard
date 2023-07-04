@@ -18,6 +18,7 @@ from layout.survey import return_survey_layout
 from layout.header import return_header_layout
 from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
+from layout.footprint import return_footprint_layout
 
 
 #################### Load global variables ####################
@@ -26,8 +27,8 @@ from layout.separation import return_separation_layout
 # if len(sys.argv) > 1:
 #     path_config = sys.argv[1]
 # else:
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024/base_collider/xtrack_0000/config.yaml"
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=True, load_from_pickle=False)
 
 #################### App ####################
 app = Dash(
@@ -85,6 +86,8 @@ def select_tab(value):
             return return_filling_scheme_layout()
         case "display-separation":
             return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])
+        case "display-footprint":
+            return return_footprint_layout()
         case "display-sanity":
             sanity_after_beam_beam = return_sanity_layout(
                 dic_after_bb["dic_tw_b1"],
@@ -217,6 +220,17 @@ def update_graph_LHC_layout(value):
     return fig
 
 
+@app.callback(Output("footprint", "figure"), Input("tab-titles", "value"))
+def update_graph_footprint(value):
+    if value == "display-footprint":
+        return plot.return_plot_footprint(
+            dic_after_bb["footprint"],
+            dic_after_bb["i_bunch_b1"],
+        )
+    else:
+        return no_update
+
+
 # ! Uncomment this function once I find out how to store collider elements
 # @app.callback(
 #     Output("text-element", "children"),
@@ -330,7 +344,7 @@ def update_graph_LHC_layout(value):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8081)
+    app.run_server(debug=False, host="0.0.0.0", port=8082)
 
 
 # Run with gunicorn dashboard:server -b :8000

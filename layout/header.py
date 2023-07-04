@@ -51,6 +51,7 @@ def return_header_layout():
                                 {"value": "display-scheme", "label": "Filling scheme"},
                                 {"value": "display-sanity", "label": "Sanity checks"},
                                 {"value": "display-separation", "label": "Beam-beam separation"},
+                                {"value": "display-footprint", "label": "Footprint"},
                                 {"value": "display-optics", "label": "Optics"},
                                 {"value": "display-survey", "label": "Survey"},
                             ],

@@ -70,8 +70,12 @@ def init(path_config, build_collider=False, load_from_pickle=False):
         )
 
         # Get the global variables before and after the beam-beam
-        dic_after_bb = initialize_global_variables(twiss_check_after_beam_beam)
-        dic_before_bb = initialize_global_variables(twiss_check_before_beam_beam)
+        dic_after_bb = initialize_global_variables(
+            twiss_check_after_beam_beam, compute_footprint=True
+        )
+        dic_before_bb = initialize_global_variables(
+            twiss_check_before_beam_beam, compute_footprint=False
+        )
 
         # Dump the dictionnaries in a pickle file
         print("Dumping global variables in a pickle file.")
@@ -131,7 +135,7 @@ def initialize_both_twiss_checks(
     return twiss_check_after_bb, twiss_check_before_bb
 
 
-def initialize_global_variables(twiss_check):
+def initialize_global_variables(twiss_check, compute_footprint=True):
     """Initialize global variables, from a collider with beam-beam set."""
     if twiss_check.collider is None:
         raise ValueError("The collider must be provided in the twiss_check object.")
@@ -180,6 +184,15 @@ def initialize_global_variables(twiss_check):
     patt.compute_beam_beam_schedule(n_lr_per_side=26)
     bbs = patt.b1.bb_schedule
 
+    # Get the footprint only if bb is on
+    if compute_footprint:
+        array_qx, array_qy = return_footprint(
+            collider, twiss_check.nemitt_x, beam="lhcb1", n_turns=2000
+        )
+    else:
+        array_qx = np.array([])
+        array_qy = np.array([])
+
     # Store everything in a dictionnary
     dic_global_var = {
         "l_lumi": l_lumi,
@@ -200,6 +213,7 @@ def initialize_global_variables(twiss_check):
         "i_bunch_b1": i_bunch_b1,
         "i_bunch_b2": i_bunch_b2,
         "bbs": bbs,
+        "footprint": (array_qx, array_qy),
     }
 
     return dic_global_var
@@ -562,3 +576,18 @@ def return_data_table(df, id_table, twiss=True):
         ),
     )
     return table
+
+
+def return_footprint(collider, emittance, beam="lhcb1", n_turns=2000):
+    fp_polar_xm = collider[beam].get_footprint(
+        nemitt_x=emittance,
+        nemitt_y=emittance,
+        n_turns=n_turns,
+        linear_rescale_on_knobs=[xt.LinearRescale(knob_name="beambeam_scale", v0=0.0, dv=0.05)],
+        freeze_longitudinal=True,
+    )
+
+    qx = fp_polar_xm.qx
+    qy = fp_polar_xm.qy
+
+    return qx, qy
