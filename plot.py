@@ -2,6 +2,7 @@
 # --- Imports
 # ==================================================================================================import numpy as np
 import numpy as np
+import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -1296,9 +1297,9 @@ def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
 
 
 def return_plot_footprint(t_array_footprint, i_bunch_b1):
+    palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
-
     for x, y in zip(array_qx, array_qy):
         # Insert additional None when dx or dy is too big
         # to avoid connecting the lines
@@ -1306,13 +1307,13 @@ def return_plot_footprint(t_array_footprint, i_bunch_b1):
         y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
         x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
         y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="teal"))
-    for x, y in zip(array_qx.T, array_qy.T):
+        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="whitesmoke"))
+    for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
         x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
         y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
         x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
         y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="teal"))
+        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color=palette[9 - idx]))
 
     fig.update_yaxes(
         scaleanchor="x",
