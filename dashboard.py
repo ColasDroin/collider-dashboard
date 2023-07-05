@@ -28,7 +28,7 @@ from layout.footprint import return_footprint_layout
 #     path_config = sys.argv[1]
 # else:
 path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/example_tunescan/base_collider/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
-dic_before_bb, dic_after_bb = init.init(path_config, build_collider=True, load_from_pickle=False)
+dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
 
 #################### App ####################
 app = Dash(

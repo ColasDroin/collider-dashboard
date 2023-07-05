@@ -1326,10 +1326,10 @@ def return_plot_footprint(t_array_footprint, i_bunch_b1):
         xaxis_title="Qx",
         yaxis_title="Qy",
         xaxis=dict(
-            range=[np.min(array_qx) - 0.001, np.max(array_qy) + 0.001],
+            range=[np.percentile(array_qx, 10) - 0.001, np.percentile(array_qy, 90) + 0.001],
         ),
         yaxis=dict(
-            range=[np.min(array_qx) - 0.001, np.max(array_qy) + 0.001],
+            range=[np.percentile(array_qx, 10) - 0.003, np.percentile(array_qy, 90) + 0.003],
         ),
         # width=500,
         # height=500,
@@ -1338,6 +1338,7 @@ def return_plot_footprint(t_array_footprint, i_bunch_b1):
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        dragmode="pan",
     )
 
     return fig
