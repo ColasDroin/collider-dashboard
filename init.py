@@ -32,7 +32,6 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
     """Initialize the app variables from a given collider json file. All features related to the
     configuration will be deactivated."""
 
-    # ! Update this
     # Path to the pickle dictionnaries (for loading and saving)
     path_pickle = "temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
@@ -42,28 +41,38 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         if not os.path.isfile(path_pickle):
             raise ValueError("The pickle file does not exist.")
         with open(path_pickle, "rb") as f:
-            dic_before_bb, dic_after_bb = pickle.load(f)
+            dic_without_bb, dic_after_bb = pickle.load(f)
         print("Returning global variables from pickle file.")
-        return dic_before_bb, dic_after_bb
+        return dic_without_bb, dic_after_bb
 
     else:
         # Rebuild collider
         collider = xt.Multiline.from_json(path_collider)
-
-        # Build trackers
         collider.build_trackers()
 
-        # Compute dictionnary of global variables
-        dic_before_bb, dic_after_bb = compute_global_variables(
+        # Build collider before bb
+        collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+        collider_without_bb.build_trackers()
+        collider_without_bb.vars["beambeam_scale"] = 0
+
+        # Compute twiss checks
+        twiss_check_after_beam_beam, twiss_check_before_beam_beam = compute_twiss_checks(
             path_config=None,
             path_collider=None,
-            path_collider_before_bb=None,
+            path_collider_without_bb=None,
             force_build_collider=False,
             collider=collider,
+            collider_without_bb=collider_without_bb,
+        )
+
+        # Compute global variables
+        dic_without_bb, dic_after_bb = compute_global_variables_from_twiss_checks(
+            twiss_check_after_beam_beam,
+            twiss_check_before_beam_beam,
             path_pickle=path_pickle,
         )
 
-        return dic_before_bb, dic_after_bb
+        return dic_without_bb, dic_after_bb
 
 
 def init_from_config(
@@ -89,15 +98,15 @@ def init_from_config(
         if not os.path.isfile(path_pickle):
             raise ValueError("The pickle file does not exist.")
         with open(path_pickle, "rb") as f:
-            dic_before_bb, dic_after_bb = pickle.load(f)
+            dic_without_bb, dic_after_bb = pickle.load(f)
         print("Returning global variables from pickle file.")
-        return dic_before_bb, dic_after_bb
+        return dic_without_bb, dic_after_bb
 
     else:
         # If a collider is being built, explictely set the paths to None
         if force_build_collider:
             path_collider = None
-            path_collider_before_bb = None
+            path_collider_without_bb = None
         else:
             # Get the path to the collider object
             path_collider = (
@@ -106,69 +115,91 @@ def init_from_config(
                 + "collider.json"
             )
             # Also get a path to the collider after beam-beam object
-            path_collider_before_bb = path_collider.replace(".json", "_before_bb.json")
+            path_collider_without_bb = path_collider.replace(".json", "_before_bb.json")
 
-            # Compute global variables
-            dic_before_bb, dic_after_bb = compute_global_variables(
-                path_config=path_config,
-                path_collider=path_collider,
-                path_collider_before_bb=path_collider_before_bb,
-                force_build_collider=force_build_collider,
-                path_pickle=path_pickle,
-            )
+        # Compute twiss checks
+        twiss_check_after_beam_beam, twiss_check_before_beam_beam = compute_twiss_checks(
+            path_config=path_config,
+            path_collider=path_collider,
+            path_collider_without_bb=path_collider_without_bb,
+            force_build_collider=force_build_collider,
+        )
 
-        return dic_before_bb, dic_after_bb
+        # Compute global variables
+        dic_without_bb, dic_after_bb = compute_global_variables_from_twiss_checks(
+            twiss_check_after_beam_beam,
+            twiss_check_before_beam_beam,
+            path_pickle=path_pickle,
+        )
+
+        return dic_without_bb, dic_after_bb
 
 
-def compute_global_variables(
+def compute_twiss_checks(
     path_config=None,
     path_collider=None,
     collider=None,
-    path_collider_before_bb=None,
+    collider_without_bb=None,
+    path_collider_without_bb=None,
     force_build_collider=False,
-    path_pickle=None,
 ):
     """Computes the app global variables from:
-    - either a collider (gen 1 or gen 2)
+    - either a collider (gen 1 or gen 2), before and after bb
     - either a path to configuration file, along with the path to gen 1 collider
-    - an already existing gen 2 collider if force_build_collider is False, else the collider object
-      is stored in the temp folder.
+    - an already existing gen 2 collider (in the temp folder) if force_build_collider is False, else
+      the collider objects (before and after bb) are stored in the temp folder.
     """
 
     if force_build_collider:
         if path_config is None:
             raise ValueError("If force_build_collider is True, path_config must be provided.")
-        if path_collider is not None or path_collider_before_bb is not None:
+        elif (
+            path_collider is not None or path_collider_without_bb is not None or collider is not None
+        ):
             raise ValueError(
-                "If force_build_collider is True, path_collider and path_collider_before_bb must"
-                " not be provided."
+                "If force_build_collider is True, path_collider, path_collider_without_bb and"
+                " collider must not be provided."
             )
-        if collider is not None:
-            raise ValueError("If force_build_collider is True, a collider must not be provided.")
+        else:
+            twiss_check_after_beam_beam, twiss_check_before_beam_beam = (
+                initialize_twiss_checks_configuring_new_collider(path_config)
+            )
 
-    if collider is not None:
+    elif collider is not None:
         if (
             path_config is not None
             or path_collider is not None
-            or path_collider_before_bb is not None
+            or path_collider_without_bb is not None
             or force_build_collider is not False
         ):
             raise ValueError(
-                "If collider is provided, path_config, path_collider, path_collider_before_bb and"
+                "If collider is provided, path_config, path_collider, path_collider_without_bb and"
                 " force_build_collider must not be provided."
             )
+        elif collider_without_bb is None:
+            raise ValueError("If collider is provided, collider_without_bb must be provided.")
+        else:
+            twiss_check_after_beam_beam, twiss_check_before_beam_beam = (
+                initialize_twiss_checks_from_collider_objects(collider, collider_without_bb)
+            )
 
-    # Build the Twiss check objects
-    twiss_check_after_beam_beam, twiss_check_before_beam_beam = initialize_both_twiss_checks(
-        path_config,
-        path_collider=path_collider,
-        path_collider_before_bb=path_collider_before_bb,
-        build_collider=force_build_collider,
-    )
+    elif path_config is not None:
+        twiss_check_after_beam_beam, twiss_check_before_beam_beam = (
+            initialize_twiss_checks_configuring_new_collider(path_config)
+        )
 
+    else:
+        raise ValueError("Either collider, path_config or force_build_collider must be provided.")
+
+    return twiss_check_after_beam_beam, twiss_check_before_beam_beam
+
+
+def compute_global_variables_from_twiss_checks(
+    twiss_check_after_beam_beam, twiss_check_before_beam_beam, path_pickle=None
+):
     # Get the global variables before and after the beam-beam
     dic_after_bb = initialize_global_variables(twiss_check_after_beam_beam, compute_footprint=True)
-    dic_before_bb = initialize_global_variables(
+    dic_without_bb = initialize_global_variables(
         twiss_check_before_beam_beam, compute_footprint=False
     )
 
@@ -176,59 +207,61 @@ def compute_global_variables(
         # Dump the dictionnaries in a pickle file
         print("Dumping global variables in a pickle file.")
         with open(path_pickle, "wb") as f:
-            pickle.dump((dic_before_bb, dic_after_bb), f)
+            pickle.dump((dic_without_bb, dic_after_bb), f)
 
-    return dic_before_bb, dic_after_bb
+    return dic_without_bb, dic_after_bb
 
 
-def initialize_both_twiss_checks(
-    path_config, path_collider=None, path_collider_before_bb=None, build_collider=True
+def initialize_twiss_checks_configuring_new_collider(path_config):
+    # Build collider from config file
+    build_collider = BuildCollider(path_config)
+
+    # Dump collider
+    path_collider = build_collider.dump_collider(
+        prefix="temp/", dump_before_bb=False
+    )
+
+    # Do Twiss check after bb with the collider dumped previously
+    twiss_check_after_bb = TwissCheck(
+        path_config,
+        collider=build_collider.collider,
+    )
+
+    # Same before bb
+    twiss_check_without_bb = TwissCheck(
+        path_config,
+        collider=build_collider.collider_without_bb,
+    )
+
+    return twiss_check_after_bb, twiss_check_without_bb
+
+
+def initialize_twiss_checks_from_temp_collider_paths(
+    path_config, path_collider, path_collider_without_bb
 ):
-    """Initialize all twiss_check object from a collider or path to a collider."""
-    if build_collider:
-        if path_collider is not None or path_collider_before_bb is not None:
-            raise ValueError(
-                "If build_collider is True, path_collider and path_collider_before_bb must not be"
-                " provided. If you want to use a collider from a json file, set build_collider to"
-                " False."
-            )
+    # Rebuild the collider from the json file
+    collider = xt.Multiline.from_json(path_collider)
+    collider.build_trackers()
 
-        # Build collider from config file
-        build_collider = BuildCollider(path_config)
+    # Build collider before bb
+    collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+    collider_without_bb.build_trackers()
+    collider_without_bb.vars["beambeam_scale"] = 0   
+    
+    
+    # Do Twiss check, reloading the collider from a json file
+    twiss_check_after_bb = TwissCheck(path_config, collider=collider)
+    twiss_check_without_bb = TwissCheck(
+        path_config, collider=collider_without_bb
+    )
 
-        # Dump collider
-        path_collider, path_collider_before_bb = build_collider.dump_collider(
-            prefix="temp/", dump_before_bb=True
-        )
+    return twiss_check_after_bb, twiss_check_without_bb
 
-        # Do Twiss check after bb with the collider dumped previously
-        twiss_check_after_bb = TwissCheck(
-            path_config,
-            path_collider=None,
-            collider=build_collider.collider,
-        )
 
-        # Same before bb
-        twiss_check_before_bb = TwissCheck(
-            path_config,
-            path_collider=None,
-            collider=build_collider.collider_before_bb,
-        )
-
-    elif path_collider is not None and path_collider_before_bb is not None:
-        # Do Twiss check, reloading the collider from a json file
-        twiss_check_after_bb = TwissCheck(path_config, path_collider=path_collider, collider=None)
-        twiss_check_before_bb = TwissCheck(
-            path_config, path_collider=path_collider_before_bb, collider=None
-        )
-    else:
-        raise ValueError(
-            "If build_collider is False, path_collider and path_collider_before_bb must be"
-            " provided."
-        )
-
-    # Finally, return the two twiss_check objects
-    return twiss_check_after_bb, twiss_check_before_bb
+def initialize_twiss_checks_from_collider_objects(collider, collider_without_bb):
+    twiss_check_after_bb = None
+    twiss_check_without_bb = None
+    return twiss_check_after_bb, twiss_check_without_bb
 
 
 def initialize_global_variables(twiss_check, compute_footprint=True):

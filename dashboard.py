@@ -27,9 +27,9 @@ from layout.footprint import return_footprint_layout
 # if len(sys.argv) > 1:
 #     path_config = sys.argv[1]
 # else:
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/example_tunescan/base_collider/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
+path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
 dic_before_bb, dic_after_bb = init.init_from_config(
-    path_config, force_build_collider=False, load_global_variables_from_pickle=True
+    path_config, force_build_collider=True, load_global_variables_from_pickle=False
 )
 
 #################### App ####################
