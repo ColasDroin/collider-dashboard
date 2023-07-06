@@ -198,8 +198,21 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
         body_5 = [html.Tbody([row_PU])]
         table_5 = dmc.Table(header_4 + body_5)
     else:
-        table_4 = dmc.Text("No luminosities could be computed since no configuration was provided with the collider", size="xl", style={"margin": "auto"})
-        table_5 = dmc.Text("No pile-up could be computed since no configuration was provided with the collider", size="xl", style={"margin": "auto"})
+        table_4 = dmc.Text(
+            (
+                "No luminosities could be computed since no configuration was provided with the"
+                " collider"
+            ),
+            size="xl",
+            style={"margin": "auto"},
+            color="tomato",
+        )
+        table_5 = dmc.Text(
+            "No pile-up could be computed since no configuration was provided with the collider",
+            size="xl",
+            style={"margin": "auto"},
+            color="tomato",
+        )
 
     return dmc.Stack(
         children=[
@@ -227,7 +240,7 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
                 mb=10,
                 style={"width": "100%"},
             ),
-            dmc.Group(
+            dmc.Stack(
                 children=[
                     dmc.Text("Luminosities", size="xl", style={"margin": "auto"}),
                     table_4,
@@ -235,7 +248,7 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
                 mb=10,
                 style={"width": "100%"},
             ),
-            dmc.Group(
+            dmc.Stack(
                 children=[
                     dmc.Text("Pile-up", size="xl", style={"margin": "auto"}),
                     table_5,

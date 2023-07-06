@@ -1,6 +1,7 @@
 #################### Imports ####################
 
 # Import standard libraries
+import plotly.graph_objects as go
 import dash_mantine_components as dmc
 from dash import Dash, html, Input, Output, no_update
 import sys
@@ -23,15 +24,15 @@ from layout.footprint import return_footprint_layout
 
 #################### Load global variables ####################
 
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
-dic_without_bb, dic_with_bb = init.init_from_config(
-    path_config, force_build_collider=False, load_global_variables_from_pickle=False
-)
-
-# path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/final_collider.json"
-# dic_without_bb, dic_with_bb = init_from_collider(
-#     path_collider, load_global_variables_from_pickle=False
+# path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
+# dic_without_bb, dic_with_bb = init.init_from_config(
+#     path_config, force_build_collider=False, load_global_variables_from_pickle=False
 # )
+path_config = None
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/final_collider.json"
+dic_without_bb, dic_with_bb = init.init_from_collider(
+    path_collider, load_global_variables_from_pickle=True
+)
 #################### App ####################
 app = Dash(
     __name__,
@@ -180,19 +181,33 @@ def update_graph_LHC_layout(l_values):
     return fig
 
 
-@app.callback(Output("filling-scheme-graph", "figure"), Input("tab-titles", "value"))
+@app.callback(
+    Output("filling-scheme-graph", "figure"),
+    Output("filling-scheme-graph", "style"),
+    Output("filling-scheme-alert", "style"),
+    Input("tab-titles", "value"),
+)
 def update_graph_filling(value):
     if value == "display-scheme":
         if dic_with_bb["array_b1"] is not None:
-            return plot.return_plot_filling_scheme(
-                dic_with_bb["array_b1"],
-                dic_with_bb["array_b2"],
-                dic_with_bb["i_bunch_b1"],
-                dic_with_bb["i_bunch_b2"],
-                dic_with_bb["bbs"],
+            return (
+                plot.return_plot_filling_scheme(
+                    dic_with_bb["array_b1"],
+                    dic_with_bb["array_b2"],
+                    dic_with_bb["i_bunch_b1"],
+                    dic_with_bb["i_bunch_b2"],
+                    dic_with_bb["bbs"],
+                ),
+                {"height": "90vh", "width": "100%", "margin": "auto"},
+                {"margin": "auto", "display": "none"},
             )
+
         else:
-            return no_update
+            return (
+                go.Figure(),
+                {"height": "90vh", "width": "100%", "margin": "auto", "display": "none"},
+                {"margin": "auto"},
+            )
 
     else:
         return no_update

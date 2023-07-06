@@ -29,8 +29,13 @@ def return_configuration_layout(path_configuration):
         )
 
     else:
-        configuration_layout = dmc.Text(
-            "No configuration file provided", size="xl", style={"margin": "auto"}
+        configuration_layout = dmc.Center(
+            dmc.Alert(
+                "Configuration can't be displayed as no configuration file was provided.",
+                title="No configuration !",
+                style={"margin": "auto"},
+            ),
+            style={"width": "70%", "margin": "auto"},
         )
 
     return configuration_layout

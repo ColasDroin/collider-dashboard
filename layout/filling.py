@@ -14,6 +14,15 @@ import plot
 def return_filling_scheme_layout():
     scheme_layout = dmc.Stack(
         children=[
+            dmc.Alert(
+                (
+                    "Filling scheme analysis not available as no configuration was provided when"
+                    " building the dashboard"
+                ),
+                title="No configuration provided!",
+                id="filling-scheme-alert",
+                style={"margin": "auto", "display": "none"},
+            ),
             dcc.Loading(
                 dcc.Graph(
                     id="filling-scheme-graph",
