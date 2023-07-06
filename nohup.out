@@ -122,3 +122,39 @@ PermissionError: [Errno 13] Permission denied: '/afs/cern.ch/work/c/cdroin/priva
 [2023-07-03 16:20:26 +0200] [729334] [INFO] Worker exiting (pid: 729334)
 Returning global variables from pickle file.
 [2023-07-03 16:20:27 +0200] [728725] [INFO] Shutting down: Master
+[2023-07-03 16:21:33 +0200] [967475] [INFO] Starting gunicorn 20.1.0
+[2023-07-03 16:21:33 +0200] [967475] [INFO] Listening at: http://0.0.0.0:8080 (967475)
+[2023-07-03 16:21:33 +0200] [967475] [INFO] Using worker: sync
+[2023-07-03 16:21:33 +0200] [967477] [INFO] Booting worker with pid: 967477
+[2023-07-03 16:21:57 +0200] [967741] [INFO] Starting gunicorn 20.1.0
+[2023-07-03 16:21:57 +0200] [967741] [INFO] Listening at: http://0.0.0.0:8081 (967741)
+[2023-07-03 16:21:57 +0200] [967741] [INFO] Using worker: sync
+[2023-07-03 16:21:57 +0200] [967743] [INFO] Booting worker with pid: 967743
+[2023-07-03 18:12:08 +0200] [967475] [INFO] Handling signal: hup
+[2023-07-03 18:12:08 +0200] [967475] [INFO] Hang up: Master
+[2023-07-03 18:12:08 +0200] [967741] [INFO] Handling signal: hup
+[2023-07-03 18:12:08 +0200] [967741] [INFO] Hang up: Master
+[2023-07-03 18:12:08 +0200] [988518] [INFO] Booting worker with pid: 988518
+[2023-07-03 18:12:08 +0200] [988519] [INFO] Booting worker with pid: 988519
+[2023-07-03 18:12:08 +0200] [967741] [WARNING] Worker with pid 967743 was terminated due to signal 1
+[2023-07-03 18:12:08 +0200] [967475] [WARNING] Worker with pid 967477 was terminated due to signal 1
+[2023-07-05 11:28:38 +0200] [967475] [INFO] Handling signal: term
+[2023-07-05 11:28:38 +0200] [967741] [INFO] Handling signal: term
+[2023-07-05 00:06:51,655] ERROR in app: Exception on / [GET]
+Traceback (most recent call last):
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/flask/app.py", line 2529, in wsgi_app
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/flask/app.py", line 1825, in full_dispatch_request
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/flask/app.py", line 1821, in full_dispatch_request
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/flask/app.py", line 2313, in preprocess_request
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/dash/dash.py", line 1284, in _setup_server
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/dash/dash.py", line 822, in _generate_scripts_html
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/dash/dash.py", line 769, in _collect_and_register_resources
+  File "/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/dash/dash.py", line 748, in _relative_url_path
+PermissionError: [Errno 13] Permission denied: '/afs/cern.ch/work/c/cdroin/private/example_DA_study/miniforge/lib/python3.10/site-packages/dash/deps/polyfill@7.12.1.min.js'
+--- Logging error ---
+[2023-07-05 11:28:38 +0200] [988518] [INFO] Worker exiting (pid: 988518)
+[2023-07-05 11:28:38 +0200] [988519] [INFO] Worker exiting (pid: 988519)
+Returning global variables from pickle file.
+Returning global variables from pickle file.
+[2023-07-05 11:28:39 +0200] [967475] [INFO] Shutting down: Master
+[2023-07-05 11:28:39 +0200] [967741] [INFO] Shutting down: Master
