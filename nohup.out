@@ -59,7 +59,7 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap_external>", line 883, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
   File "/afs/cern.ch/work/c/cdroin/private/dashboard/dashboard.py", line 32, in <module>
-    dic_before_bb, dic_after_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
+    dic_without_bb, dic_with_bb = init.init(path_config, build_collider=False, load_from_pickle=True)
   File "/afs/cern.ch/work/c/cdroin/private/dashboard/init.py", line 30, in init
     + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
 IndexError: list index out of range

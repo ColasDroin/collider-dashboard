@@ -1296,7 +1296,7 @@ def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
     return fig
 
 
-def return_plot_footprint(t_array_footprint, i_bunch_b1):
+def return_plot_footprint(t_array_footprint, title):
     palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
@@ -1307,7 +1307,14 @@ def return_plot_footprint(t_array_footprint, i_bunch_b1):
         y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
         x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
         y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color="whitesmoke", opacity=0.3,))
+        fig.add_trace(
+            go.Scattergl(
+                x=x_temp,
+                y=y_temp,
+                line_color="whitesmoke",
+                opacity=0.3,
+            )
+        )
     for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
         x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
         y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
@@ -1321,7 +1328,7 @@ def return_plot_footprint(t_array_footprint, i_bunch_b1):
     )
 
     fig.update_layout(
-        title="Tune footprint for beam 1 and bunch " + str(i_bunch_b1),
+        title=title,
         title_x=0.5,
         xaxis_title="Qx",
         yaxis_title="Qy",

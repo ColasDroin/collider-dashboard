@@ -23,15 +23,15 @@ from layout.footprint import return_footprint_layout
 
 #################### Load global variables ####################
 
-# Get the path to the config file from the command line, or use the default one
-# if len(sys.argv) > 1:
-#     path_config = sys.argv[1]
-# else:
 path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
-dic_before_bb, dic_after_bb = init.init_from_config(
-    path_config, force_build_collider=True, load_global_variables_from_pickle=False
+dic_without_bb, dic_with_bb = init.init_from_config(
+    path_config, force_build_collider=False, load_global_variables_from_pickle=False
 )
 
+# path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/final_collider.json"
+# dic_without_bb, dic_with_bb = init_from_collider(
+#     path_collider, load_global_variables_from_pickle=False
+# )
 #################### App ####################
 app = Dash(
     __name__,
@@ -87,23 +87,23 @@ def select_tab(value):
         case "display-scheme":
             return return_filling_scheme_layout()
         case "display-separation":
-            return return_separation_layout(dic_before_bb["dic_sep_IPs"]["v"])
+            return return_separation_layout(dic_without_bb["dic_sep_IPs"]["v"])
         case "display-footprint":
             return return_footprint_layout()
         case "display-sanity":
             sanity_after_beam_beam = return_sanity_layout(
-                dic_after_bb["dic_tw_b1"],
-                dic_after_bb["dic_tw_b2"],
-                dic_after_bb["l_lumi"],
-                dic_after_bb["array_b1"],
-                dic_after_bb["array_b2"],
+                dic_with_bb["dic_tw_b1"],
+                dic_with_bb["dic_tw_b2"],
+                dic_with_bb["l_lumi"],
+                dic_with_bb["array_b1"],
+                dic_with_bb["array_b2"],
             )
             sanity_before_beam_beam = return_sanity_layout(
-                dic_before_bb["dic_tw_b1"],
-                dic_before_bb["dic_tw_b2"],
-                dic_before_bb["l_lumi"],
-                dic_before_bb["array_b1"],
-                dic_before_bb["array_b2"],
+                dic_without_bb["dic_tw_b1"],
+                dic_without_bb["dic_tw_b2"],
+                dic_without_bb["l_lumi"],
+                dic_without_bb["array_b1"],
+                dic_without_bb["array_b2"],
             )
             tabs_sanity = dmc.Tabs(
                 [
@@ -131,7 +131,7 @@ def select_tab(value):
             return tabs_sanity
 
         case "display-optics":
-            return return_optics_layout(dic_after_bb)
+            return return_optics_layout(dic_with_bb)
         case "display-survey":
             return return_survey_layout()
         case _:
@@ -142,15 +142,15 @@ def select_tab(value):
 def select_data_table(value):
     match value:
         case "Twiss table beam 1":
-            return dic_after_bb["table_tw_b1"]
+            return dic_with_bb["table_tw_b1"]
         case "Survey table beam 1":
-            return dic_after_bb["table_sv_b1"]
+            return dic_with_bb["table_sv_b1"]
         case "Twiss table beam 2":
-            return dic_after_bb["table_tw_b2"]
+            return dic_with_bb["table_tw_b2"]
         case "Survey table beam 2":
-            return dic_after_bb["table_sv_b2"]
+            return dic_with_bb["table_sv_b2"]
         case _:
-            return dic_after_bb["table_tw_b1"]
+            return dic_with_bb["table_tw_b1"]
 
 
 @app.callback(
@@ -164,16 +164,16 @@ def update_graph_LHC_layout(l_values):
         # Get indices of elements to keep (# ! implemented only for beam 1)
         l_indices_to_keep.extend(
             plot.get_indices_of_interest(
-                dic_after_bb["df_tw_b1"], "ip" + str_ind_1, "ip" + str_ind_2
+                dic_with_bb["df_tw_b1"], "ip" + str_ind_1, "ip" + str_ind_2
             )
         )
 
     fig = plot.return_plot_lattice_with_tracking(
-        dic_after_bb["df_sv_b1"],
-        dic_after_bb["df_elements_corrected"],
-        dic_after_bb["df_tw_b1"],
-        df_sv_2=dic_after_bb["df_sv_b2"],
-        df_tw_2=dic_after_bb["df_tw_b2"],
+        dic_with_bb["df_sv_b1"],
+        dic_with_bb["df_elements_corrected"],
+        dic_with_bb["df_tw_b1"],
+        df_sv_2=dic_with_bb["df_sv_b2"],
+        df_tw_2=dic_with_bb["df_tw_b2"],
         l_indices_to_keep=l_indices_to_keep,
     )
 
@@ -183,13 +183,13 @@ def update_graph_LHC_layout(l_values):
 @app.callback(Output("filling-scheme-graph", "figure"), Input("tab-titles", "value"))
 def update_graph_filling(value):
     if value == "display-scheme":
-        if dic_after_bb["array_b1"] is not None:
+        if dic_with_bb["array_b1"] is not None:
             return plot.return_plot_filling_scheme(
-                dic_after_bb["array_b1"],
-                dic_after_bb["array_b2"],
-                dic_after_bb["i_bunch_b1"],
-                dic_after_bb["i_bunch_b2"],
-                dic_after_bb["bbs"],
+                dic_with_bb["array_b1"],
+                dic_with_bb["array_b2"],
+                dic_with_bb["i_bunch_b1"],
+                dic_with_bb["i_bunch_b2"],
+                dic_with_bb["bbs"],
             )
         else:
             return no_update
@@ -202,10 +202,10 @@ def update_graph_filling(value):
 def update_graph_optics(value):
     if value == "display-optics":
         return plot.return_plot_optics(
-            dic_after_bb["df_tw_b1"],
-            dic_after_bb["df_tw_b2"],
-            dic_after_bb["df_sv_b1"],
-            dic_after_bb["df_elements_corrected"],
+            dic_with_bb["df_tw_b1"],
+            dic_with_bb["df_tw_b2"],
+            dic_with_bb["df_sv_b1"],
+            dic_with_bb["df_elements_corrected"],
         )
     else:
         return no_update
@@ -217,21 +217,47 @@ def update_graph_optics(value):
 )
 def update_graph_LHC_layout(value):
     if value == "v" or value == "h":
-        fig = plot.return_plot_separation(dic_before_bb["dic_sep_IPs"][value])
+        fig = plot.return_plot_separation(dic_without_bb["dic_sep_IPs"][value])
     else:
         fig = plot.return_plot_separation_both_planes(
-            dic_before_bb["dic_sep_IPs"]["v"], dic_before_bb["dic_sep_IPs"]["h"]
+            dic_without_bb["dic_sep_IPs"]["v"], dic_without_bb["dic_sep_IPs"]["h"]
         )
     return fig
 
 
-@app.callback(Output("footprint", "figure"), Input("tab-titles", "value"))
+@app.callback(
+    Output("footprint-without-bb", "figure"),
+    Output("footprint-with-bb", "figure"),
+    Input("tab-titles", "value"),
+)
 def update_graph_footprint(value):
     if value == "display-footprint":
-        return plot.return_plot_footprint(
-            dic_after_bb["footprint"],
-            dic_after_bb["i_bunch_b1"],
-        )
+        if dic_without_bb["i_bunch_b1"] is not None:
+            title_without_bb = (
+                "Tune footprint without beam-beam effects for beam 1 and bunch "
+                + str(dic_without_bb["i_bunch_b1"])
+            )
+            title_with_bb = "Tune footprint with beam-beam effects for beam 1 and bunch " + str(
+                dic_with_bb["i_bunch_b1"]
+            )
+        else:
+            title_without_bb = (
+                "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
+            )
+            title_with_bb = (
+                "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
+            )
+
+        return [
+            plot.return_plot_footprint(
+                dic_without_bb["footprint"],
+                title=title_without_bb,
+            ),
+            plot.return_plot_footprint(
+                dic_with_bb["footprint"],
+                title=title_with_bb,
+            ),
+        ]
     else:
         return no_update
 

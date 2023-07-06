@@ -16,16 +16,31 @@ def return_footprint_layout():
             dmc.Stack(
                 children=[
                     dcc.Loading(
-                        dcc.Graph(
-                            id="footprint",
-                            mathjax=True,
-                            config={
-                                "displayModeBar": False,
-                                "scrollZoom": True,
-                                "responsive": True,
-                                "displaylogo": False,
-                            },
-                            style={"height": "70vh", "width": "70%", "margin": "auto"},
+                        dmc.Group(
+                            children=[
+                                dcc.Graph(
+                                    id="footprint-without-bb",
+                                    mathjax=True,
+                                    config={
+                                        "displayModeBar": False,
+                                        "scrollZoom": True,
+                                        "responsive": True,
+                                        "displaylogo": False,
+                                    },
+                                    style={"height": "70vh", "width": "45%", "margin": "auto"},
+                                ),
+                                dcc.Graph(
+                                    id="footprint-with-bb",
+                                    mathjax=True,
+                                    config={
+                                        "displayModeBar": False,
+                                        "scrollZoom": True,
+                                        "responsive": True,
+                                        "displaylogo": False,
+                                    },
+                                    style={"height": "70vh", "width": "45%", "margin": "auto"},
+                                ),
+                            ],
                         ),
                         type="circle",
                         color="cyan",
