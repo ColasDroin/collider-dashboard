@@ -10,6 +10,7 @@ from dash.dash_table.Format import Format, Scheme
 import pickle
 import os
 import copy
+import logging
 
 # Module to compute beam-beam schedule
 import fillingpatterns as fp
@@ -115,7 +116,7 @@ def init_from_config(
                 + "collider.json"
             )
             # Also get a path to the collider after beam-beam object
-            path_collider_without_bb = path_collider.replace(".json", "_before_bb.json")
+            path_collider_without_bb = path_collider.replace(".json", "_without_bb.json")
 
         # Compute twiss checks
         twiss_check_after_beam_beam, twiss_check_without_beam_beam = compute_twiss_checks(
@@ -154,7 +155,9 @@ def compute_twiss_checks(
         if path_config is None:
             raise ValueError("If force_build_collider is True, path_config must be provided.")
         elif (
-            path_collider is not None or path_collider_without_bb is not None or collider is not None
+            path_collider is not None
+            or path_collider_without_bb is not None
+            or collider is not None
         ):
             raise ValueError(
                 "If force_build_collider is True, path_collider, path_collider_without_bb and"
@@ -200,7 +203,7 @@ def compute_global_variables_from_twiss_checks(
     # Get the global variables before and after the beam-beam
     dic_after_bb = initialize_global_variables(twiss_check_after_beam_beam, compute_footprint=True)
     dic_without_bb = initialize_global_variables(
-        twiss_check_without_beam_beam, compute_footprint=False
+        twiss_check_without_beam_beam, compute_footprint=True
     )
 
     if path_pickle is not None:
@@ -217,9 +220,7 @@ def initialize_twiss_checks_configuring_new_collider(path_config):
     build_collider = BuildCollider(path_config)
 
     # Dump collider
-    path_collider = build_collider.dump_collider(
-        prefix="temp/", dump_before_bb=False
-    )
+    path_collider = build_collider.dump_collider(prefix="temp/")
 
     # Do Twiss check after bb with the collider dumped previously
     twiss_check_after_bb = TwissCheck(
@@ -246,31 +247,56 @@ def initialize_twiss_checks_from_temp_collider_paths(
     # Build collider before bb
     collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
     collider_without_bb.build_trackers()
-    collider_without_bb.vars["beambeam_scale"] = 0   
-    
-    
+    collider_without_bb.vars["beambeam_scale"] = 0
+
     # Do Twiss check, reloading the collider from a json file
     twiss_check_after_bb = TwissCheck(path_config, collider=collider)
-    twiss_check_without_bb = TwissCheck(
-        path_config, collider=collider_without_bb
-    )
+    twiss_check_without_bb = TwissCheck(path_config, collider=collider_without_bb)
 
     return twiss_check_after_bb, twiss_check_without_bb
 
 
 def initialize_twiss_checks_from_collider_objects(collider, collider_without_bb):
-    twiss_check_after_bb = None
-    twiss_check_without_bb = None
+    twiss_check_after_bb = TwissCheck(collider=collider)
+    twiss_check_without_bb = TwissCheck(collider=collider_without_bb)
     return twiss_check_after_bb, twiss_check_without_bb
 
 
 def initialize_global_variables(twiss_check, compute_footprint=True):
     """Initialize global variables, from a collider with beam-beam set."""
-    if twiss_check.collider is None:
-        raise ValueError("The collider must be provided in the twiss_check object.")
 
     # Get luminosity at each IP
-    l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+    if twiss_check.path_configuration is not None:
+        l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+
+        # Get the beams schemes
+        array_b1 = twiss_check.array_b1
+        array_b2 = twiss_check.array_b2
+
+        # Get the bunches selected for tracking
+        i_bunch_b1 = twiss_check.i_bunch_b1
+        i_bunch_b2 = twiss_check.i_bunch_b2
+
+        # Get emittances
+        nemitt_x = twiss_check.nemitt_x
+        nemitt_y = twiss_check.nemitt_y
+
+        # Get the beam-beam schedule
+        patt = fp.FillingPattern.from_json(twiss_check.path_filling_scheme)
+        patt.compute_beam_beam_schedule(n_lr_per_side=26)
+        bbs = patt.b1.bb_schedule
+
+    else:
+        l_lumi = None
+        array_b1 = None
+        array_b2 = None
+        i_bunch_b1 = None
+        i_bunch_b2 = None
+        bbs = None
+        # Get emittance for the computation of the normalized separation
+        logging.warning("No configuration file provided, using default values for emittances.")
+        nemitt_x = 2.5e-6
+        nemitt_y = 2.5e-6
 
     # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
     (
@@ -296,28 +322,13 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
     dic_tw_b1 = return_twiss_dic(tw_b1)
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
-    # Get the beams schemes
-    array_b1 = twiss_check.array_b1
-    array_b2 = twiss_check.array_b2
-
-    # get the bunches selected for tracking
-    i_bunch_b1 = twiss_check.i_bunch_b1
-    i_bunch_b2 = twiss_check.i_bunch_b2
-
     # Get the dictionnary to plot separation
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
-    dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1)
-
-    # Get the beam-beam schedule
-    patt = fp.FillingPattern.from_json(twiss_check.path_filling_scheme)
-    patt.compute_beam_beam_schedule(n_lr_per_side=26)
-    bbs = patt.b1.bb_schedule
+    dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y)
 
     # Get the footprint only if bb is on
     if compute_footprint:
-        array_qx, array_qy = return_footprint(
-            collider, twiss_check.nemitt_x, beam="lhcb1", n_turns=2000
-        )
+        array_qx, array_qy = return_footprint(collider, nemitt_x, beam="lhcb1", n_turns=2000)
     else:
         array_qx = np.array([])
         array_qy = np.array([])
@@ -423,9 +434,6 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
 
 def return_all_loaded_variables(collider):
     """Return all loaded variables if they are not already loaded."""
-
-    if collider is None:
-        raise ValueError("Either collider or collider_path must be provided")
 
     # Get elements of the line (only done for b1, should be identical for b2)
     df_elements = return_dataframe_elements_from_line(collider.lhcb1)
@@ -593,8 +601,9 @@ def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
     return dic_bb_ho_IPs
 
 
-def return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1):
+def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y):
     dic_sep_IPs = {"v": {}, "h": {}}
+
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         # s doesn't depend on plane
         s = dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].s
@@ -604,7 +613,7 @@ def return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1):
             dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
             - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
         )
-        n_emitt = twiss_check.nemitt_x / 7000
+        n_emitt = nemitt_x / 7000
         sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
         xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
         beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
@@ -628,7 +637,7 @@ def return_separation_dic(dic_bb_ho_IPs, twiss_check, tw_b1):
             dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].y
             - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].y.to_numpy()
         )
-        n_emitt = twiss_check.nemitt_y / 7000
+        n_emitt = nemitt_y / 7000
         sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].bety * n_emitt) ** 0.5
         xing = abs(float(tw_b1.rows[f"ip{n_ip}"]["py"]))
         beta = float(tw_b1.rows[f"ip{n_ip}"]["bety"])

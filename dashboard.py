@@ -183,13 +183,16 @@ def update_graph_LHC_layout(l_values):
 @app.callback(Output("filling-scheme-graph", "figure"), Input("tab-titles", "value"))
 def update_graph_filling(value):
     if value == "display-scheme":
-        return plot.return_plot_filling_scheme(
-            dic_after_bb["array_b1"],
-            dic_after_bb["array_b2"],
-            dic_after_bb["i_bunch_b1"],
-            dic_after_bb["i_bunch_b2"],
-            dic_after_bb["bbs"],
-        )
+        if dic_after_bb["array_b1"] is not None:
+            return plot.return_plot_filling_scheme(
+                dic_after_bb["array_b1"],
+                dic_after_bb["array_b2"],
+                dic_after_bb["i_bunch_b1"],
+                dic_after_bb["i_bunch_b2"],
+                dic_after_bb["bbs"],
+            )
+        else:
+            return no_update
 
     else:
         return no_update

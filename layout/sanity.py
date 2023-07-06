@@ -111,91 +111,95 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
     table_2 = dmc.Table(header_2 + body_2)
     table_3 = dmc.Table(header_2 + body_3)
 
-    # Luminosities
-    header_3 = [
-        html.Thead(
-            html.Tr(
-                [
-                    html.Th("IP 1 [cm-2 s-1]"),
-                    html.Th("IP 2 [cm-2 s-1]"),
-                    html.Th("IP 5 [cm-2 s-1]"),
-                    html.Th("IP 8 [cm-2 s-1]"),
-                ]
+    if l_lumi is not None:
+        # Luminosities
+        header_3 = [
+            html.Thead(
+                html.Tr(
+                    [
+                        html.Th("IP 1 [cm-2 s-1]"),
+                        html.Th("IP 2 [cm-2 s-1]"),
+                        html.Th("IP 5 [cm-2 s-1]"),
+                        html.Th("IP 8 [cm-2 s-1]"),
+                    ]
+                )
             )
-        )
-    ]
-
-    row_lumi = html.Tr(
-        [
-            (
-                html.Td(f"{l_lumi[0]:.3e}", style={"font-weight": "bold", "color": "red"})
-                if l_lumi[0] > 5e34
-                else html.Td(f"{l_lumi[0]:.3e}")
-            ),
-            html.Td(f"{l_lumi[1]:.3e}"),
-            (
-                html.Td(f"{l_lumi[2]:.3e}", style={"font-weight": "bold", "color": "red"})
-                if l_lumi[2] > 5e34
-                else html.Td(f"{l_lumi[2]:.3e}")
-            ),
-            html.Td(f"{l_lumi[3]:.3e}"),
         ]
-    )
-    body_4 = [html.Tbody([row_lumi])]
-    table_4 = dmc.Table(header_3 + body_4)
 
-    # Pile-up
-    cross_section = 81e-27
-    # Assert that the arrays have the required length, and do the convolution to get number of collisions
-    assert len(array_b1) == len(array_b2) == 3564
-    n_collisions_ip1_and_5 = array_b1 @ array_b2
-    n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
-    n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
-    l_n_collisions = [
-        n_collisions_ip1_and_5,
-        n_collisions_ip2,
-        n_collisions_ip1_and_5,
-        n_collisions_ip8,
-    ]
-    n_turn_per_second = 1 / dic_tw_b1["T_rev0"]
-    l_PU = [
-        lumi / n_col * cross_section / n_turn_per_second
-        for lumi, n_col in zip(l_lumi, l_n_collisions)
-    ]
+        row_lumi = html.Tr(
+            [
+                (
+                    html.Td(f"{l_lumi[0]:.3e}", style={"font-weight": "bold", "color": "red"})
+                    if l_lumi[0] > 5e34
+                    else html.Td(f"{l_lumi[0]:.3e}")
+                ),
+                html.Td(f"{l_lumi[1]:.3e}"),
+                (
+                    html.Td(f"{l_lumi[2]:.3e}", style={"font-weight": "bold", "color": "red"})
+                    if l_lumi[2] > 5e34
+                    else html.Td(f"{l_lumi[2]:.3e}")
+                ),
+                html.Td(f"{l_lumi[3]:.3e}"),
+            ]
+        )
+        body_4 = [html.Tbody([row_lumi])]
+        table_4 = dmc.Table(header_3 + body_4)
 
-    # Luminosities
-    header_4 = [
-        html.Thead(
-            html.Tr(
-                [
-                    html.Th("IP 1 [counts]"),
-                    html.Th("IP 2 [counts]"),
-                    html.Th("IP 5 [counts]"),
-                    html.Th("IP 8 [counts]"),
-                ]
+        # Pile-up
+        cross_section = 81e-27
+        # Assert that the arrays have the required length, and do the convolution to get number of collisions
+        assert len(array_b1) == len(array_b2) == 3564
+        n_collisions_ip1_and_5 = array_b1 @ array_b2
+        n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
+        n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
+        l_n_collisions = [
+            n_collisions_ip1_and_5,
+            n_collisions_ip2,
+            n_collisions_ip1_and_5,
+            n_collisions_ip8,
+        ]
+        n_turn_per_second = 1 / dic_tw_b1["T_rev0"]
+        l_PU = [
+            lumi / n_col * cross_section / n_turn_per_second
+            for lumi, n_col in zip(l_lumi, l_n_collisions)
+        ]
+
+        # PU
+        header_4 = [
+            html.Thead(
+                html.Tr(
+                    [
+                        html.Th("IP 1 [counts]"),
+                        html.Th("IP 2 [counts]"),
+                        html.Th("IP 5 [counts]"),
+                        html.Th("IP 8 [counts]"),
+                    ]
+                )
             )
-        )
-    ]
-
-    # Table
-    row_PU = html.Tr(
-        [
-            (
-                html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
-                if l_PU[0] > 140
-                else html.Td(f"{l_PU[0]:.1f}")
-            ),
-            html.Td(f"{l_PU[1]:.3e}"),
-            (
-                html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
-                if l_PU[2] > 140
-                else html.Td(f"{l_PU[2]:.1f}")
-            ),
-            html.Td(f"{l_PU[3]:.3e}"),
         ]
-    )
-    body_5 = [html.Tbody([row_PU])]
-    table_5 = dmc.Table(header_4 + body_5)
+
+        # Table
+        row_PU = html.Tr(
+            [
+                (
+                    html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
+                    if l_PU[0] > 140
+                    else html.Td(f"{l_PU[0]:.1f}")
+                ),
+                html.Td(f"{l_PU[1]:.3e}"),
+                (
+                    html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
+                    if l_PU[2] > 140
+                    else html.Td(f"{l_PU[2]:.1f}")
+                ),
+                html.Td(f"{l_PU[3]:.3e}"),
+            ]
+        )
+        body_5 = [html.Tbody([row_PU])]
+        table_5 = dmc.Table(header_4 + body_5)
+    else:
+        table_4 = dmc.Text("No luminosities could be computed since no configuration was provided with the collider", size="xl", style={"margin": "auto"})
+        table_5 = dmc.Text("No pile-up could be computed since no configuration was provided with the collider", size="xl", style={"margin": "auto"})
 
     return dmc.Stack(
         children=[
