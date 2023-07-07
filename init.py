@@ -11,6 +11,7 @@ import pickle
 import os
 import copy
 import logging
+import json
 
 # Module to compute beam-beam schedule
 import fillingpatterns as fp
@@ -48,11 +49,23 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
 
     else:
         # Rebuild collider
-        collider = xt.Multiline.from_json(path_collider)
+        # collider = xt.Multiline.from_json(path_collider)
+        with open(path_collider, "r") as fid:
+            collider_dict = json.load(fid)
+        if "config_yaml" in collider_dict:
+            print("A configuration has been found in the collider file. Using it.")
+            config = collider_dict["config_yaml"]
+        else:
+            print(
+                "Warning, you provided a collider file without a configuration. Some features of"
+                " the dashboard will be missing."
+            )
+            config = None
+        collider = xt.Multiline.from_dict(collider_dict)
         collider.build_trackers()
 
         # Build collider before bb
-        collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+        collider_without_bb = xt.Multiline.from_dict(collider_dict)
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
@@ -62,6 +75,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
             path_collider=None,
             path_collider_without_bb=None,
             force_build_collider=False,
+            config=config,
             collider=collider,
             collider_without_bb=collider_without_bb,
         )
@@ -139,16 +153,18 @@ def init_from_config(
 def compute_twiss_checks(
     path_config=None,
     path_collider=None,
+    config=None,
     collider=None,
     collider_without_bb=None,
     path_collider_without_bb=None,
     force_build_collider=False,
 ):
     """Computes the app global variables from:
-    - either a collider (gen 1 or gen 2), before and after bb
+    - either a collider (gen 1 or gen 2), with and without bb, with or without config
     - either a path to configuration file, along with the path to gen 1 collider
-    - an already existing gen 2 collider (in the temp folder) if force_build_collider is False, else
-      the collider objects (before and after bb) are stored in the temp folder.
+    - either an already existing gen 2 collider (in the temp folder) along with a configuration file,
+      if force_build_collider is False, else the collider objects (before and after bb) are stored
+      in the temp folder.
     """
 
     if force_build_collider:
@@ -167,32 +183,43 @@ def compute_twiss_checks(
             twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
                 initialize_twiss_checks_configuring_new_collider(path_config)
             )
-
-    elif collider is not None:
-        if (
-            path_config is not None
-            or path_collider is not None
-            or path_collider_without_bb is not None
-            or force_build_collider is not False
-        ):
-            raise ValueError(
-                "If collider is provided, path_config, path_collider, path_collider_without_bb and"
-                " force_build_collider must not be provided."
-            )
-        elif collider_without_bb is None:
-            raise ValueError("If collider is provided, collider_without_bb must be provided.")
-        else:
-            twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
-                initialize_twiss_checks_from_collider_objects(collider, collider_without_bb)
-            )
-
-    elif path_config is not None:
-        twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
-            initialize_twiss_checks_configuring_new_collider(path_config)
-        )
-
     else:
-        raise ValueError("Either collider, path_config or force_build_collider must be provided.")
+        if collider is not None:
+            if (
+                path_config is not None
+                or path_collider is not None
+                or path_collider_without_bb is not None
+                or force_build_collider is not False
+            ):
+                raise ValueError(
+                    "If collider is provided, path_config, path_collider, path_collider_without_bb"
+                    " and force_build_collider must not be provided."
+                )
+            elif collider_without_bb is None:
+                raise ValueError("If collider is provided, collider_without_bb must be provided.")
+            else:
+                twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
+                    initialize_twiss_checks_from_collider_objects(
+                        collider, collider_without_bb, config=config
+                    )
+                )
+
+        else:
+            if (
+                path_config is not None
+                and path_collider is not None
+                and path_collider_without_bb is not None
+            ):
+                twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
+                    initialize_twiss_checks_from_temp_collider_paths(
+                        path_config, path_collider, path_collider_without_bb
+                    )
+                )
+            else:
+                raise ValueError(
+                    "If force_build_collider is False, and no collider has been provided, a"
+                    " path_config and a path collider must be provided."
+                )
 
     return twiss_check_after_beam_beam, twiss_check_without_beam_beam
 
@@ -252,9 +279,10 @@ def initialize_twiss_checks_from_temp_collider_paths(
     return twiss_check_with_bb, twiss_check_without_bb
 
 
-def initialize_twiss_checks_from_collider_objects(collider, collider_without_bb):
-    twiss_check_with_bb = TwissCheck(collider)
-    twiss_check_without_bb = TwissCheck(collider_without_bb)
+def initialize_twiss_checks_from_collider_objects(collider, collider_without_bb, config=None):
+    """config is either None or a dictionnary. If None, the twiss_check is built without it."""
+    twiss_check_with_bb = TwissCheck(collider, configuration=config)
+    twiss_check_without_bb = TwissCheck(collider_without_bb, configuration=config)
     return twiss_check_with_bb, twiss_check_without_bb
 
 
@@ -262,7 +290,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
     """Initialize global variables, from a collider with beam-beam set."""
 
     # Get luminosity at each IP
-    if twiss_check.path_configuration is not None:
+    if twiss_check.configuration is not None:
         l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
         # Get the beams schemes
