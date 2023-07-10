@@ -310,6 +310,9 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule
 
+        # Get configuration
+        configuration_str = twiss_check.configuration_str
+
     else:
         l_lumi = None
         array_b1 = None
@@ -317,6 +320,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         i_bunch_b1 = None
         i_bunch_b2 = None
         bbs = None
+        configuration_str = None
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")
         nemitt_x = 2.5e-6
@@ -378,6 +382,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         "i_bunch_b2": i_bunch_b2,
         "bbs": bbs,
         "footprint": (array_qx, array_qy),
+        "configuration_str": configuration_str,
     }
 
     return dic_global_var

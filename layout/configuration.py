@@ -7,15 +7,11 @@ import dash_mantine_components as dmc
 #################### Configuration layout ####################
 
 
-def return_configuration_layout(path_configuration):
-    if path_configuration is not None:
-        # Load configuration file
-        with open(path_configuration, "r") as file:
-            configuration_str = file.read()
-
+def return_configuration_layout(configuration_str, path_collider):
+    if configuration_str is not None:
         configuration_layout = dmc.Stack(
             children=[
-                dmc.Center(dmc.Text("Configuration path: " + path_configuration)),
+                dmc.Center(dmc.Text("Configuration path: " + path_collider)),
                 dmc.Center(
                     children=[
                         dmc.Prism(
