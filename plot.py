@@ -1316,10 +1316,12 @@ def return_plot_footprint(t_array_footprint, title):
             )
         )
     for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
-        x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        #x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        #y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        #x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        #y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        x_temp = x
+        y_temp = y
         fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color=palette[9 - idx]))
 
     fig.update_yaxes(

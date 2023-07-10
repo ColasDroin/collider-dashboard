@@ -24,18 +24,18 @@ from layout.footprint import return_footprint_layout
 
 #################### Load global variables ####################
 
-path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_00/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
-path_job = path_config.split("/config.yaml")[0]
-dic_without_bb, dic_with_bb = init.init_from_config(
-    path_config, force_build_collider=True, load_global_variables_from_pickle=False
-)
-
-# path_config = None
-# path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_36/xtrack_0000/final_collider.json"
-# path_job = path_collider.split("/final_collider.json")[0]
-# dic_without_bb, dic_with_bb = init.init_from_collider(
-#     path_collider, load_global_variables_from_pickle=False
+# path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_00/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
+# path_job = path_config.split("/config.yaml")[0]
+# dic_without_bb, dic_with_bb = init.init_from_config(
+#     path_config, force_build_collider=True, load_global_variables_from_pickle=False
 # )
+
+path_config = None
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_00/xtrack_0000/final_collider.json"
+path_job = path_collider.split("/final_collider.json")[0]
+dic_without_bb, dic_with_bb = init.init_from_collider(
+    path_collider, load_global_variables_from_pickle=False
+)
 #################### App ####################
 app = Dash(
     __name__,
