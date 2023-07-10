@@ -356,7 +356,8 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
 
     # Get the footprint only if bb is on
     if compute_footprint:
-        array_qx, array_qy = return_footprint(collider, nemitt_x, beam="lhcb1", n_turns=2000)
+        array_qx1, array_qy1 = return_footprint(collider, nemitt_x, beam="lhcb1", n_turns=2000)
+        array_qx2, array_qy2 = return_footprint(collider, nemitt_x, beam="lhcb2", n_turns=2000)
     else:
         array_qx = np.array([])
         array_qy = np.array([])
@@ -381,7 +382,8 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         "i_bunch_b1": i_bunch_b1,
         "i_bunch_b2": i_bunch_b2,
         "bbs": bbs,
-        "footprint": (array_qx, array_qy),
+        "footprint_b1": (array_qx1, array_qy1),
+        "footprint_b2": (array_qx2, array_qy2),
         "configuration_str": configuration_str,
     }
 

@@ -19,7 +19,7 @@ def return_footprint_layout():
                         dmc.Group(
                             children=[
                                 dcc.Graph(
-                                    id="footprint-without-bb",
+                                    id="footprint-without-bb-b1",
                                     mathjax=True,
                                     config={
                                         "displayModeBar": False,
@@ -30,7 +30,33 @@ def return_footprint_layout():
                                     style={"height": "70vh", "width": "45%", "margin": "auto"},
                                 ),
                                 dcc.Graph(
-                                    id="footprint-with-bb",
+                                    id="footprint-with-bb-b1",
+                                    mathjax=True,
+                                    config={
+                                        "displayModeBar": False,
+                                        "scrollZoom": True,
+                                        "responsive": True,
+                                        "displaylogo": False,
+                                    },
+                                    style={"height": "70vh", "width": "45%", "margin": "auto"},
+                                ),
+                            ],
+                        ),
+                        dmc.Group(
+                            children=[
+                                dcc.Graph(
+                                    id="footprint-without-bb-b2",
+                                    mathjax=True,
+                                    config={
+                                        "displayModeBar": False,
+                                        "scrollZoom": True,
+                                        "responsive": True,
+                                        "displaylogo": False,
+                                    },
+                                    style={"height": "70vh", "width": "45%", "margin": "auto"},
+                                ),
+                                dcc.Graph(
+                                    id="footprint-with-bb-b2",
                                     mathjax=True,
                                     config={
                                         "displayModeBar": False,

@@ -244,36 +244,59 @@ def update_graph_LHC_layout(value):
 
 
 @app.callback(
-    Output("footprint-without-bb", "figure"),
-    Output("footprint-with-bb", "figure"),
+    Output("footprint-without-bb-b1", "figure"),
+    Output("footprint-without-bb-b2", "figure"),
+    Output("footprint-with-bb-b1", "figure"),
+    Output("footprint-with-bb-b2", "figure"),
     Input("tab-titles", "value"),
 )
 def update_graph_footprint(value):
     if value == "display-footprint":
         if dic_without_bb["i_bunch_b1"] is not None:
-            title_without_bb = (
+            title_without_bb_b1 = (
                 "Tune footprint without beam-beam effects for beam 1 and bunch "
                 + str(dic_without_bb["i_bunch_b1"])
             )
-            title_with_bb = "Tune footprint with beam-beam effects for beam 1 and bunch " + str(
+            title_without_bb_b2 = (
+                "Tune footprint without beam-beam effects for beam 2 and bunch "
+                + str(dic_without_bb["i_bunch_b2"])
+            )
+            title_with_bb_b1 = "Tune footprint with beam-beam effects for beam 1 and bunch " + str(
                 dic_with_bb["i_bunch_b1"]
             )
+            title_with_bb_b2 = "Tune footprint with beam-beam effects for beam 2 and bunch " + str(
+                dic_with_bb["i_bunch_b2"]
+            )
         else:
-            title_without_bb = (
+            title_without_bb_b1 = (
                 "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
             )
-            title_with_bb = (
+            title_without_bb_b2 = (
+                "Tune footprint without beam-beam effects for beam 2 (bunch number unknown)"
+            )
+            title_with_bb_b1 = (
                 "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
+            )
+            title_with_bb_b2 = (
+                "Tune footprint with beam-beam effects for beam 2 (bunch number unknown)"
             )
 
         return [
             plot.return_plot_footprint(
-                dic_without_bb["footprint"],
-                title=title_without_bb,
+                dic_without_bb["footprint_b1"],
+                title=title_without_bb_b1,
             ),
             plot.return_plot_footprint(
-                dic_with_bb["footprint"],
-                title=title_with_bb,
+                dic_without_bb["footprint_b2"],
+                title=title_without_bb_b2,
+            ),
+            plot.return_plot_footprint(
+                dic_with_bb["footprint_b1"],
+                title=title_with_bb_b1,
+            ),
+            plot.return_plot_footprint(
+                dic_with_bb["footprint_b2"],
+                title=title_with_bb_b2,
             ),
         ]
     else:
