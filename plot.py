@@ -1300,29 +1300,36 @@ def return_plot_footprint(t_array_footprint, title):
     palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
-    for x, y in zip(array_qx, array_qy):
-        # Insert additional None when dx or dy is too big
-        # to avoid connecting the lines
-        x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+    # for x, y in zip(array_qx, array_qy):
+    #     # Insert additional None when dx or dy is too big
+    #     # to avoid connecting the lines
+    #     x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+    #     y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+    #     x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+    #     y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+    #     fig.add_trace(
+    #         go.Scattergl(
+    #             x=x_temp,
+    #             y=y_temp,
+    #             line_color="whitesmoke",
+    #             opacity=0.3,
+    #         )
+    #     )
+    for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
+        # x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        # y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+        # x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        # y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        x_temp = x
+        y_temp = y
         fig.add_trace(
             go.Scattergl(
                 x=x_temp,
                 y=y_temp,
-                line_color="whitesmoke",
-                opacity=0.3,
-            )
+                line_color=palette[9 - idx],
+                mode="markers",
+            ),
         )
-    for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
-        #x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        #y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        #x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        #y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        x_temp = x
-        y_temp = y
-        fig.add_trace(go.Scattergl(x=x_temp, y=y_temp, line_color=palette[9 - idx]))
 
     fig.update_yaxes(
         scaleanchor="x",
