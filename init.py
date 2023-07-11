@@ -352,7 +352,8 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
 
     # Get the dictionnary to plot separation
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
-    dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y)
+    energy = twiss_check.collider.lhcb1.particle_ref._p0c[0]/1e9
+    dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
 
     # Get the footprint only if bb is on
     if compute_footprint:
@@ -634,7 +635,7 @@ def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
     return dic_bb_ho_IPs
 
 
-def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y):
+def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy):
     dic_sep_IPs = {"v": {}, "h": {}}
 
     for idx, n_ip in enumerate([1, 2, 5, 8]):
@@ -646,7 +647,7 @@ def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y):
             dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
             - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
         )
-        n_emitt = nemitt_x / 7000
+        n_emitt = nemitt_x / energy
         sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
         xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
         beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
