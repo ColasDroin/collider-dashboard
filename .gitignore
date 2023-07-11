@@ -7,3 +7,4 @@ __pycache__/
 modules/*
 temp/*.pkl
 !modules/.gitkeep
+nohup.out

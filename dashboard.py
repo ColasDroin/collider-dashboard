@@ -34,7 +34,7 @@ path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024_reverted/collider_00/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb = init.init_from_collider(
-    path_collider, load_global_variables_from_pickle=True
+    path_collider, load_global_variables_from_pickle=False
 )
 #################### App ####################
 app = Dash(
@@ -234,7 +234,7 @@ def update_graph_optics(value):
     Input("chips-sep", "value"),
     Input("chips-sep-bb", "value"),
 )
-def update_graph_LHC_layout(value, bb):
+def update_graph_separation(value, bb):
     if bb == "On":
         dic = dic_with_bb
     elif bb == "Off":
