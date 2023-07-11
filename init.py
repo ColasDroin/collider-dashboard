@@ -359,8 +359,10 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         array_qx1, array_qy1 = return_footprint(collider, nemitt_x, beam="lhcb1", n_turns=2000)
         array_qx2, array_qy2 = return_footprint(collider, nemitt_x, beam="lhcb2", n_turns=2000)
     else:
-        array_qx = np.array([])
-        array_qy = np.array([])
+        array_qx1 = np.array([])
+        array_qy1 = np.array([])
+        array_qx2 = np.array([])
+        array_qy2 = np.array([])
 
     # Store everything in a dictionnary
     dic_global_var = {

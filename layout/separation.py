@@ -19,6 +19,22 @@ def return_separation_layout(dic_sep_IPs):
                         children=[
                             dmc.Group(
                                 children=[
+                                    dmc.Text("Beam-beam: "),
+                                    dmc.ChipGroup(
+                                        [
+                                            dmc.Chip(
+                                                x,
+                                                value=x,
+                                                variant="outline",
+                                                color="cyan",
+                                            )
+                                            for x in ["On", "Off"]
+                                        ],
+                                        id="chips-sep-bb",
+                                        value="Off",
+                                        mb=0,
+                                    ),
+                                    dmc.Space(),
                                     dmc.Text("Separation plane: "),
                                     dmc.ChipGroup(
                                         [

@@ -31,7 +31,7 @@ from layout.footprint import return_footprint_layout
 # )
 
 path_config = None
-path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/test/base_collider/xtrack_0004/collider.json"
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024_reverted/collider_00/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
@@ -232,14 +232,24 @@ def update_graph_optics(value):
 @app.callback(
     Output("beam-separation", "figure"),
     Input("chips-sep", "value"),
+    Input("chips-sep-bb", "value"),
 )
-def update_graph_LHC_layout(value):
-    if value == "v" or value == "h":
-        fig = plot.return_plot_separation(dic_without_bb["dic_sep_IPs"][value])
+def update_graph_LHC_layout(value, bb):
+    if bb == "On":
+        dic = dic_with_bb
+    elif bb == "Off":
+        dic = dic_without_bb
     else:
+        raise ValueError("bb should be either On or Off")
+
+    if value == "v" or value == "h":
+        fig = plot.return_plot_separation(dic["dic_sep_IPs"][value])
+    elif value == "||v+h||":
         fig = plot.return_plot_separation_both_planes(
-            dic_without_bb["dic_sep_IPs"]["v"], dic_without_bb["dic_sep_IPs"]["h"]
+            dic["dic_sep_IPs"]["v"], dic["dic_sep_IPs"]["h"]
         )
+    else:
+        raise ValueError("value should be either v, h or ||v+h||")
     return fig
 
 
