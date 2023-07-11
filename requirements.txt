@@ -11,7 +11,6 @@ dash-html-components==2.0.0
 dash-iconify==0.1.2
 dash-mantine-components==0.12.1
 dash-table==5.0.0
--e git+https://github.com/PyCOMPLETE/FillingPatterns.git@5f28d1a99e9a2ef7cc5c171d0cab6679946309e8#egg=fillingpatterns
 Flask==2.2.5
 fonttools==4.40.0
 idna==3.4
