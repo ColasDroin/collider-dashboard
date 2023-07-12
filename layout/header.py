@@ -66,6 +66,7 @@ def return_header_layout():
                             weight="bold",
                         ),
                         dmc.Group(
+                            id="group-collider-dropdown",
                             children=[
                                 dmc.Text("Preloaded collider: "),
                                 dmc.Select(

@@ -45,7 +45,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         with open(path_pickle, "rb") as f:
             dic_without_bb, dic_with_bb = pickle.load(f)
         print("Returning global variables from pickle file.")
-        return dic_without_bb, dic_with_bb
+        return dic_without_bb, dic_with_bb, path_pickle
 
     else:
         # Rebuild collider
@@ -87,7 +87,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
             path_pickle=path_pickle,
         )
 
-        return dic_without_bb, dic_with_bb
+        return dic_without_bb, dic_with_bb, path_pickle
 
 
 def init_from_config(
@@ -352,7 +352,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
 
     # Get the dictionnary to plot separation
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
-    energy = twiss_check.collider.lhcb1.particle_ref._p0c[0]/1e9
+    energy = twiss_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
 
     # Get the footprint only if bb is on

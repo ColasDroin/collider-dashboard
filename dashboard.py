@@ -17,7 +17,7 @@ from layout.filling import return_filling_scheme_layout
 from layout.optics import return_optics_layout
 from layout.sanity import return_sanity_layout
 from layout.survey import return_survey_layout
-from layout.header import return_header_layout, initial_value, l_data
+from layout.header import return_header_layout, initial_value
 from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
 from layout.footprint import return_footprint_layout
@@ -34,9 +34,12 @@ from layout.footprint import return_footprint_layout
 path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_20/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
-dic_without_bb, dic_with_bb = init.init_from_collider(
+dic_without_bb, dic_with_bb, initial_value = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
 )
+
+# Activating this will allow to select a collider from the dropdown menu, but will restrict the choice to preloaded colliders
+ACTIVATE_COLLIDER_DROPDOWN = True
 #################### App ####################
 app = Dash(
     __name__,
@@ -84,14 +87,25 @@ app.layout = layout
 
 
 @app.callback(
+    Output("group-collider-dropdown", "style"),
+    Input("main-div", "style"),
+)
+def update_preloaded_collider_value_at_launch_style(_):
+    if not ACTIVATE_COLLIDER_DROPDOWN:
+        return {"display": "none"}
+    return no_update
+
+
+@app.callback(
     Output("select-preloaded-collider", "value"),
     Input("main-div", "style"),
     State("select-preloaded-collider", "value"),
 )
 def update_preloaded_collider_value_at_launch(_, value):
-    global initial_value
-    if value != initial_value:
-        return initial_value
+    if ACTIVATE_COLLIDER_DROPDOWN:
+        global initial_value
+        if value != initial_value:
+            return initial_value
     return no_update
 
 
@@ -100,16 +114,17 @@ def update_preloaded_collider_value_at_launch(_, value):
     Input("select-preloaded-collider", "value"),
 )
 def select_preloaded_collider(value):
-    global dic_without_bb, dic_with_bb, path_job, initial_value
-    if value is not None and value != initial_value:
-        try:
-            with open(value, "rb") as f:
-                dic_without_bb, dic_with_bb = pickle.load(f)
-            path_job = value.split("collider.jsont_dic_var.pkl")[0]
-            initial_value = value
-            return "/"
-        except:
-            print("Could not load pickle file.")
+    if ACTIVATE_COLLIDER_DROPDOWN:
+        global dic_without_bb, dic_with_bb, path_job, initial_value
+        if value is not None and value != initial_value:
+            try:
+                with open(value, "rb") as f:
+                    dic_without_bb, dic_with_bb = pickle.load(f)
+                path_job = value.split("collider.jsont_dic_var.pkl")[0]
+                initial_value = value
+                return "/"
+            except:
+                print("Could not load pickle file.")
     return no_update
 
 
@@ -458,7 +473,7 @@ def update_graph_footprint(value):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=True, host="0.0.0.0", port=8082)
+    app.run_server(debug=False, host="0.0.0.0", port=8082)
 
 
 # Run with gunicorn dashboard:server -b :8000
