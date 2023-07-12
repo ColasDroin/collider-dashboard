@@ -17,7 +17,7 @@ from layout.filling import return_filling_scheme_layout
 from layout.optics import return_optics_layout
 from layout.sanity import return_sanity_layout
 from layout.survey import return_survey_layout
-from layout.header import return_header_layout, initial_value
+from layout.header import return_header_layout, initial_pickle_path
 from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
 from layout.footprint import return_footprint_layout
@@ -34,7 +34,7 @@ from layout.footprint import return_footprint_layout
 path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_20/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
-dic_without_bb, dic_with_bb, initial_value = init.init_from_collider(
+dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
 )
 
@@ -103,9 +103,9 @@ def update_preloaded_collider_value_at_launch_style(_):
 )
 def update_preloaded_collider_value_at_launch(_, value):
     if ACTIVATE_COLLIDER_DROPDOWN:
-        global initial_value
-        if value != initial_value:
-            return initial_value
+        global initial_pickle_path
+        if value != initial_pickle_path:
+            return initial_pickle_path
     return no_update
 
 
@@ -115,13 +115,13 @@ def update_preloaded_collider_value_at_launch(_, value):
 )
 def select_preloaded_collider(value):
     if ACTIVATE_COLLIDER_DROPDOWN:
-        global dic_without_bb, dic_with_bb, path_job, initial_value
-        if value is not None and value != initial_value:
+        global dic_without_bb, dic_with_bb, path_job, initial_pickle_path
+        if value is not None and value != initial_pickle_path:
             try:
                 with open(value, "rb") as f:
                     dic_without_bb, dic_with_bb = pickle.load(f)
                 path_job = value.split("collider.jsont_dic_var.pkl")[0]
-                initial_value = value
+                initial_pickle_path = value
                 return "/"
             except:
                 print("Could not load pickle file.")

@@ -371,6 +371,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         "dic_tw_b1": dic_tw_b1,
         "dic_tw_b2": dic_tw_b2,
         "dic_sep_IPs": dic_sep_IPs,
+        "dic_bb_ho_IPs": dic_bb_ho_IPs,
         "df_sv_b1": df_sv_b1,
         "df_sv_b2": df_sv_b2,
         "df_tw_b1": df_tw_b1,

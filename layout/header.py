@@ -21,12 +21,12 @@ def set_collider_dropdown_options():
     return l_data
 
 
-def return_initial_value(l_data):
+def return_initial_pickle_path(l_data):
     return l_data[0]["value"]
 
 
 l_data = set_collider_dropdown_options()
-initial_value = return_initial_value(l_data)
+initial_pickle_path = return_initial_pickle_path(l_data)
 
 
 #################### Header Layout ####################
@@ -72,7 +72,7 @@ def return_header_layout():
                                 dmc.Select(
                                     id="select-preloaded-collider",
                                     data=l_data,
-                                    value=initial_value,
+                                    value=initial_pickle_path,
                                     searchable=True,
                                     nothingFound="No options found",
                                     # style={"width": 200},
