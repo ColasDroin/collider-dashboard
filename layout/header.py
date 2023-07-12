@@ -1,12 +1,35 @@
 #################### Imports ####################
-
 # Import standard libraries
+import os
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
+
+#################### Functions to load collider choices ####################
+def set_collider_dropdown_options():
+    l_data = []
+    for x in sorted(os.listdir("temp/")):
+        try:
+            id_collider = int(x.split("optics_")[1].split("_xtrack")[0].split("_")[-1]) + 23
+            data = {
+                "value": os.path.join("temp", x),
+                "label": x.split("optics_")[1].split("_xtrack")[0][:-2] + f"{id_collider}",
+            }
+            l_data.append(data)
+        except:
+            pass
+    return l_data
+
+
+def return_initial_value(l_data):
+    return l_data[0]["value"]
+
+
+l_data = set_collider_dropdown_options()
+initial_value = return_initial_value(l_data)
+
+
 #################### Header Layout ####################
-
-
 def return_header_layout():
     def create_header_link(icon, href, size=22, color="cyan"):
         return dmc.Anchor(
@@ -41,6 +64,19 @@ def return_header_layout():
                             size=30,
                             color="cyan",
                             weight="bold",
+                        ),
+                        dmc.Group(
+                            children=[
+                                dmc.Text("Preloaded collider: "),
+                                dmc.Select(
+                                    id="select-preloaded-collider",
+                                    data=l_data,
+                                    value=initial_value,
+                                    searchable=True,
+                                    nothingFound="No options found",
+                                    # style={"width": 200},
+                                ),
+                            ],
                         ),
                         dmc.SegmentedControl(
                             id="tab-titles",
