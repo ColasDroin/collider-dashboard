@@ -148,6 +148,8 @@ def select_tab(value):
                 dic_with_bb["l_lumi"],
                 dic_with_bb["array_b1"],
                 dic_with_bb["array_b2"],
+                dic_with_bb["polarity_alice"],
+                dic_with_bb["polarity_lhcb"],
             )
             sanity_before_beam_beam = return_sanity_layout(
                 dic_without_bb["dic_tw_b1"],
@@ -155,6 +157,8 @@ def select_tab(value):
                 dic_without_bb["l_lumi"],
                 dic_without_bb["array_b1"],
                 dic_without_bb["array_b2"],
+                dic_without_bb["polarity_alice"],
+                dic_without_bb["polarity_lhcb"],
             )
             tabs_sanity = dmc.Tabs(
                 [

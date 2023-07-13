@@ -10,7 +10,13 @@ import xtrack as xt
 #################### Sanity checks Layout ####################
 
 
-def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
+def return_sanity_layout(
+    dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2, polarity_alice, polarity_lhcb
+):
+    # Ensure that the polarities are defined
+    polarity_alice = polarity_alice if polarity_alice is not None else "N/A"
+    polarity_lhcb = polarity_lhcb if polarity_lhcb is not None else "N/A"
+
     # Check general observables (tune, chroma, etc.)
     header_1 = [
         html.Thead(
@@ -22,7 +28,9 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
                     html.Th("dQx"),
                     html.Th("dQy"),
                     html.Th("Linear coupling"),
-                    html.Th("Momentum compaction factor"),
+                    html.Th("Polarity Alice"),
+                    html.Th("Polarity LHCb"),
+                    # html.Th("Momentum compaction factor"),
                 ]
             )
         )
@@ -36,7 +44,9 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
             html.Td(f'{dic_tw_b1["dqx"]:.2f}'),
             html.Td(f'{dic_tw_b1["dqy"]:.2f}'),
             html.Td(f'{dic_tw_b1["c_minus"]:.4f}'),
-            html.Td(f'{dic_tw_b1["momentum_compaction_factor"]:.4f}'),
+            html.Td(str(polarity_alice)),
+            html.Td(str(polarity_lhcb)),
+            # html.Td(f'{dic_tw_b1["momentum_compaction_factor"]:.4f}'),
         ]
     )
     row2 = html.Tr(
@@ -47,7 +57,9 @@ def return_sanity_layout(dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2):
             html.Td(f'{dic_tw_b2["dqx"]:.2f}'),
             html.Td(f'{dic_tw_b2["dqy"]:.2f}'),
             html.Td(f'{dic_tw_b2["c_minus"]:.4f}'),
-            html.Td(f'{dic_tw_b2["momentum_compaction_factor"]:.4f}'),
+            html.Td(str(polarity_alice)),
+            html.Td(str(polarity_lhcb)),
+            # html.Td(f'{dic_tw_b2["momentum_compaction_factor"]:.4f}'),
         ]
     )
     body_1 = [html.Tbody([row1, row2])]

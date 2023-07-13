@@ -310,6 +310,9 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule
 
+        # Get polarity Alice and LHCb
+        polarity_alice, polarity_lhcb = twiss_check.return_polarity_ip_2_8()
+
         # Get configuration
         configuration_str = twiss_check.configuration_str
 
@@ -320,11 +323,13 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         i_bunch_b1 = None
         i_bunch_b2 = None
         bbs = None
+        polarity_alice = None
+        polarity_lhcb = None
         configuration_str = None
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")
-        nemitt_x = 2.5e-6
-        nemitt_y = 2.5e-6
+        nemitt_x = 2.2e-6
+        nemitt_y = 2.2e-6
 
     # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
     (
@@ -388,6 +393,8 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         "bbs": bbs,
         "footprint_b1": (array_qx1, array_qy1),
         "footprint_b2": (array_qx2, array_qy2),
+        "polarity_alice": polarity_alice,
+        "polarity_lhcb": polarity_lhcb,
         "configuration_str": configuration_str,
     }
 
