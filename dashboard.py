@@ -473,7 +473,7 @@ def update_graph_footprint(value):
 
 #################### Launch app ####################
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0", port=8082)
+    app.run_server(debug=False, host="0.0.0.0", port=8080)
 
 
 # Run with gunicorn dashboard:server -b :8000

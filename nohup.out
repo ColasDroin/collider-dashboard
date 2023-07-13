@@ -158,3 +158,36 @@ Returning global variables from pickle file.
 Returning global variables from pickle file.
 [2023-07-05 11:28:39 +0200] [967475] [INFO] Shutting down: Master
 [2023-07-05 11:28:39 +0200] [967741] [INFO] Shutting down: Master
+[2023-07-12 16:33:28 +0200] [2529788] [INFO] Starting gunicorn 20.1.0
+[2023-07-12 16:33:28 +0200] [2529788] [INFO] Listening at: http://0.0.0.0:8080 (2529788)
+[2023-07-12 16:33:28 +0200] [2529788] [INFO] Using worker: sync
+[2023-07-12 16:33:28 +0200] [2529789] [INFO] Booting worker with pid: 2529789
+[2023-07-12 16:33:32 +0200] [2529788] [INFO] Handling signal: int
+[2023-07-12 16:33:32 +0200] [2529789] [INFO] Worker exiting (pid: 2529789)
+Returning global variables from pickle file.
+[2023-07-12 16:33:32 +0200] [2529788] [WARNING] Worker with pid 2529789 was terminated due to signal 2
+[2023-07-12 16:33:33 +0200] [2529788] [INFO] Shutting down: Master
+[2023-07-12 16:33:44 +0200] [2530061] [INFO] Starting gunicorn 20.1.0
+[2023-07-12 16:33:44 +0200] [2530061] [INFO] Listening at: http://0.0.0.0:8080 (2530061)
+[2023-07-12 16:33:44 +0200] [2530061] [INFO] Using worker: sync
+[2023-07-12 16:33:44 +0200] [2530063] [INFO] Booting worker with pid: 2530063
+[2023-07-12 16:33:50 +0200] [2530247] [INFO] Starting gunicorn 20.1.0
+[2023-07-12 16:33:50 +0200] [2530247] [INFO] Listening at: http://0.0.0.0:8081 (2530247)
+[2023-07-12 16:33:50 +0200] [2530247] [INFO] Using worker: sync
+[2023-07-12 16:33:50 +0200] [2530249] [INFO] Booting worker with pid: 2530249
+[2023-07-12 16:34:32 +0200] [2530061] [INFO] Handling signal: hup
+[2023-07-12 16:34:32 +0200] [2530061] [INFO] Hang up: Master
+[2023-07-12 16:34:32 +0200] [2530247] [INFO] Handling signal: hup
+[2023-07-12 16:34:32 +0200] [2530247] [INFO] Hang up: Master
+[2023-07-12 16:34:32 +0200] [2530655] [INFO] Booting worker with pid: 2530655
+[2023-07-12 16:34:32 +0200] [2530656] [INFO] Booting worker with pid: 2530656
+[2023-07-12 16:34:32 +0200] [2530061] [WARNING] Worker with pid 2530063 was terminated due to signal 1
+[2023-07-12 16:34:32 +0200] [2530247] [WARNING] Worker with pid 2530249 was terminated due to signal 1
+[2023-07-12 16:38:24 +0200] [2530247] [CRITICAL] WORKER TIMEOUT (pid:2530655)
+[2023-07-12 16:38:24 +0200] [2530655] [INFO] Worker exiting (pid: 2530655)
+Returning global variables from pickle file.
+[2023-07-12 16:38:25 +0200] [2531620] [INFO] Booting worker with pid: 2531620
+[2023-07-12 16:39:16 +0200] [2530247] [CRITICAL] WORKER TIMEOUT (pid:2531620)
+[2023-07-12 16:39:16 +0200] [2531620] [INFO] Worker exiting (pid: 2531620)
+Returning global variables from pickle file.
+[2023-07-12 16:39:16 +0200] [2532116] [INFO] Booting worker with pid: 2532116
