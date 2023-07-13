@@ -20,6 +20,7 @@ from layout.survey import return_survey_layout
 from layout.header import return_header_layout, initial_pickle_path
 from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
+from layout.separation_3D import return_3D_separation_layout
 from layout.footprint import return_footprint_layout
 
 
@@ -32,7 +33,7 @@ from layout.footprint import return_footprint_layout
 # )
 
 path_config = None
-path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_20/xtrack_0000/collider.json"
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_00/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
@@ -68,7 +69,7 @@ layout = html.Div(
                     ],
                 ),
             ],
-            style={"margin-top": "75px"},
+            style={"margin-top": "80px"},
         ),
     ],
 )
@@ -139,6 +140,8 @@ def select_tab(value):
             return return_filling_scheme_layout()
         case "display-separation":
             return return_separation_layout(dic_without_bb["dic_sep_IPs"]["v"])
+        case "display-3D-separation":
+            return return_3D_separation_layout(dic_without_bb["dic_bb_ho_IPs"])
         case "display-footprint":
             return return_footprint_layout()
         case "display-sanity":
@@ -148,6 +151,8 @@ def select_tab(value):
                 dic_with_bb["l_lumi"],
                 dic_with_bb["array_b1"],
                 dic_with_bb["array_b2"],
+                dic_with_bb["polarity_alice"],
+                dic_with_bb["polarity_lhcb"],
             )
             sanity_before_beam_beam = return_sanity_layout(
                 dic_without_bb["dic_tw_b1"],
@@ -155,6 +160,8 @@ def select_tab(value):
                 dic_without_bb["l_lumi"],
                 dic_without_bb["array_b1"],
                 dic_without_bb["array_b2"],
+                dic_without_bb["polarity_alice"],
+                dic_without_bb["polarity_lhcb"],
             )
             tabs_sanity = dmc.Tabs(
                 [
@@ -297,6 +304,23 @@ def update_graph_separation(value, bb):
         )
     else:
         raise ValueError("value should be either v, h or ||v+h||")
+    return fig
+
+
+@app.callback(
+    Output("beam-separation-3D", "figure"),
+    Input("chips-sep-bb-3D", "value"),
+)
+def update_graph_separation_3D(bb):
+    if bb == "On":
+        dic = dic_with_bb
+    elif bb == "Off":
+        dic = dic_without_bb
+    else:
+        raise ValueError("bb should be either On or Off")
+
+    fig = plot.return_plot_separation_3D(dic["dic_bb_ho_IPs"])
+
     return fig
 
 
