@@ -1219,10 +1219,6 @@ def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
         rows=2,
         cols=2,
         subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
-        # specs=[
-        #    [{"secondary_y": True}, {"secondary_y": True}],
-        #    [{"secondary_y": True}, {"secondary_y": True}],
-        # ],
         horizontal_spacing=0.2,
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
@@ -1293,6 +1289,63 @@ def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
         showlegend=False,
     )
 
+    return fig
+
+
+def return_plot_separation_3D(dic_bb_ho_IPs):
+    fig = make_subplots(
+        rows=2,
+        cols=2,
+        subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
+        specs=[
+            [{"type": "scatter3d"}, {"type": "scatter3d"}],
+            [{"type": "scatter3d"}, {"type": "scatter3d"}],
+        ],
+        horizontal_spacing=0.05,
+        vertical_spacing=0.05,
+    )
+
+    for idx, ip in enumerate(["ip1", "ip2", "ip5", "ip8"]):
+        for beam, color in zip(["lhcb1", "lhcb2"], ["teal", "tomato"]):
+            df = dic_bb_ho_IPs[beam]["tw"][ip]
+            df_sv = dic_bb_ho_IPs[beam]["sv"][ip]
+            s = df.s.to_numpy()
+            x = df.x.to_numpy()
+            X = df_sv.X.to_numpy()
+            y = df.y.to_numpy()
+            bx = df.betx.to_numpy()
+            by = df.bety.to_numpy()
+            w = np.sqrt((bx + by) / 2)
+
+            for i in range(df.shape[0] - 2):
+                fig.add_trace(
+                    go.Scatter3d(
+                        x=s[i : i + 3],
+                        y=x[i : i + 3] + X[i : i + 3],
+                        z=y[i : i + 3],
+                        mode="lines",
+                        line=dict(color=color, width=w[i + 1]),
+                        showlegend=False,
+                    ),
+                    row=idx // 2 + 1,
+                    col=idx % 2 + 1,
+                )
+
+    fig.update_layout(
+        autosize=False,
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        title="3D Beam-beam separation at the different IPs",
+        title_x=0.5,
+        scene=dict(
+            xaxis_title="s[m]",
+            yaxis_title="x[m]",
+            zaxis_title="y[m]",
+            # showlegend=False,
+        ),
+        margin=dict(l=20, r=20, b=10, t=30),  # , pad=10),
+    )
     return fig
 
 

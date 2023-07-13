@@ -10,7 +10,7 @@ import plot
 #################### Separation Layout ####################
 
 
-def return_separation_layout(dic_sep_IPs):
+def return_3D_separation_layout(dic_bb_HO):
     separation_layout = (
         dmc.Center(
             dmc.Stack(
@@ -30,24 +30,8 @@ def return_separation_layout(dic_sep_IPs):
                                             )
                                             for x in ["On", "Off"]
                                         ],
-                                        id="chips-sep-bb",
+                                        id="chips-sep-bb-3D",
                                         value="Off",
-                                        mb=0,
-                                    ),
-                                    dmc.Space(),
-                                    dmc.Text("Separation plane: "),
-                                    dmc.ChipGroup(
-                                        [
-                                            dmc.Chip(
-                                                x,
-                                                value=x,
-                                                variant="outline",
-                                                color="cyan",
-                                            )
-                                            for x in ["v", "h", "||v+h||"]
-                                        ],
-                                        id="chips-sep",
-                                        value="v",
                                         mb=0,
                                     ),
                                 ],
@@ -57,7 +41,7 @@ def return_separation_layout(dic_sep_IPs):
                     ),
                     dcc.Loading(
                         dcc.Graph(
-                            id="beam-separation",
+                            id="beam-separation-3D",
                             mathjax=True,
                             config={
                                 "displayModeBar": False,

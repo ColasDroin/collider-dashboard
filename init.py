@@ -720,7 +720,7 @@ def return_data_table(df, id_table, twiss=True):
                         "id": i,
                         "deletable": False,
                         "type": "numeric",
-                        "format": Format(precision=6, scheme=Scheme.decimal_si_prefix),
+                        "format": Format(precision=6, scheme=Scheme.decimal_or_exponent),
                     }
                     if idx != idx_column_name
                     else {"name": i, "id": i, "deletable": False}
