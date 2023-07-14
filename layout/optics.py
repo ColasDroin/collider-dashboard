@@ -2,7 +2,7 @@
 
 # Import standard libraries
 import dash_mantine_components as dmc
-from dash import dcc
+from dash import dcc, html
 
 # Import functions
 import plot
@@ -11,7 +11,7 @@ import plot
 
 
 def return_optics_layout(dic_with_bb):
-    optics_layout = dmc.Stack(
+    optics_layout = html.Div(
         children=[
             dcc.Loading(
                 dcc.Graph(
@@ -35,6 +35,17 @@ def return_optics_layout(dic_with_bb):
                 type="circle",
                 color="cyan",
             ),
-        ]
+            dmc.NumberInput(
+                label="Vertical zoom",
+                description="Vertical zoom level",
+                id="vertical-zoom-optics",
+                value=0,
+                min=-14,
+                max=14,
+                step=1,
+                style={"width": 150, "position": "absolute", "bottom": "3%", "right": "3%"},
+            ),
+        ],
+        # style={"height": "100vh", "width": "100%", "margin": "auto"},
     )
     return optics_layout

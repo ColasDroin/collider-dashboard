@@ -270,15 +270,33 @@ def update_graph_filling(value):
         return no_update
 
 
-@app.callback(Output("LHC-2D-near-IP", "figure"), Input("tab-titles", "value"))
-def update_graph_optics(value):
-    if value == "display-optics":
-        return plot.return_plot_optics(
+@app.callback(
+    Output("LHC-2D-near-IP", "figure"),
+    Input("tab-titles", "value"),
+    Input("vertical-zoom-optics", "value"),
+)
+def update_graph_optics(tab_value, zoom_value):
+    if tab_value == "display-optics":
+        fig = plot.return_plot_optics(
             dic_with_bb["df_tw_b1"],
             dic_with_bb["df_tw_b2"],
             dic_with_bb["df_sv_b1"],
             dic_with_bb["df_elements_corrected"],
         )
+
+        factor = 2**-zoom_value
+        fig.update_yaxes(
+            title_text=r"$\beta_{x,y}[m]$", range=[0, 10000 * factor * 2], row=2, col=1
+        )
+        fig.update_yaxes(
+            title_text=r"(Closed orbit)$_{x,y}[m]$",
+            range=[-0.03 * factor, 0.03 * factor],
+            row=3,
+            col=1,
+        )
+        fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3 * factor, 3 * factor], row=4, col=1)
+
+        return fig
     else:
         return no_update
 
