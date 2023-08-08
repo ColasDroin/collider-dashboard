@@ -17,7 +17,7 @@ import json
 import fillingpatterns as fp
 
 # Import collider and twiss functions
-from modules.twiss_check.twiss_check import TwissCheck
+from modules.collider_check.collider_check import ColliderCheck
 from modules.build_collider.build_collider import BuildCollider
 
 # ==================================================================================================
@@ -70,7 +70,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         collider_without_bb.vars["beambeam_scale"] = 0
 
         # Compute twiss checks
-        twiss_check_after_beam_beam, twiss_check_without_beam_beam = compute_twiss_checks(
+        collider_check_after_beam_beam, collider_check_without_beam_beam = compute_collider_checks(
             path_config=None,
             path_collider=None,
             path_collider_without_bb=None,
@@ -81,9 +81,9 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         )
 
         # Compute global variables
-        dic_without_bb, dic_with_bb = compute_global_variables_from_twiss_checks(
-            twiss_check_after_beam_beam,
-            twiss_check_without_beam_beam,
+        dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
+            collider_check_after_beam_beam,
+            collider_check_without_beam_beam,
             path_pickle=path_pickle,
         )
 
@@ -133,7 +133,7 @@ def init_from_config(
             path_collider_without_bb = path_collider.replace(".json", "_without_bb.json")
 
         # Compute twiss checks
-        twiss_check_after_beam_beam, twiss_check_without_beam_beam = compute_twiss_checks(
+        collider_check_after_beam_beam, collider_check_without_beam_beam = compute_collider_checks(
             path_config=path_config,
             path_collider=path_collider,
             path_collider_without_bb=path_collider_without_bb,
@@ -141,16 +141,16 @@ def init_from_config(
         )
 
         # Compute global variables
-        dic_without_bb, dic_with_bb = compute_global_variables_from_twiss_checks(
-            twiss_check_after_beam_beam,
-            twiss_check_without_beam_beam,
+        dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
+            collider_check_after_beam_beam,
+            collider_check_without_beam_beam,
             path_pickle=path_pickle,
         )
 
         return dic_without_bb, dic_with_bb
 
 
-def compute_twiss_checks(
+def compute_collider_checks(
     path_config=None,
     path_collider=None,
     config=None,
@@ -180,8 +180,8 @@ def compute_twiss_checks(
                 " collider must not be provided."
             )
         else:
-            twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
-                initialize_twiss_checks_configuring_new_collider(path_config)
+            collider_check_after_beam_beam, collider_check_without_beam_beam = (
+                initialize_collider_checks_configuring_new_collider(path_config)
             )
     else:
         if collider is not None:
@@ -198,8 +198,8 @@ def compute_twiss_checks(
             elif collider_without_bb is None:
                 raise ValueError("If collider is provided, collider_without_bb must be provided.")
             else:
-                twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
-                    initialize_twiss_checks_from_collider_objects(
+                collider_check_after_beam_beam, collider_check_without_beam_beam = (
+                    initialize_collider_checks_from_collider_objects(
                         collider, collider_without_bb, config=config
                     )
                 )
@@ -210,8 +210,8 @@ def compute_twiss_checks(
                 and path_collider is not None
                 and path_collider_without_bb is not None
             ):
-                twiss_check_after_beam_beam, twiss_check_without_beam_beam = (
-                    initialize_twiss_checks_from_temp_collider_paths(
+                collider_check_after_beam_beam, collider_check_without_beam_beam = (
+                    initialize_collider_checks_from_temp_collider_paths(
                         path_config, path_collider, path_collider_without_bb
                     )
                 )
@@ -221,16 +221,16 @@ def compute_twiss_checks(
                     " path_config and a path collider must be provided."
                 )
 
-    return twiss_check_after_beam_beam, twiss_check_without_beam_beam
+    return collider_check_after_beam_beam, collider_check_without_beam_beam
 
 
-def compute_global_variables_from_twiss_checks(
-    twiss_check_after_beam_beam, twiss_check_without_beam_beam, path_pickle=None
+def compute_global_variables_from_collider_checks(
+    collider_check_after_beam_beam, collider_check_without_beam_beam, path_pickle=None
 ):
     # Get the global variables before and after the beam-beam
-    dic_with_bb = initialize_global_variables(twiss_check_after_beam_beam, compute_footprint=True)
+    dic_with_bb = initialize_global_variables(collider_check_after_beam_beam, compute_footprint=True)
     dic_without_bb = initialize_global_variables(
-        twiss_check_without_beam_beam, compute_footprint=True
+        collider_check_without_beam_beam, compute_footprint=True
     )
 
     if path_pickle is not None:
@@ -242,7 +242,7 @@ def compute_global_variables_from_twiss_checks(
     return dic_without_bb, dic_with_bb
 
 
-def initialize_twiss_checks_configuring_new_collider(path_config):
+def initialize_collider_checks_configuring_new_collider(path_config):
     # Build collider from config file
     build_collider = BuildCollider(path_config)
 
@@ -250,17 +250,17 @@ def initialize_twiss_checks_configuring_new_collider(path_config):
     path_collider = build_collider.dump_collider(prefix="temp/")
 
     # Do Twiss check after bb with the collider dumped previously
-    twiss_check_with_bb = TwissCheck(build_collider.collider, path_configuration=path_config)
+    collider_check_with_bb = ColliderCheck(build_collider.collider, path_configuration=path_config)
 
     # Same before bb
-    twiss_check_without_bb = TwissCheck(
+    collider_check_without_bb = ColliderCheck(
         build_collider.collider_without_bb, path_configuration=path_config
     )
 
-    return twiss_check_with_bb, twiss_check_without_bb
+    return collider_check_with_bb, collider_check_without_bb
 
 
-def initialize_twiss_checks_from_temp_collider_paths(
+def initialize_collider_checks_from_temp_collider_paths(
     path_config, path_collider, path_collider_without_bb
 ):
     # Rebuild the collider from the json file
@@ -273,48 +273,48 @@ def initialize_twiss_checks_from_temp_collider_paths(
     collider_without_bb.vars["beambeam_scale"] = 0
 
     # Do Twiss check, reloading the collider from a json file
-    twiss_check_with_bb = TwissCheck(collider, path_configuration=path_config)
-    twiss_check_without_bb = TwissCheck(collider_without_bb, path_configuration=path_config)
+    collider_check_with_bb = ColliderCheck(collider, path_configuration=path_config)
+    collider_check_without_bb = ColliderCheck(collider_without_bb, path_configuration=path_config)
 
-    return twiss_check_with_bb, twiss_check_without_bb
-
-
-def initialize_twiss_checks_from_collider_objects(collider, collider_without_bb, config=None):
-    """config is either None or a dictionnary. If None, the twiss_check is built without it."""
-    twiss_check_with_bb = TwissCheck(collider, configuration=config)
-    twiss_check_without_bb = TwissCheck(collider_without_bb, configuration=config)
-    return twiss_check_with_bb, twiss_check_without_bb
+    return collider_check_with_bb, collider_check_without_bb
 
 
-def initialize_global_variables(twiss_check, compute_footprint=True):
+def initialize_collider_checks_from_collider_objects(collider, collider_without_bb, config=None):
+    """config is either None or a dictionnary. If None, the collider_check is built without it."""
+    collider_check_with_bb = ColliderCheck(collider, configuration=config)
+    collider_check_without_bb = ColliderCheck(collider_without_bb, configuration=config)
+    return collider_check_with_bb, collider_check_without_bb
+
+
+def initialize_global_variables(collider_check, compute_footprint=True):
     """Initialize global variables, from a collider with beam-beam set."""
 
     # Get luminosity at each IP
-    if twiss_check.configuration is not None:
-        l_lumi = [twiss_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
+    if collider_check.configuration is not None:
+        l_lumi = [collider_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
         # Get the beams schemes
-        array_b1 = twiss_check.array_b1
-        array_b2 = twiss_check.array_b2
+        array_b1 = collider_check.array_b1
+        array_b2 = collider_check.array_b2
 
         # Get the bunches selected for tracking
-        i_bunch_b1 = twiss_check.i_bunch_b1
-        i_bunch_b2 = twiss_check.i_bunch_b2
+        i_bunch_b1 = collider_check.i_bunch_b1
+        i_bunch_b2 = collider_check.i_bunch_b2
 
         # Get emittances
-        nemitt_x = twiss_check.nemitt_x
-        nemitt_y = twiss_check.nemitt_y
+        nemitt_x = collider_check.nemitt_x
+        nemitt_y = collider_check.nemitt_y
 
         # Get the beam-beam schedule
-        patt = fp.FillingPattern.from_json(twiss_check.path_filling_scheme)
+        patt = fp.FillingPattern.from_json(collider_check.path_filling_scheme)
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule
 
         # Get polarity Alice and LHCb
-        polarity_alice, polarity_lhcb = twiss_check.return_polarity_ip_2_8()
+        polarity_alice, polarity_lhcb = collider_check.return_polarity_ip_2_8()
 
         # Get configuration
-        configuration_str = twiss_check.configuration_str
+        configuration_str = collider_check.configuration_str
 
     else:
         l_lumi = None
@@ -331,7 +331,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         nemitt_x = 2.2e-6
         nemitt_y = 2.2e-6
 
-    # Get collider and twiss variables (can't do it from twiss_check as corrections must be applied)
+    # Get collider and twiss variables (can't do it from collider_check as corrections must be applied)
     (
         collider,
         tw_b1,
@@ -343,7 +343,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
         df_sv_b2,
         df_tw_b2,
         df_elements_corrected,
-    ) = return_all_loaded_variables(collider=twiss_check.collider)
+    ) = return_all_loaded_variables(collider=collider_check.collider)
 
     # Get corresponding data tables
     table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
@@ -357,7 +357,7 @@ def initialize_global_variables(twiss_check, compute_footprint=True):
 
     # Get the dictionnary to plot separation
     dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
-    energy = twiss_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
+    energy = collider_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
 
     # Get the footprint only if bb is on
