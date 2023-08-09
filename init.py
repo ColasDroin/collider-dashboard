@@ -24,9 +24,8 @@ from modules.build_collider.build_collider import BuildCollider
 # --- Functions initialize all global variables
 # ==================================================================================================
 
-"""Thid module initializes all global variables from either:
-- a collider json (gen 1 or gen 2)
-- a gen 1 collider json along with a gen 2 configuration file
+"""Thid module initializes all global variables from a collider json, potentially embedding a 
+configuration file.
 """
 
 
@@ -49,7 +48,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
 
     else:
         # Rebuild collider
-        # collider = xt.Multiline.from_json(path_collider)
+        # ! This should be updated when metadata is hanlded better
         with open(path_collider, "r") as fid:
             collider_dict = json.load(fid)
         if "config_yaml" in collider_dict:
@@ -69,166 +68,32 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
-        # Compute twiss checks
-        collider_check_after_beam_beam, collider_check_without_beam_beam = compute_collider_checks(
-            path_config=None,
-            path_collider=None,
-            path_collider_without_bb=None,
-            force_build_collider=False,
-            config=config,
-            collider=collider,
-            collider_without_bb=collider_without_bb,
-        )
+        # ! This should be updated when metadata is hanlded better
+        # Add configuration to collider as metadata
+        if config is not None:
+            collider.metadata = config
+
+        # Compute collider checks
+        collider_check_with_bb = ColliderCheck(collider)
+        collider_check_without_bb = ColliderCheck(collider_without_bb)
 
         # Compute global variables
         dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
-            collider_check_after_beam_beam,
-            collider_check_without_beam_beam,
+            collider_check_with_bb,
+            collider_check_without_bb,
             path_pickle=path_pickle,
         )
 
         return dic_without_bb, dic_with_bb, path_pickle
 
 
-def init_from_config(
-    path_config, force_build_collider=False, load_global_variables_from_pickle=False
-):
-    """Initialize the app variables from a given generation 2 collider configuration file.
-    The generation 1 json collider file must exist."""
-
-    # Path to the pickle dictionnaries (for loading and saving)
-    path_pickle = (
-        "temp/"
-        + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
-        + "t_dic_var.pkl"
-    )
-
-    # Try to load the dictionnaries of variables from pickle
-    if load_global_variables_from_pickle:
-        # Raise error if a collider must be built
-        if force_build_collider:
-            raise ValueError("If load_from_pickle is True, force_build_collider must be False.")
-
-        # Check that the pickle file exists
-        if not os.path.isfile(path_pickle):
-            raise ValueError("The pickle file does not exist.")
-        with open(path_pickle, "rb") as f:
-            dic_without_bb, dic_with_bb = pickle.load(f)
-        print("Returning global variables from pickle file.")
-        return dic_without_bb, dic_with_bb
-
-    else:
-        # If a collider is being built, explictely set the paths to None
-        if force_build_collider:
-            path_collider = None
-            path_collider_without_bb = None
-        else:
-            # Get the path to the collider object
-            path_collider = (
-                "temp/"
-                + path_config.split("/scans/")[1].split("config.yaml")[0].replace("/", "_")
-                + "collider.json"
-            )
-            # Also get a path to the collider after beam-beam object
-            path_collider_without_bb = path_collider.replace(".json", "_without_bb.json")
-
-        # Compute twiss checks
-        collider_check_after_beam_beam, collider_check_without_beam_beam = compute_collider_checks(
-            path_config=path_config,
-            path_collider=path_collider,
-            path_collider_without_bb=path_collider_without_bb,
-            force_build_collider=force_build_collider,
-        )
-
-        # Compute global variables
-        dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
-            collider_check_after_beam_beam,
-            collider_check_without_beam_beam,
-            path_pickle=path_pickle,
-        )
-
-        return dic_without_bb, dic_with_bb
-
-
-def compute_collider_checks(
-    path_config=None,
-    path_collider=None,
-    config=None,
-    collider=None,
-    collider_without_bb=None,
-    path_collider_without_bb=None,
-    force_build_collider=False,
-):
-    """Computes the app global variables from:
-    - either a collider (gen 1 or gen 2), with and without bb, with or without config
-    - either a path to configuration file, along with the path to gen 1 collider
-    - either an already existing gen 2 collider (in the temp folder) along with a configuration file,
-      if force_build_collider is False, else the collider objects (before and after bb) are stored
-      in the temp folder.
-    """
-
-    if force_build_collider:
-        if path_config is None:
-            raise ValueError("If force_build_collider is True, path_config must be provided.")
-        elif (
-            path_collider is not None
-            or path_collider_without_bb is not None
-            or collider is not None
-        ):
-            raise ValueError(
-                "If force_build_collider is True, path_collider, path_collider_without_bb and"
-                " collider must not be provided."
-            )
-        else:
-            collider_check_after_beam_beam, collider_check_without_beam_beam = (
-                initialize_collider_checks_configuring_new_collider(path_config)
-            )
-    else:
-        if collider is not None:
-            if (
-                path_config is not None
-                or path_collider is not None
-                or path_collider_without_bb is not None
-                or force_build_collider is not False
-            ):
-                raise ValueError(
-                    "If collider is provided, path_config, path_collider, path_collider_without_bb"
-                    " and force_build_collider must not be provided."
-                )
-            elif collider_without_bb is None:
-                raise ValueError("If collider is provided, collider_without_bb must be provided.")
-            else:
-                collider_check_after_beam_beam, collider_check_without_beam_beam = (
-                    initialize_collider_checks_from_collider_objects(
-                        collider, collider_without_bb, config=config
-                    )
-                )
-
-        else:
-            if (
-                path_config is not None
-                and path_collider is not None
-                and path_collider_without_bb is not None
-            ):
-                collider_check_after_beam_beam, collider_check_without_beam_beam = (
-                    initialize_collider_checks_from_temp_collider_paths(
-                        path_config, path_collider, path_collider_without_bb
-                    )
-                )
-            else:
-                raise ValueError(
-                    "If force_build_collider is False, and no collider has been provided, a"
-                    " path_config and a path collider must be provided."
-                )
-
-    return collider_check_after_beam_beam, collider_check_without_beam_beam
-
-
 def compute_global_variables_from_collider_checks(
     collider_check_after_beam_beam, collider_check_without_beam_beam, path_pickle=None
 ):
     # Get the global variables before and after the beam-beam
-    dic_with_bb = initialize_global_variables(collider_check_after_beam_beam, compute_footprint=True)
+    dic_with_bb = initialize_global_variables(
+        collider_check_after_beam_beam, compute_footprint=True
+    )
     dic_without_bb = initialize_global_variables(
         collider_check_without_beam_beam, compute_footprint=True
     )
@@ -240,50 +105,6 @@ def compute_global_variables_from_collider_checks(
             pickle.dump((dic_without_bb, dic_with_bb), f)
 
     return dic_without_bb, dic_with_bb
-
-
-def initialize_collider_checks_configuring_new_collider(path_config):
-    # Build collider from config file
-    build_collider = BuildCollider(path_config)
-
-    # Dump collider
-    path_collider = build_collider.dump_collider(prefix="temp/")
-
-    # Do Twiss check after bb with the collider dumped previously
-    collider_check_with_bb = ColliderCheck(build_collider.collider, path_configuration=path_config)
-
-    # Same before bb
-    collider_check_without_bb = ColliderCheck(
-        build_collider.collider_without_bb, path_configuration=path_config
-    )
-
-    return collider_check_with_bb, collider_check_without_bb
-
-
-def initialize_collider_checks_from_temp_collider_paths(
-    path_config, path_collider, path_collider_without_bb
-):
-    # Rebuild the collider from the json file
-    collider = xt.Multiline.from_json(path_collider)
-    collider.build_trackers()
-
-    # Build collider before bb
-    collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
-    collider_without_bb.build_trackers()
-    collider_without_bb.vars["beambeam_scale"] = 0
-
-    # Do Twiss check, reloading the collider from a json file
-    collider_check_with_bb = ColliderCheck(collider, path_configuration=path_config)
-    collider_check_without_bb = ColliderCheck(collider_without_bb, path_configuration=path_config)
-
-    return collider_check_with_bb, collider_check_without_bb
-
-
-def initialize_collider_checks_from_collider_objects(collider, collider_without_bb, config=None):
-    """config is either None or a dictionnary. If None, the collider_check is built without it."""
-    collider_check_with_bb = ColliderCheck(collider, configuration=config)
-    collider_check_without_bb = ColliderCheck(collider_without_bb, configuration=config)
-    return collider_check_with_bb, collider_check_without_bb
 
 
 def initialize_global_variables(collider_check, compute_footprint=True):
