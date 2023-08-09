@@ -70,8 +70,9 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
 
         # ! This should be updated when metadata is hanlded better
         # Add configuration to collider as metadata
-        if config is not None:
+        if config is not None and not hasattr(collider, "metadata"):
             collider.metadata = config
+            collider_without_bb.metadata = config
 
         # Compute collider checks
         collider_check_with_bb = ColliderCheck(collider)
@@ -108,7 +109,7 @@ def compute_global_variables_from_collider_checks(
 
 
 def initialize_global_variables(collider_check, compute_footprint=True):
-    """Initialize global variables, from a collider with beam-beam set."""
+    """Initialize global variables from a collider check object."""
 
     # Get luminosity at each IP
     if collider_check.configuration is not None:
