@@ -33,7 +33,7 @@ dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
 )
 
 # Activating this will allow to select a collider from the dropdown menu, but will restrict the choice to preloaded colliders
-ACTIVATE_COLLIDER_DROPDOWN = True
+ACTIVATE_COLLIDER_DROPDOWN = False
 #################### App ####################
 app = Dash(
     __name__,
