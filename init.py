@@ -186,18 +186,26 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
     # Convert the twiss variables in dic_separation_ip to pandas dataframe so that it can be saved in a pickle file
     for ip in [1, 2, 5, 8]:
-        dic_separation_ip[f"ip{ip}"]["twiss_filtered"]["b1"] = dic_separation_ip[f"ip{ip}"][
-            "twiss_filtered"
-        ]["b1"].to_pandas()
-        dic_separation_ip[f"ip{ip}"]["twiss_filtered"]["b2"] = dic_separation_ip[f"ip{ip}"][
-            "twiss_filtered"
-        ]["b2"].to_pandas()
-        dic_separation_ip[f"ip{ip}"]["survey_filtered"]["b1"] = dic_separation_ip[f"ip{ip}"][
-            "survey_filtered"
-        ]["b1"].to_pandas()
-        dic_separation_ip[f"ip{ip}"]["survey_filtered"]["b2"] = dic_separation_ip[f"ip{ip}"][
-            "survey_filtered"
-        ]["b2"].to_pandas()
+        for variable_to_convert in [
+            "twiss_filtered",
+            "survey_filtered",
+            "s",
+            "dx_meter",
+            "dy_meter",
+            "dx_sig",
+            "dy_sig",
+        ]:
+            if variable_to_convert == "twiss_filtered" or variable_to_convert == "survey_filtered":
+                dic_separation_ip[f"ip{ip}"][variable_to_convert]["b1"] = dic_separation_ip[
+                    f"ip{ip}"
+                ][variable_to_convert]["b1"].to_pandas()
+                dic_separation_ip[f"ip{ip}"][variable_to_convert]["b2"] = dic_separation_ip[
+                    f"ip{ip}"
+                ][variable_to_convert]["b2"].to_pandas()
+            else:
+                dic_separation_ip[f"ip{ip}"][variable_to_convert] = np.array(
+                    dic_separation_ip[f"ip{ip}"][variable_to_convert], dtype=np.float64
+                )
 
     # Get the footprint only if bb is on
     if compute_footprint:
