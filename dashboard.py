@@ -308,9 +308,9 @@ def update_graph_separation(value, bb):
         raise ValueError("bb should be either On or Off")
 
     if value == "v" or value == "h":
-        fig = plot.return_plot_separation(dic["dic_separation_ip"], value)
+        fig = plot.return_plot_separation(dic["dic_separation_ip"], "x" if value == "h" else "y")
     elif value == "||v+h||":
-        fig = plot.return_plot_separation_both_planes(dic["dic_separation_ip"], "xh")
+        fig = plot.return_plot_separation(dic["dic_separation_ip"], "xy")
     else:
         raise ValueError("value should be either v, h or ||v+h||")
     return fig
