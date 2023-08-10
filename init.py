@@ -183,9 +183,21 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     dic_separation_ip = {
         f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}") for ip in [1, 2, 5, 8]
     }
-    # dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider_check.collider)
-    # energy = collider_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
-    # dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
+
+    # Convert the twiss variables in dic_separation_ip to pandas dataframe so that it can be saved in a pickle file
+    for ip in [1, 2, 5, 8]:
+        dic_separation_ip[f"ip{ip}"]["twiss_filtered"]["b1"] = dic_separation_ip[f"ip{ip}"][
+            "twiss_filtered"
+        ]["b1"].to_pandas()
+        dic_separation_ip[f"ip{ip}"]["twiss_filtered"]["b2"] = dic_separation_ip[f"ip{ip}"][
+            "twiss_filtered"
+        ]["b2"].to_pandas()
+        dic_separation_ip[f"ip{ip}"]["survey_filtered"]["b1"] = dic_separation_ip[f"ip{ip}"][
+            "survey_filtered"
+        ]["b1"].to_pandas()
+        dic_separation_ip[f"ip{ip}"]["survey_filtered"]["b2"] = dic_separation_ip[f"ip{ip}"][
+            "survey_filtered"
+        ]["b2"].to_pandas()
 
     # Get the footprint only if bb is on
     if compute_footprint:

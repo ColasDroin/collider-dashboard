@@ -10,7 +10,7 @@ import plot
 #################### Separation Layout ####################
 
 
-def return_3D_separation_layout(dic_bb_HO):
+def return_3D_separation_layout():
     separation_layout = (
         dmc.Center(
             dmc.Stack(

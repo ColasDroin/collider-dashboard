@@ -1132,15 +1132,15 @@ def return_plot_separation(dic_separation_ip, plane):
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_separation_ip[f"ip{n_ip}"]["s"]
         sep = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"]
-        if plane == "x" or plane == "h":
+        if plane == "v" or plane == "h":
             sep_sigma = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"]
-        elif plane == "xh":
+        elif plane == "vh":
             sep_sigma = np.sqrt(
                 dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
                 + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
             )
 
-        if plane == "x" or plane == "h":
+        if plane == "v" or plane == "h":
             # Do the plot
             fig.add_trace(
                 go.Scatter(
@@ -1168,7 +1168,7 @@ def return_plot_separation(dic_separation_ip, plane):
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
-            secondary_y=True if plane == "x" or plane == "h" else False,
+            secondary_y=True if plane == "v" or plane == "h" else False,
         )
 
         # fig.add_trace(
@@ -1201,7 +1201,7 @@ def return_plot_separation(dic_separation_ip, plane):
                 row=row,
                 col=column,
                 linecolor="cyan",
-                secondary_y=True if plane == "x" or plane == "h" else False,
+                secondary_y=True if plane == "v" or plane == "h" else False,
             )
             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
 

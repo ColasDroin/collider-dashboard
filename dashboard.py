@@ -132,9 +132,9 @@ def select_tab(value):
         case "display-scheme":
             return return_filling_scheme_layout()
         case "display-separation":
-            return return_separation_layout(dic_without_bb["dic_sep_IPs"]["v"])
+            return return_separation_layout()
         case "display-3D-separation":
-            return return_3D_separation_layout(dic_without_bb["dic_bb_ho_IPs"])
+            return return_3D_separation_layout()
         case "display-footprint":
             return return_footprint_layout()
         case "display-sanity":
