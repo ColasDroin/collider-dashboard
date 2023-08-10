@@ -153,19 +153,21 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         nemitt_x = 2.2e-6
         nemitt_y = 2.2e-6
 
-    # Get collider and twiss variables (can't do it from collider_check as corrections must be applied)
-    (
-        collider,
-        tw_b1,
-        sv_b1,
-        df_sv_b1,
-        df_tw_b1,
-        tw_b2,
-        sv_b2,
-        df_sv_b2,
-        df_tw_b2,
-        df_elements_corrected,
-    ) = return_all_loaded_variables(collider=collider_check.collider)
+    # Get elements of the line (only done for b1, should be identical for b2)
+    df_elements = return_dataframe_elements_from_line(collider_check.collider.lhcb1)
+
+    # Get twiss and survey for both lines
+    tw_b1, df_sv_b1, df_tw_b1 = (
+        collider_check.tw_b1,
+        collider_check.df_sv_b1,
+        collider_check.df_tw_b1,
+    )
+
+    tw_b2, sv_b2 = collider_check.tw_b2.reverse(), collider_check.sv_b2.reverse()
+    df_tw_b2, df_sv_b2 = tw_b2.to_pandas(), sv_b2.to_pandas()
+
+    # Correct df elements for thin lens approximation
+    df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
 
     # Get corresponding data tables
     table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
@@ -178,14 +180,18 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
     # Get the dictionnary to plot separation
-    dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider)
+    dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider_check.collider)
     energy = collider_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
     dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
 
     # Get the footprint only if bb is on
     if compute_footprint:
-        array_qx1, array_qy1 = return_footprint(collider, nemitt_x, beam="lhcb1", n_turns=2000)
-        array_qx2, array_qy2 = return_footprint(collider, nemitt_x, beam="lhcb2", n_turns=2000)
+        array_qx1, array_qy1 = return_footprint(
+            collider_check.collider, nemitt_x, beam="lhcb1", n_turns=2000
+        )
+        array_qx2, array_qy2 = return_footprint(
+            collider_check.collider, nemitt_x, beam="lhcb2", n_turns=2000
+        )
     else:
         array_qx1 = np.array([])
         array_qy1 = np.array([])
@@ -232,25 +238,6 @@ def return_dataframe_elements_from_line(line):
     return df_elements
 
 
-def return_survey_and_twiss_dataframes_from_line(line, correct_s_axis=False):
-    """Return the survey and twiss dataframes from a line."""
-
-    # Get Twiss and survey
-    tw = line.twiss()
-    sv = line.survey()
-
-    # Correct s-axis if required
-    if correct_s_axis:
-        tw = tw.reverse()
-        sv = sv.reverse()
-
-    # Convert to dataframe
-    df_tw = tw.to_pandas()
-    df_sv = sv.to_pandas()
-
-    return tw, sv, df_sv, df_tw
-
-
 def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     """Correct the dataframe of elements for thin lens approximation."""
     df_elements_corrected = df_elements.copy(deep=True)
@@ -263,7 +250,7 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
             try:
                 index = df_tw[df_tw.name == name].index[0]
             except IndexError:
-                print(f"IndexError for {name}")
+                print(f"IndexError trying to correct slicing for {name}")
                 continue
 
             # Add length
@@ -284,9 +271,6 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
                 else df_elements.loc[i]["knl"]
             )
 
-            # print(df_elements)
-            # print(df_elements_corrected)
-
             # Replace order
             df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
 
@@ -294,39 +278,6 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
             df_elements_corrected.drop(i, inplace=True)
 
     return df_elements_corrected
-
-
-def return_all_loaded_variables(collider):
-    """Return all loaded variables if they are not already loaded."""
-
-    # Get elements of the line (only done for b1, should be identical for b2)
-    df_elements = return_dataframe_elements_from_line(collider.lhcb1)
-
-    # Compute twiss and survey for both lines
-    tw_b1, sv_b1, df_sv_b1, df_tw_b1 = return_survey_and_twiss_dataframes_from_line(
-        collider.lhcb1, correct_s_axis=False
-    )
-
-    tw_b2, sv_b2, df_sv_b2, df_tw_b2 = return_survey_and_twiss_dataframes_from_line(
-        collider.lhcb2, correct_s_axis=True
-    )
-
-    # Correct df elements for thin lens approximation
-    df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
-
-    # Return all variables
-    return (
-        collider,
-        tw_b1,
-        sv_b1,
-        df_sv_b1,
-        df_tw_b1,
-        tw_b2,
-        sv_b2,
-        df_sv_b2,
-        df_tw_b2,
-        df_elements_corrected,
-    )
 
 
 def return_twiss_dic(tw):
