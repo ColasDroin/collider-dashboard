@@ -180,9 +180,12 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
     # Get the dictionnary to plot separation
-    dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider_check.collider)
-    energy = collider_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
-    dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
+    dic_separation_ip = {
+        f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}") for ip in [1, 2, 5, 8]
+    }
+    # dic_bb_ho_IPs = return_bb_ho_dic(df_tw_b1, df_tw_b2, collider_check.collider)
+    # energy = collider_check.collider.lhcb1.particle_ref._p0c[0] / 1e9
+    # dic_sep_IPs = return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy)
 
     # Get the footprint only if bb is on
     if compute_footprint:
@@ -203,8 +206,9 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         "l_lumi": l_lumi,
         "dic_tw_b1": dic_tw_b1,
         "dic_tw_b2": dic_tw_b2,
-        "dic_sep_IPs": dic_sep_IPs,
-        "dic_bb_ho_IPs": dic_bb_ho_IPs,
+        # "dic_sep_IPs": dic_sep_IPs,
+        # "dic_bb_ho_IPs": dic_bb_ho_IPs,
+        "dic_separation_ip": dic_separation_ip,
         "df_sv_b1": df_sv_b1,
         "df_sv_b2": df_sv_b2,
         "df_tw_b1": df_tw_b1,
@@ -306,168 +310,168 @@ def return_twiss_dic(tw):
     return dic_tw
 
 
-def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
-    # Find elements at extremities of each IP
-    # IP1 : mqy.4l1.b1 to mqy.4r1.b1
-    # IP2 : mqy.b5l2.b1 to mqy.b4r2.b1
-    # IP5 : mqy.4l5.b1 to mqy.4r5.b1
-    # IP8 : mqy.b4l8.b1 to mqy.b4r8.b1
-    dic_bb_ho_IPs = {"lhcb1": {"sv": {}, "tw": {}}, "lhcb2": {"sv": {}, "tw": {}}}
-    for beam, df_tw in zip(["lhcb1", "lhcb2"], [df_tw_b1, df_tw_b2]):
-        for ip, el_start, el_end in zip(
-            ["ip1", "ip2", "ip5", "ip8"],
-            ["mqy.4l1", "mqy.b4l2", "mqy.4l5", "mqy.b4l8"],
-            ["mqy.4r1", "mqy.b4r2", "mqy.4r5", "mqy.b4r8"],
-        ):
-            # Change element name for current beam
-            el_start = el_start + "." + beam[3:]
-            el_end = el_end + "." + beam[3:]
+# def return_bb_ho_dic(df_tw_b1, df_tw_b2, collider):
+#     # Find elements at extremities of each IP
+#     # IP1 : mqy.4l1.b1 to mqy.4r1.b1
+#     # IP2 : mqy.b5l2.b1 to mqy.b4r2.b1
+#     # IP5 : mqy.4l5.b1 to mqy.4r5.b1
+#     # IP8 : mqy.b4l8.b1 to mqy.b4r8.b1
+#     dic_bb_ho_IPs = {"lhcb1": {"sv": {}, "tw": {}}, "lhcb2": {"sv": {}, "tw": {}}}
+#     for beam, df_tw in zip(["lhcb1", "lhcb2"], [df_tw_b1, df_tw_b2]):
+#         for ip, el_start, el_end in zip(
+#             ["ip1", "ip2", "ip5", "ip8"],
+#             ["mqy.4l1", "mqy.b4l2", "mqy.4l5", "mqy.b4l8"],
+#             ["mqy.4r1", "mqy.b4r2", "mqy.4r5", "mqy.b4r8"],
+#         ):
+#             # Change element name for current beam
+#             el_start = el_start + "." + beam[3:]
+#             el_end = el_end + "." + beam[3:]
 
-            # # Recompute survey from ip
-            if beam == "lhcb1":
-                df_sv = collider[beam].survey(element0=ip).to_pandas()
-            else:
-                df_sv = collider[beam].survey(element0=ip).reverse().to_pandas()
+#             # # Recompute survey from ip
+#             if beam == "lhcb1":
+#                 df_sv = collider[beam].survey(element0=ip).to_pandas()
+#             else:
+#                 df_sv = collider[beam].survey(element0=ip).reverse().to_pandas()
 
-            # Get twiss and sv between start and end element
-            idx_element_start_tw = df_tw.index[df_tw.name == el_start].tolist()[0]
-            idx_element_end_tw = df_tw.index[df_tw.name == el_end].tolist()[0]
-            idx_element_start_sv = df_sv.index[df_sv.name == el_start].tolist()[0]
-            idx_element_end_sv = df_sv.index[df_sv.name == el_end].tolist()[0]
+#             # Get twiss and sv between start and end element
+#             idx_element_start_tw = df_tw.index[df_tw.name == el_start].tolist()[0]
+#             idx_element_end_tw = df_tw.index[df_tw.name == el_end].tolist()[0]
+#             idx_element_start_sv = df_sv.index[df_sv.name == el_start].tolist()[0]
+#             idx_element_end_sv = df_sv.index[df_sv.name == el_end].tolist()[0]
 
-            # Get dataframe of elements between s_start and s_end
-            dic_bb_ho_IPs[beam]["sv"][ip] = copy.deepcopy(
-                df_sv.iloc[idx_element_start_sv : idx_element_end_sv + 1]
-            )
-            dic_bb_ho_IPs[beam]["tw"][ip] = copy.deepcopy(
-                df_tw.iloc[idx_element_start_tw : idx_element_end_tw + 1]
-            )
+#             # Get dataframe of elements between s_start and s_end
+#             dic_bb_ho_IPs[beam]["sv"][ip] = copy.deepcopy(
+#                 df_sv.iloc[idx_element_start_sv : idx_element_end_sv + 1]
+#             )
+#             dic_bb_ho_IPs[beam]["tw"][ip] = copy.deepcopy(
+#                 df_tw.iloc[idx_element_start_tw : idx_element_end_tw + 1]
+#             )
 
-    # Delete all .b1 and .b2 from element names
-    for ip in ["ip1", "ip2", "ip5", "ip8"]:
-        dic_bb_ho_IPs["lhcb2"]["sv"][ip].loc[:, "name"] = [
-            el.replace(".b2", "").replace("b2_", "") for el in dic_bb_ho_IPs["lhcb2"]["sv"][ip].name
-        ]
-        dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "name"] = [
-            el.replace(".b1", "").replace("b1_", "") for el in dic_bb_ho_IPs["lhcb1"]["sv"][ip].name
-        ]
-        dic_bb_ho_IPs["lhcb2"]["tw"][ip].loc[:, "name"] = [
-            el.replace(".b2", "").replace("b2_", "") for el in dic_bb_ho_IPs["lhcb2"]["tw"][ip].name
-        ]
-        dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "name"] = [
-            el.replace(".b1", "").replace("b1_", "") for el in dic_bb_ho_IPs["lhcb1"]["tw"][ip].name
-        ]
+#     # Delete all .b1 and .b2 from element names
+#     for ip in ["ip1", "ip2", "ip5", "ip8"]:
+#         dic_bb_ho_IPs["lhcb2"]["sv"][ip].loc[:, "name"] = [
+#             el.replace(".b2", "").replace("b2_", "") for el in dic_bb_ho_IPs["lhcb2"]["sv"][ip].name
+#         ]
+#         dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "name"] = [
+#             el.replace(".b1", "").replace("b1_", "") for el in dic_bb_ho_IPs["lhcb1"]["sv"][ip].name
+#         ]
+#         dic_bb_ho_IPs["lhcb2"]["tw"][ip].loc[:, "name"] = [
+#             el.replace(".b2", "").replace("b2_", "") for el in dic_bb_ho_IPs["lhcb2"]["tw"][ip].name
+#         ]
+#         dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "name"] = [
+#             el.replace(".b1", "").replace("b1_", "") for el in dic_bb_ho_IPs["lhcb1"]["tw"][ip].name
+#         ]
 
-    for ip in ["ip1", "ip2", "ip5", "ip8"]:
-        # Get intersection of names in twiss and survey
-        s_intersection = (
-            set(dic_bb_ho_IPs["lhcb2"]["sv"][ip].name)
-            .intersection(set(dic_bb_ho_IPs["lhcb1"]["sv"][ip].name))
-            .intersection(set(dic_bb_ho_IPs["lhcb2"]["tw"][ip].name))
-            .intersection(set(dic_bb_ho_IPs["lhcb1"]["tw"][ip].name))
-        )
+#     for ip in ["ip1", "ip2", "ip5", "ip8"]:
+#         # Get intersection of names in twiss and survey
+#         s_intersection = (
+#             set(dic_bb_ho_IPs["lhcb2"]["sv"][ip].name)
+#             .intersection(set(dic_bb_ho_IPs["lhcb1"]["sv"][ip].name))
+#             .intersection(set(dic_bb_ho_IPs["lhcb2"]["tw"][ip].name))
+#             .intersection(set(dic_bb_ho_IPs["lhcb1"]["tw"][ip].name))
+#         )
 
-        # Clean dataframes in both beams so that they are comparable
-        for beam in ["lhcb1", "lhcb2"]:
-            # Remove all rows whose name is not in both beams
-            dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
-                dic_bb_ho_IPs[beam]["sv"][ip].name.isin(s_intersection)
-            ]
-            dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
-                dic_bb_ho_IPs[beam]["tw"][ip].name.isin(s_intersection)
-            ]
+#         # Clean dataframes in both beams so that they are comparable
+#         for beam in ["lhcb1", "lhcb2"]:
+#             # Remove all rows whose name is not in both beams
+#             dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
+#                 dic_bb_ho_IPs[beam]["sv"][ip].name.isin(s_intersection)
+#             ]
+#             dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
+#                 dic_bb_ho_IPs[beam]["tw"][ip].name.isin(s_intersection)
+#             ]
 
-            # Remove all elements whose name contains '..'
-            for i in range(1, 6):
-                dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
-                    ~dic_bb_ho_IPs[beam]["sv"][ip].name.str.endswith(f"..{i}")
-                ]
-                dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
-                    ~dic_bb_ho_IPs[beam]["tw"][ip].name.str.endswith(f"..{i}")
-                ]
+#             # Remove all elements whose name contains '..'
+#             for i in range(1, 6):
+#                 dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
+#                     ~dic_bb_ho_IPs[beam]["sv"][ip].name.str.endswith(f"..{i}")
+#                 ]
+#                 dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
+#                     ~dic_bb_ho_IPs[beam]["tw"][ip].name.str.endswith(f"..{i}")
+#                 ]
 
-        # Center s around IP for beam 1
-        dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "s"] = (
-            dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "s"]
-            - dic_bb_ho_IPs["lhcb1"]["sv"][ip][
-                dic_bb_ho_IPs["lhcb1"]["sv"][ip].name == ip
-            ].s.to_numpy()
-        )
-        dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "s"] = (
-            dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "s"]
-            - dic_bb_ho_IPs["lhcb1"]["tw"][ip][
-                dic_bb_ho_IPs["lhcb1"]["tw"][ip].name == ip
-            ].s.to_numpy()
-        )
+#         # Center s around IP for beam 1
+#         dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "s"] = (
+#             dic_bb_ho_IPs["lhcb1"]["sv"][ip].loc[:, "s"]
+#             - dic_bb_ho_IPs["lhcb1"]["sv"][ip][
+#                 dic_bb_ho_IPs["lhcb1"]["sv"][ip].name == ip
+#             ].s.to_numpy()
+#         )
+#         dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "s"] = (
+#             dic_bb_ho_IPs["lhcb1"]["tw"][ip].loc[:, "s"]
+#             - dic_bb_ho_IPs["lhcb1"]["tw"][ip][
+#                 dic_bb_ho_IPs["lhcb1"]["tw"][ip].name == ip
+#             ].s.to_numpy()
+#         )
 
-        # Set the s of beam 1 as reference for all dataframes
-        dic_bb_ho_IPs["lhcb2"]["sv"][ip].loc[:, "s"] = dic_bb_ho_IPs["lhcb1"]["sv"][ip].s.to_numpy()
-        dic_bb_ho_IPs["lhcb2"]["tw"][ip].loc[:, "s"] = dic_bb_ho_IPs["lhcb1"]["tw"][ip].s.to_numpy()
+#         # Set the s of beam 1 as reference for all dataframes
+#         dic_bb_ho_IPs["lhcb2"]["sv"][ip].loc[:, "s"] = dic_bb_ho_IPs["lhcb1"]["sv"][ip].s.to_numpy()
+#         dic_bb_ho_IPs["lhcb2"]["tw"][ip].loc[:, "s"] = dic_bb_ho_IPs["lhcb1"]["tw"][ip].s.to_numpy()
 
-        # Only keep bb_ho and bb_lr elements
-        for beam in ["lhcb1", "lhcb2"]:
-            dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
-                dic_bb_ho_IPs[beam]["sv"][ip].name.str.contains(f"bb_ho|bb_lr")
-            ]
-            dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
-                dic_bb_ho_IPs[beam]["tw"][ip].name.str.contains(f"bb_ho|bb_lr")
-            ]
+#         # Only keep bb_ho and bb_lr elements
+#         for beam in ["lhcb1", "lhcb2"]:
+#             dic_bb_ho_IPs[beam]["sv"][ip] = dic_bb_ho_IPs[beam]["sv"][ip][
+#                 dic_bb_ho_IPs[beam]["sv"][ip].name.str.contains(f"bb_ho|bb_lr")
+#             ]
+#             dic_bb_ho_IPs[beam]["tw"][ip] = dic_bb_ho_IPs[beam]["tw"][ip][
+#                 dic_bb_ho_IPs[beam]["tw"][ip].name.str.contains(f"bb_ho|bb_lr")
+#             ]
 
-    return dic_bb_ho_IPs
+#     return dic_bb_ho_IPs
 
 
-def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy):
-    dic_sep_IPs = {"v": {}, "h": {}}
+# def return_separation_dic(dic_bb_ho_IPs, tw_b1, nemitt_x, nemitt_y, energy):
+#     dic_sep_IPs = {"v": {}, "h": {}}
 
-    for idx, n_ip in enumerate([1, 2, 5, 8]):
-        # s doesn't depend on plane
-        s = dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].s
+#     for idx, n_ip in enumerate([1, 2, 5, 8]):
+#         # s doesn't depend on plane
+#         s = dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].s
 
-        # Horizontal separation
-        x = abs(
-            dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
-            - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
-        )
-        n_emitt = nemitt_x / energy
-        sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
-        xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
-        beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
-        sep_survey = abs(
-            dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].X
-            - dic_bb_ho_IPs["lhcb2"]["sv"][f"ip{n_ip}"].X.to_numpy()
-        )
-        sep = xing * 2 * np.sqrt(beta / n_emitt)
+#         # Horizontal separation
+#         x = abs(
+#             dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].x
+#             - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].x.to_numpy()
+#         )
+#         n_emitt = nemitt_x / energy
+#         sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].betx * n_emitt) ** 0.5
+#         xing = float(tw_b1.rows[f"ip{n_ip}"]["px"])
+#         beta = float(tw_b1.rows[f"ip{n_ip}"]["betx"])
+#         sep_survey = abs(
+#             dic_bb_ho_IPs["lhcb1"]["sv"][f"ip{n_ip}"].X
+#             - dic_bb_ho_IPs["lhcb2"]["sv"][f"ip{n_ip}"].X.to_numpy()
+#         )
+#         sep = xing * 2 * np.sqrt(beta / n_emitt)
 
-        # Store everyting in dic
-        dic_sep_IPs["h"][f"ip{n_ip}"] = {
-            "s": s,
-            "x": x,
-            "sep": sep,
-            "sep_survey": sep_survey,
-            "sigma": sigma,
-        }
+#         # Store everyting in dic
+#         dic_sep_IPs["h"][f"ip{n_ip}"] = {
+#             "s": s,
+#             "x": x,
+#             "sep": sep,
+#             "sep_survey": sep_survey,
+#             "sigma": sigma,
+#         }
 
-        # Vertical separation
-        x = abs(
-            dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].y
-            - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].y.to_numpy()
-        )
-        n_emitt = nemitt_y / 7000
-        sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].bety * n_emitt) ** 0.5
-        xing = abs(float(tw_b1.rows[f"ip{n_ip}"]["py"]))
-        beta = float(tw_b1.rows[f"ip{n_ip}"]["bety"])
-        sep_survey = 0
-        sep = xing * 2 * np.sqrt(beta / n_emitt)
+#         # Vertical separation
+#         x = abs(
+#             dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].y
+#             - dic_bb_ho_IPs["lhcb2"]["tw"][f"ip{n_ip}"].y.to_numpy()
+#         )
+#         n_emitt = nemitt_y / 7000
+#         sigma = (dic_bb_ho_IPs["lhcb1"]["tw"][f"ip{n_ip}"].bety * n_emitt) ** 0.5
+#         xing = abs(float(tw_b1.rows[f"ip{n_ip}"]["py"]))
+#         beta = float(tw_b1.rows[f"ip{n_ip}"]["bety"])
+#         sep_survey = 0
+#         sep = xing * 2 * np.sqrt(beta / n_emitt)
 
-        # Store everyting in dic
-        dic_sep_IPs["v"][f"ip{n_ip}"] = {
-            "s": s,
-            "x": x,
-            "sep": sep,
-            "sep_survey": sep_survey,
-            "sigma": sigma,
-        }
-    return dic_sep_IPs
+#         # Store everyting in dic
+#         dic_sep_IPs["v"][f"ip{n_ip}"] = {
+#             "s": s,
+#             "x": x,
+#             "sep": sep,
+#             "sep_survey": sep_survey,
+#             "sigma": sigma,
+#         }
+#     return dic_sep_IPs
 
 
 # ==================================================================================================
