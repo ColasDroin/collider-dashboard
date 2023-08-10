@@ -1132,15 +1132,15 @@ def return_plot_separation(dic_separation_ip, plane):
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_separation_ip[f"ip{n_ip}"]["s"]
         sep = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"]
-        if plane == "x" or plane == "y":
+        if plane == "x" or plane == "h":
             sep_sigma = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"]
-        elif plane == "xy":
+        elif plane == "xh":
             sep_sigma = np.sqrt(
                 dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
                 + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
             )
 
-        if plane == "x" or plane == "y":
+        if plane == "x" or plane == "h":
             # Do the plot
             fig.add_trace(
                 go.Scatter(
@@ -1168,7 +1168,7 @@ def return_plot_separation(dic_separation_ip, plane):
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
-            secondary_y=True if plane == "x" or plane == "y" else False,
+            secondary_y=True if plane == "x" or plane == "h" else False,
         )
 
         # fig.add_trace(
@@ -1201,7 +1201,7 @@ def return_plot_separation(dic_separation_ip, plane):
                 row=row,
                 col=column,
                 linecolor="cyan",
-                secondary_y=True if plane == "x" or plane == "y" else False,
+                secondary_y=True if plane == "x" or plane == "h" else False,
             )
             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
 
@@ -1298,7 +1298,7 @@ def return_plot_separation(dic_separation_ip, plane):
 #     return fig
 
 
-def return_plot_separation_3D(dic_bb_ho_IPs):
+def return_plot_separation_3D(dic_separation_ip):
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -1312,18 +1312,18 @@ def return_plot_separation_3D(dic_bb_ho_IPs):
     )
 
     for idx, ip in enumerate(["ip1", "ip2", "ip5", "ip8"]):
-        for beam, color in zip(["lhcb1", "lhcb2"], ["teal", "tomato"]):
-            df = dic_bb_ho_IPs[beam]["tw"][ip]
-            df_sv = dic_bb_ho_IPs[beam]["sv"][ip]
-            s = df.s.to_numpy()
-            x = df.x.to_numpy()
-            X = df_sv.X.to_numpy()
-            y = df.y.to_numpy()
-            bx = df.betx.to_numpy()
-            by = df.bety.to_numpy()
+        for beam, color in zip(["b1", "b2"], ["teal", "tomato"]):
+            # df = dic_bb_ho_IPs[beam]["tw"][ip]
+            # df_sv = dic_bb_ho_IPs[beam]["sv"][ip]
+            s = dic_separation_ip[ip]["s"].to_numpy()
+            x = dic_separation_ip["twiss_filtered"][beam]["x"].to_numpy()
+            X = dic_separation_ip["survey_filtered"][beam]["x"].to_numpy()
+            y = dic_separation_ip["twiss_filtered"][beam]["y"].to_numpy()
+            bx = dic_separation_ip["twiss_filtered"]["betx"].to_numpy()
+            by = dic_separation_ip["twiss_filtered"]["bety"].to_numpy()
             w = np.sqrt((bx + by) / 2)
 
-            for i in range(df.shape[0] - 2):
+            for i in range(s.shape[0] - 2):
                 fig.add_trace(
                     go.Scatter3d(
                         x=s[i : i + 3],
