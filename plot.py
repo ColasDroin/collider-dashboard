@@ -1131,13 +1131,15 @@ def return_plot_separation(dic_separation_ip, plane):
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_separation_ip[f"ip{n_ip}"]["s"]
-        sep = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"]
         if plane == "x" or plane == "y":
-            sep_sigma = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"]
+            sep = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"])
+            sep_sigma = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"])
         elif plane == "xy":
-            sep_sigma = np.sqrt(
-                dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
-                + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
+            sep_sigma = np.abs(
+                np.sqrt(
+                    dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
+                    + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
+                )
             )
 
         if plane == "x" or plane == "y":
@@ -1313,14 +1315,12 @@ def return_plot_separation_3D(dic_separation_ip):
 
     for idx, ip in enumerate(["ip1", "ip2", "ip5", "ip8"]):
         for beam, color in zip(["b1", "b2"], ["teal", "tomato"]):
-            # df = dic_bb_ho_IPs[beam]["tw"][ip]
-            # df_sv = dic_bb_ho_IPs[beam]["sv"][ip]
-            s = dic_separation_ip[ip]["s"].to_numpy()
-            x = dic_separation_ip["twiss_filtered"][beam]["x"].to_numpy()
-            X = dic_separation_ip["survey_filtered"][beam]["x"].to_numpy()
-            y = dic_separation_ip["twiss_filtered"][beam]["y"].to_numpy()
-            bx = dic_separation_ip["twiss_filtered"]["betx"].to_numpy()
-            by = dic_separation_ip["twiss_filtered"]["bety"].to_numpy()
+            s = dic_separation_ip[ip]["s"]
+            x = dic_separation_ip[ip]["twiss_filtered"][beam]["x"].to_numpy()
+            X = dic_separation_ip[ip]["survey_filtered"][beam]["X"].to_numpy()
+            y = dic_separation_ip[ip]["twiss_filtered"][beam]["y"].to_numpy()
+            bx = dic_separation_ip[ip]["twiss_filtered"][beam]["betx"].to_numpy()
+            by = dic_separation_ip[ip]["twiss_filtered"][beam]["bety"].to_numpy()
             w = np.sqrt((bx + by) / 2)
 
             for i in range(s.shape[0] - 2):
