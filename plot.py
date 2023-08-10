@@ -1118,7 +1118,7 @@ def get_indices_of_interest(df_tw, element_1, element_2):
     return list(range(idx_1, idx_2))
 
 
-def return_plot_separation(dic_sep_IPs):
+def return_plot_separation(dic_separation_ip, plane):
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -1130,31 +1130,37 @@ def return_plot_separation(dic_sep_IPs):
         horizontal_spacing=0.2,
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
-        s = dic_sep_IPs[f"ip{n_ip}"]["s"]
-        x = dic_sep_IPs[f"ip{n_ip}"]["x"]
-        sep = dic_sep_IPs[f"ip{n_ip}"]["sep"]
-        sep_survey = dic_sep_IPs[f"ip{n_ip}"]["sep_survey"]
-        sigma = dic_sep_IPs[f"ip{n_ip}"]["sigma"]
+        s = dic_separation_ip[f"ip{n_ip}"]["s"]
+        sep = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"]
+        if plane == "x" or plane == "y":
+            sep_sigma = dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"]
+        elif plane == "xy":
+            sep_sigma = np.sqrt(
+                dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
+                + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
+            )
 
-        # Do the plot
+        if plane == "x" or plane == "y":
+            # Do the plot
+            fig.add_trace(
+                go.Scatter(
+                    x=s,
+                    y=sep,
+                    name="Separation at ip " + str(n_ip),
+                    legendgroup=" IP " + str(n_ip),
+                    mode="lines+markers",
+                    line=dict(color="coral", width=1),
+                ),
+                row=idx // 2 + 1,
+                col=idx % 2 + 1,
+                secondary_y=False,
+            )
+
+        # Plot normalized separation in any case
         fig.add_trace(
             go.Scatter(
                 x=s,
-                y=x + sep_survey,
-                name="Separation at ip " + str(n_ip),
-                legendgroup=" IP " + str(n_ip),
-                mode="lines+markers",
-                line=dict(color="coral", width=1),
-            ),
-            row=idx // 2 + 1,
-            col=idx % 2 + 1,
-            secondary_y=False,
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                x=s,
-                y=(x + sep_survey) / sigma,
+                y=sep_sigma,
                 name="Normalized separation at ip " + str(n_ip),
                 legendgroup=" IP " + str(n_ip),
                 mode="lines+markers",
@@ -1162,24 +1168,24 @@ def return_plot_separation(dic_sep_IPs):
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
-            secondary_y=True,
+            secondary_y=True if plane == "x" or plane == "y" else False,
         )
 
-        fig.add_trace(
-            go.Scatter(
-                x=s,
-                y=[sep] * len(s),
-                name="Inner normalized separation at ip " + str(n_ip),
-                legendgroup=" IP " + str(n_ip),
-                mode="lines+text",
-                textposition="top left",
-                line=dict(color="white", width=1, dash="dash"),
-                text=[""] * (len(s) - 1) + ["Inner normalized separation"],
-            ),
-            row=idx // 2 + 1,
-            col=idx % 2 + 1,
-            secondary_y=True,
-        )
+        # fig.add_trace(
+        #     go.Scatter(
+        #         x=s,
+        #         y=[sep] * len(s),
+        #         name="Inner normalized separation at ip " + str(n_ip),
+        #         legendgroup=" IP " + str(n_ip),
+        #         mode="lines+text",
+        #         textposition="top left",
+        #         line=dict(color="white", width=1, dash="dash"),
+        #         text=[""] * (len(s) - 1) + ["Inner normalized separation"],
+        #     ),
+        #     row=idx // 2 + 1,
+        #     col=idx % 2 + 1,
+        #     secondary_y=True,
+        # )
 
     for row in range(1, 3):
         for column in range(1, 3):
@@ -1195,7 +1201,7 @@ def return_plot_separation(dic_sep_IPs):
                 row=row,
                 col=column,
                 linecolor="cyan",
-                secondary_y=True,
+                secondary_y=True if plane == "x" or plane == "y" else False,
             )
             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
 
@@ -1214,82 +1220,82 @@ def return_plot_separation(dic_sep_IPs):
     return fig
 
 
-def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
-    fig = make_subplots(
-        rows=2,
-        cols=2,
-        subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
-        horizontal_spacing=0.2,
-    )
-    for idx, n_ip in enumerate([1, 2, 5, 8]):
-        s = dic_sep_IPs_x[f"ip{n_ip}"]["s"]
-        x_x = dic_sep_IPs_x[f"ip{n_ip}"]["x"]
-        sep_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep"]
-        sep_survey_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep_survey"]
-        sigma_x = dic_sep_IPs_x[f"ip{n_ip}"]["sigma"]
+# def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
+#     fig = make_subplots(
+#         rows=2,
+#         cols=2,
+#         subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
+#         horizontal_spacing=0.2,
+#     )
+#     for idx, n_ip in enumerate([1, 2, 5, 8]):
+#         s = dic_sep_IPs_x[f"ip{n_ip}"]["s"]
+#         x_x = dic_sep_IPs_x[f"ip{n_ip}"]["x"]
+#         sep_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep"]
+#         sep_survey_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep_survey"]
+#         sigma_x = dic_sep_IPs_x[f"ip{n_ip}"]["sigma"]
 
-        x_y = dic_sep_IPs_y[f"ip{n_ip}"]["x"]
-        sep_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep"]
-        sep_survey_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep_survey"]
-        sigma_y = dic_sep_IPs_y[f"ip{n_ip}"]["sigma"]
+#         x_y = dic_sep_IPs_y[f"ip{n_ip}"]["x"]
+#         sep_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep"]
+#         sep_survey_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep_survey"]
+#         sigma_y = dic_sep_IPs_y[f"ip{n_ip}"]["sigma"]
 
-        # Do the plot
-        fig.add_trace(
-            go.Scatter(
-                x=s,
-                y=np.sqrt(
-                    ((x_x + sep_survey_x) / sigma_x) ** 2 + ((x_y + sep_survey_y) / sigma_y) ** 2
-                ),
-                name="Normalized separation at ip " + str(n_ip),
-                legendgroup=" IP " + str(n_ip),
-                mode="lines+markers",
-                line=dict(color="cyan", width=1),
-            ),
-            row=idx // 2 + 1,
-            col=idx % 2 + 1,
-            # secondary_y=True,
-        )
+#         # Do the plot
+#         fig.add_trace(
+#             go.Scatter(
+#                 x=s,
+#                 y=np.sqrt(
+#                     ((x_x + sep_survey_x) / sigma_x) ** 2 + ((x_y + sep_survey_y) / sigma_y) ** 2
+#                 ),
+#                 name="Normalized separation at ip " + str(n_ip),
+#                 legendgroup=" IP " + str(n_ip),
+#                 mode="lines+markers",
+#                 line=dict(color="cyan", width=1),
+#             ),
+#             row=idx // 2 + 1,
+#             col=idx % 2 + 1,
+#             # secondary_y=True,
+#         )
 
-        fig.add_trace(
-            go.Scatter(
-                x=s,
-                y=[np.sqrt(sep_x**2 + sep_y**2)] * len(s),
-                name="Inner normalized separation at ip " + str(n_ip),
-                legendgroup=" IP " + str(n_ip),
-                mode="lines+text",
-                textposition="top left",
-                line=dict(color="white", width=1, dash="dash"),
-                text=[""] * (len(s) - 1) + ["Inner normalized separation"],
-            ),
-            row=idx // 2 + 1,
-            col=idx % 2 + 1,
-            # secondary_y=True,
-        )
+#         fig.add_trace(
+#             go.Scatter(
+#                 x=s,
+#                 y=[np.sqrt(sep_x**2 + sep_y**2)] * len(s),
+#                 name="Inner normalized separation at ip " + str(n_ip),
+#                 legendgroup=" IP " + str(n_ip),
+#                 mode="lines+text",
+#                 textposition="top left",
+#                 line=dict(color="white", width=1, dash="dash"),
+#                 text=[""] * (len(s) - 1) + ["Inner normalized separation"],
+#             ),
+#             row=idx // 2 + 1,
+#             col=idx % 2 + 1,
+#             # secondary_y=True,
+#         )
 
-    for row in range(1, 3):
-        for column in range(1, 3):
-            fig.update_yaxes(
-                title_text=r"$\textrm{B-B separation }[\sigma]$",
-                row=row,
-                col=column,
-                linecolor="cyan",
-                # secondary_y=True,
-            )
-            fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
+#     for row in range(1, 3):
+#         for column in range(1, 3):
+#             fig.update_yaxes(
+#                 title_text=r"$\textrm{B-B separation }[\sigma]$",
+#                 row=row,
+#                 col=column,
+#                 linecolor="cyan",
+#                 # secondary_y=True,
+#             )
+#             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
 
-    # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
-    # Use white theme for graph, centered title
-    fig.update_layout(
-        template="plotly_dark",
-        title="Beam-beam separation at the different IPs",
-        title_x=0.5,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        dragmode="pan",
-        showlegend=False,
-    )
+#     # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
+#     # Use white theme for graph, centered title
+#     fig.update_layout(
+#         template="plotly_dark",
+#         title="Beam-beam separation at the different IPs",
+#         title_x=0.5,
+#         paper_bgcolor="rgba(0,0,0,0)",
+#         plot_bgcolor="rgba(0,0,0,0)",
+#         dragmode="pan",
+#         showlegend=False,
+#     )
 
-    return fig
+#     return fig
 
 
 def return_plot_separation_3D(dic_bb_ho_IPs):
