@@ -53,7 +53,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
             collider_dict = json.load(fid)
         if "config_yaml" in collider_dict:
             print("A configuration has been found in the collider file. Using it.")
-            config = collider_dict["config_yaml"]
+            config = collider_dict["config_yaml"]["config_collider"]
         else:
             print(
                 "Warning, you provided a collider file without a configuration. Some features of"
