@@ -121,7 +121,7 @@ def _plot_resonance_lines(
             yVec = np.array(Qy_range)
 
         factor_order = line["Order"] ** 0.5
-        print(factor_order)
+
         # Plotting if in ROI
         l_traces.append(
             go.Scattergl(
