@@ -127,6 +127,9 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         nemitt_x = collider_check.nemitt_x
         nemitt_y = collider_check.nemitt_y
 
+        # Get energy
+        energy = collider_check.energy
+
         # Get the beam-beam schedule
         patt = fp.FillingPattern.from_json(collider_check.path_filling_scheme)
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
@@ -247,6 +250,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         "footprint_b2": (array_qx2, array_qy2),
         "polarity_alice": polarity_alice,
         "polarity_lhcb": polarity_lhcb,
+        "energy": energy,
         "configuration_str": configuration_str,
     }
 

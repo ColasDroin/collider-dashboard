@@ -33,10 +33,10 @@ from layout.footprint import return_footprint_layout
 # )
 
 path_config = None
-path_collider = "/home/cdroin/example_DA_study/master_study/scans/opt_collapse_1000_1500_thin_collider/base_collider/xtrack_0000/collider.json"
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_collapse_1000_1500_thin_collider/base_collider/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
-    path_collider, load_global_variables_from_pickle=False
+    path_collider, load_global_variables_from_pickle=True
 )
 
 # Activating this will allow to select a collider from the dropdown menu, but will restrict the choice to preloaded colliders
@@ -153,6 +153,7 @@ def select_tab(value):
                 dic_with_bb["array_b2"],
                 dic_with_bb["polarity_alice"],
                 dic_with_bb["polarity_lhcb"],
+                dic_with_bb["energy"],
             )
             sanity_before_beam_beam = return_sanity_layout(
                 dic_without_bb["dic_tw_b1"],
@@ -162,6 +163,7 @@ def select_tab(value):
                 dic_without_bb["array_b2"],
                 dic_without_bb["polarity_alice"],
                 dic_without_bb["polarity_lhcb"],
+                dic_with_bb["energy"],
             )
             tabs_sanity = dmc.Tabs(
                 [
@@ -381,18 +383,26 @@ def update_graph_footprint(value):
         return [
             plot.return_plot_footprint(
                 dic_without_bb["footprint_b1"],
+                dic_without_bb["dic_tw_b1"]["qx"],
+                dic_without_bb["dic_tw_b1"]["qy"],
                 title=title_without_bb_b1,
             ),
             plot.return_plot_footprint(
                 dic_without_bb["footprint_b2"],
+                dic_without_bb["dic_tw_b2"]["qx"],
+                dic_without_bb["dic_tw_b2"]["qy"],
                 title=title_without_bb_b2,
             ),
             plot.return_plot_footprint(
                 dic_with_bb["footprint_b1"],
+                dic_without_bb["dic_tw_b1"]["qx"],
+                dic_without_bb["dic_tw_b1"]["qy"],
                 title=title_with_bb_b1,
             ),
             plot.return_plot_footprint(
                 dic_with_bb["footprint_b2"],
+                dic_without_bb["dic_tw_b2"]["qx"],
+                dic_without_bb["dic_tw_b2"]["qy"],
                 title=title_with_bb_b2,
             ),
         ]

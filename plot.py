@@ -6,6 +6,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+from resonance import get_working_diagram
 
 
 # ==================================================================================================
@@ -1337,6 +1338,19 @@ def return_plot_separation_3D(dic_separation_ip):
                     col=idx % 2 + 1,
                 )
 
+                range_s = (s[0] - 5, s[-1] + 5)
+                range_x = range_y = (
+                    np.min((np.min((x + X)), np.min(y))) - 0.01,
+                    np.max((np.max((x + X)), np.max(y))) + 0.01,
+                )
+                fig.update_scenes(
+                    xaxis=dict(title="s[m]", range=range_s),
+                    yaxis=dict(title="x[m]", range=range_x),
+                    zaxis=dict(title="y[m]", range=range_y),
+                    aspectmode="cube",
+                    row=idx // 2 + 1,
+                    col=idx % 2 + 1,
+                )
     fig.update_layout(
         autosize=False,
         template="plotly_dark",
@@ -1344,21 +1358,22 @@ def return_plot_separation_3D(dic_separation_ip):
         plot_bgcolor="rgba(0,0,0,0)",
         title="3D Beam-beam separation at the different IPs",
         title_x=0.5,
-        scene=dict(
-            xaxis_title="s[m]",
-            yaxis_title="x[m]",
-            zaxis_title="y[m]",
-            # showlegend=False,
-        ),
         margin=dict(l=20, r=20, b=10, t=30),  # , pad=10),
     )
+
     return fig
 
 
-def return_plot_footprint(t_array_footprint, title):
+def return_plot_footprint(t_array_footprint, qx, qy, title):
     palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
+
+    # Plot resonance lines first
+    traces = get_working_diagram(order=12, color="white", alpha=0.1)
+    fig.add_traces(traces)
+
+    # Filter the footprint mesh
     # for x, y in zip(array_qx, array_qy):
     #     # Insert additional None when dx or dy is too big
     #     # to avoid connecting the lines
@@ -1389,6 +1404,17 @@ def return_plot_footprint(t_array_footprint, title):
                 mode="markers",
             ),
         )
+
+    fig.add_trace(
+        go.Scattergl(
+            x=[qx % 1],
+            y=[qy % 1],
+            mode="markers",
+            marker_color="white",
+            marker_size=10,
+            marker_symbol="x",
+        )
+    )
 
     fig.update_yaxes(
         scaleanchor="x",

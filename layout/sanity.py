@@ -11,7 +11,7 @@ import xtrack as xt
 
 
 def return_sanity_layout(
-    dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2, polarity_alice, polarity_lhcb
+    dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2, polarity_alice, polarity_lhcb, energy
 ):
     # Ensure that the polarities are defined
     polarity_alice = polarity_alice if polarity_alice is not None else "N/A"
@@ -28,8 +28,6 @@ def return_sanity_layout(
                     html.Th("dQx"),
                     html.Th("dQy"),
                     html.Th("Linear coupling"),
-                    html.Th("Polarity Alice"),
-                    html.Th("Polarity LHCb"),
                     # html.Th("Momentum compaction factor"),
                 ]
             )
@@ -226,6 +224,29 @@ def return_sanity_layout(
             color="tomato",
         )
 
+    # Others
+    header_5 = [
+        html.Thead(
+            html.Tr(
+                [
+                    html.Th("Polarity Alice"),
+                    html.Th("Polarity LHCb"),
+                    html.Th("Energy"),
+                ]
+            )
+        )
+    ]
+
+    row_other = html.Tr(
+        [
+            html.Td(str(polarity_alice)),
+            html.Td(str(polarity_lhcb)),
+            html.Td(str(energy)),
+        ]
+    )
+    body_6 = [html.Tbody([row_other])]
+    table_6 = dmc.Table(header_5 + body_6)
+
     return dmc.Stack(
         children=[
             dmc.Group(
@@ -264,6 +285,14 @@ def return_sanity_layout(
                 children=[
                     dmc.Text("Pile-up", size="xl", style={"margin": "auto"}),
                     table_5,
+                ],
+                mb=10,
+                style={"width": "100%"},
+            ),
+            dmc.Group(
+                children=[
+                    dmc.Text("Other properties", size="xl", style={"margin": "auto"}),
+                    table_6,
                 ],
                 mb=10,
                 style={"width": "100%"},
