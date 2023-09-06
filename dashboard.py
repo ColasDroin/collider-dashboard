@@ -33,7 +33,7 @@ from layout.footprint import return_footprint_layout
 # )
 
 path_config = None
-path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/opt_collapse_1000_1500_thin_collider/base_collider/xtrack_0000/collider.json"
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_opt_collapse/collider_1/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
@@ -337,7 +337,7 @@ def update_graph_separation_3D(bb):
     else:
         raise ValueError("bb should be either On or Off")
 
-    fig = plot.return_plot_separation_3D(dic["dic_separation_ip"])
+    fig = plot.return_plot_separation_3D(dic["dic_position_ip"])
 
     return fig
 

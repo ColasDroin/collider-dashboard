@@ -1301,7 +1301,7 @@ def return_plot_separation(dic_separation_ip, plane):
 #     return fig
 
 
-def return_plot_separation_3D(dic_separation_ip):
+def return_plot_separation_3D(dic_position_ip):
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -1315,13 +1315,14 @@ def return_plot_separation_3D(dic_separation_ip):
     )
 
     for idx, ip in enumerate(["ip1", "ip2", "ip5", "ip8"]):
-        for beam, color in zip(["b1", "b2"], ["teal", "tomato"]):
-            s = dic_separation_ip[ip]["s"]
-            x = dic_separation_ip[ip]["twiss_filtered"][beam]["x"].to_numpy()
-            X = dic_separation_ip[ip]["survey_filtered"][beam]["X"].to_numpy()
-            y = dic_separation_ip[ip]["twiss_filtered"][beam]["y"].to_numpy()
-            bx = dic_separation_ip[ip]["twiss_filtered"][beam]["betx"].to_numpy()
-            by = dic_separation_ip[ip]["twiss_filtered"][beam]["bety"].to_numpy()
+        for beam, color in zip(["lhcb1", "lhcb2"], ["teal", "tomato"]):
+            s = dic_position_ip[beam]["tw"][ip]["s"].to_numpy()
+            x = dic_position_ip[beam]["tw"][ip]["x"].to_numpy()
+            X = dic_position_ip[beam]["sv"][ip]["X"].to_numpy()
+            y = dic_position_ip[beam]["tw"][ip]["y"].to_numpy()
+            Y = dic_position_ip[beam]["sv"][ip]["Y"].to_numpy()
+            bx = dic_position_ip[beam]["tw"][ip]["betx"].to_numpy()
+            by = dic_position_ip[beam]["tw"][ip]["bety"].to_numpy()
             w = np.sqrt((bx + by) / 2)
 
             for i in range(s.shape[0] - 2):
