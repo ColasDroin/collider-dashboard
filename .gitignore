@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .__*
 *.c
+*.DS_Store
 modules/*
 temp/*.pkl
 !modules/.gitkeep
