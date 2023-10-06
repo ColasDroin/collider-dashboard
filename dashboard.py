@@ -17,7 +17,7 @@ from layout.filling import return_filling_scheme_layout
 from layout.optics import return_optics_layout
 from layout.sanity import return_sanity_layout
 from layout.survey import return_survey_layout
-from layout.header import return_header_layout, initial_pickle_path
+from layout.header import return_header_layout
 from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
 from layout.separation_3D import return_3D_separation_layout
@@ -25,21 +25,16 @@ from layout.footprint import return_footprint_layout
 
 
 #################### Load global variables ####################
-
-# path_config = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2024/collider_00/xtrack_0000/config.yaml"  # /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/2024_flat/base_collider/xtrack_0000/config.yaml"
-# path_job = path_config.split("/config.yaml")[0]
-# dic_without_bb, dic_with_bb = init.init_from_config(
-#     path_config, force_build_collider=True, load_global_variables_from_pickle=False
-# )
-
+# Load dashboard variables
 path_config = None
-path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_opt_collapse/collider_1/xtrack_0000/collider.json"
+path_collider = "example_collider/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
-    path_collider, load_global_variables_from_pickle=True
+    path_collider, load_global_variables_from_pickle=False
 )
 
 # Activating this will allow to select a collider from the dropdown menu, but will restrict the choice to preloaded colliders
+# ! Might not be up to date
 ACTIVATE_COLLIDER_DROPDOWN = False
 #################### App ####################
 app = Dash(

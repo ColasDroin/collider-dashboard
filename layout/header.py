@@ -21,12 +21,11 @@ def set_collider_dropdown_options():
     return l_data
 
 
-def return_initial_pickle_path(l_data):
-    return l_data[0]["value"]
-
-
 l_data = set_collider_dropdown_options()
-initial_pickle_path = return_initial_pickle_path(l_data)
+if len(l_data) > 0:
+    initial_pickle_path = l_data[0]["value"]
+else:
+    initial_pickle_path = None
 
 
 #################### Header Layout ####################

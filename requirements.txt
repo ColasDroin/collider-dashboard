@@ -42,9 +42,9 @@ typing_extensions==4.7.1
 tzdata==2023.3
 urllib3==2.0.3
 Werkzeug==2.2.3
-xdeps==0.2.0
-xfields==0.12.2
-xobjects==0.2.7
-xpart==0.15.1
-xsuite==0.5.0
-xtrack==0.38.2
+xdeps
+xfields
+xobjects
+xpart
+xsuite
+xtrack
