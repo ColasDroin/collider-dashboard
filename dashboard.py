@@ -27,7 +27,7 @@ from layout.footprint import return_footprint_layout
 #################### Load global variables ####################
 # Load dashboard variables
 path_config = None
-path_collider = "example_collider/collider.json"
+path_collider = "collider/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=False

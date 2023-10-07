@@ -53,26 +53,34 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
             collider_dict = json.load(fid)
         if "config_yaml" in collider_dict:
             print("A configuration has been found in the collider file. Using it.")
-            config = collider_dict["config_yaml"]["config_collider"]
+            config = collider_dict["config_yaml"]
         else:
             print(
                 "Warning, you provided a collider file without a configuration. Some features of"
                 " the dashboard will be missing."
             )
             config = None
+
+        # Make a copy of the collider dict to load without bb after
+        collider_dict_without_bb = copy.deepcopy(collider_dict)
+
+        # Load collider with bb
         collider = xt.Multiline.from_dict(collider_dict)
         collider.build_trackers()
 
         # Build collider before bb
-        collider_without_bb = xt.Multiline.from_dict(collider_dict)
+        collider_without_bb = xt.Multiline.from_dict(collider_dict_without_bb)
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
         # ! This should be updated when metadata is hanlded better
+
         # Add configuration to collider as metadata
-        if config is not None and not hasattr(collider, "metadata"):
+        if config is not None and (collider.metadata is None or collider.metadata == {}):
             collider.metadata = config
             collider_without_bb.metadata = config
+        elif collider.metadata is not None:
+            print("Warning, the collider file already contains metadata. Using it.")
 
         # Compute collider checks
         collider_check_with_bb = ColliderCheck(collider)
