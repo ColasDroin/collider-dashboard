@@ -27,7 +27,9 @@ from layout.footprint import return_footprint_layout
 #################### Load global variables ####################
 # Load dashboard variables
 path_config = None
-path_collider = "collider/collider.json"
+path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/new_RT_optics_simplified/base_collider/xtrack_0000/collider.json"
+# "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/new_RT_optics/base_collider/xtrack_0000/collider.json"
+# /afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_20/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=False
