@@ -47,29 +47,49 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         return dic_without_bb, dic_with_bb, path_pickle
 
     else:
+        # # Rebuild collider
+        # # ! This should be updated when metadata is hanlded better
+        # with open(path_collider, "r") as fid:
+        #     collider_dict = json.load(fid)
+        # if "config_yaml" in collider_dict:
+        #     print("A configuration has been found in the collider file. Using it.")
+        #     config = collider_dict["config_yaml"]
+        # else:
+        #     print(
+        #         "Warning, you provided a collider file without a configuration. Some features of"
+        #         " the dashboard will be missing."
+        #     )
+        #     config = None
+
+        # # Make a copy of the collider dict to load without bb after
+        # collider_dict_without_bb = copy.deepcopy(collider_dict)
+
+        # # Load collider with bb
+        # collider = xt.Multiline.from_dict(collider_dict)
+        # collider.build_trackers()
+
+        # # Build collider before bb
+        # collider_without_bb = xt.Multiline.from_dict(collider_dict_without_bb)
+        # collider_without_bb.build_trackers()
+        # collider_without_bb.vars["beambeam_scale"] = 0
+
         # Rebuild collider
-        # ! This should be updated when metadata is hanlded better
-        with open(path_collider, "r") as fid:
-            collider_dict = json.load(fid)
-        if "config_yaml" in collider_dict:
-            print("A configuration has been found in the collider file. Using it.")
-            config = collider_dict["config_yaml"]
-        else:
+        collider = xt.Multiline.from_json(path_collider)
+        config = collider.metadata
+        if config == {}:
             print(
                 "Warning, you provided a collider file without a configuration. Some features of"
                 " the dashboard will be missing."
             )
             config = None
 
-        # Make a copy of the collider dict to load without bb after
-        collider_dict_without_bb = copy.deepcopy(collider_dict)
+        # Make a copy of the collider to load without bb after
+        collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
 
         # Load collider with bb
-        collider = xt.Multiline.from_dict(collider_dict)
         collider.build_trackers()
 
         # Build collider before bb
-        collider_without_bb = xt.Multiline.from_dict(collider_dict_without_bb)
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
