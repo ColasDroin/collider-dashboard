@@ -1,11 +1,20 @@
 #################### Imports ####################
+import logging
 
+# Customize logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logging.info("Starting imports")
 # Import standard libraries
 import plotly.graph_objects as go
 import dash_mantine_components as dmc
 from dash import Dash, html, Input, Output, State, no_update, dcc
-import sys
 import pickle
+
 
 # Import initialization and plotting functions
 import init
@@ -25,6 +34,7 @@ from layout.footprint import return_footprint_layout
 
 
 #################### Load global variables ####################
+logging.info("Loading global variables")
 # Load dashboard variables
 path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/test_dump/base_collider/xtrack_0000/collider.json"
@@ -41,6 +51,7 @@ dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
 # ! Might not be up to date
 ACTIVATE_COLLIDER_DROPDOWN = False
 #################### App ####################
+logging.info("Defining app")
 app = Dash(
     __name__,
     title="Dashboard for current simulation",
@@ -52,7 +63,7 @@ app = Dash(
 server = app.server
 
 #################### App Layout ####################
-
+logging.info("Defining app layout")
 layout = html.Div(
     style={"width": "90%", "margin": "auto"},
     children=[
@@ -522,6 +533,7 @@ def update_graph_footprint(value):
 
 #################### Launch app ####################
 if __name__ == "__main__":
+    logging.info("Launching app")
     app.run_server(debug=False, host="0.0.0.0", port=8084)
 
 
