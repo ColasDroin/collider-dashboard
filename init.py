@@ -41,9 +41,9 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         # Check that the pickle file exists
         if not os.path.isfile(path_pickle):
             raise ValueError("The pickle file does not exist.")
+        logging.info("Returning global variables from pickle file.")
         with open(path_pickle, "rb") as f:
             dic_without_bb, dic_with_bb = pickle.load(f)
-        print("Returning global variables from pickle file.")
         return dic_without_bb, dic_with_bb, path_pickle
 
     else:
@@ -73,6 +73,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         # collider_without_bb.build_trackers()
         # collider_without_bb.vars["beambeam_scale"] = 0
 
+        logging.info("Building collider.")
         # Rebuild collider
         collider = xt.Multiline.from_json(path_collider)
         config = collider.metadata
@@ -93,16 +94,15 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
-        # ! This should be updated when metadata is hanlded better
-
         # Add configuration to collider as metadata
         if config is not None and (collider.metadata is None or collider.metadata == {}):
             collider.metadata = config
             collider_without_bb.metadata = config
         elif collider.metadata is not None:
-            print("Warning, the collider file already contains metadata. Using it.")
+            print("The collider file already contains metadata. Using it.")
 
         # Compute collider checks
+        logging.info("Computing collider checks.")
         collider_check_with_bb = ColliderCheck(collider)
         collider_check_without_bb = ColliderCheck(collider_without_bb)
 
@@ -120,16 +120,18 @@ def compute_global_variables_from_collider_checks(
     collider_check_after_beam_beam, collider_check_without_beam_beam, path_pickle=None
 ):
     # Get the global variables before and after the beam-beam
+    logging.info("Computing global variables with beam beam.")
     dic_with_bb = initialize_global_variables(
         collider_check_after_beam_beam, compute_footprint=True
     )
+    logging.info("Computing global variables without beam beam.")
     dic_without_bb = initialize_global_variables(
         collider_check_without_beam_beam, compute_footprint=True
     )
 
     if path_pickle is not None:
         # Dump the dictionnaries in a pickle file
-        print("Dumping global variables in a pickle file.")
+        logging.info("Dumping global variables into a pickle file.")
         with open(path_pickle, "wb") as f:
             pickle.dump((dic_without_bb, dic_with_bb), f)
 
@@ -139,8 +141,9 @@ def compute_global_variables_from_collider_checks(
 def initialize_global_variables(collider_check, compute_footprint=True):
     """Initialize global variables from a collider check object."""
 
-    # Get luminosity at each IP
     if collider_check.configuration is not None:
+        # Get luminosity at each IP
+        logging.info("Computing luminosity at each IP.")
         l_lumi = [collider_check.return_luminosity(IP=x) for x in [1, 2, 5, 8]]
 
         # Get the beams schemes
@@ -159,6 +162,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         energy = collider_check.energy
 
         # Get the beam-beam schedule
+        logging.info("Computing beam-beam schedule.")
         patt = fp.FillingPattern.from_json(collider_check.path_filling_scheme)
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule
@@ -185,9 +189,11 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         nemitt_y = 2.2e-6
 
     # Get elements of the line (only done for b1, should be identical for b2)
+    logging.info("Getting beam-beam elements for plotting.")
     df_elements = return_dataframe_elements_from_line(collider_check.collider.lhcb1)
 
     # Get twiss and survey for both lines
+    logging.info("Computing Twiss and Survey.")
     tw_b1, df_sv_b1, df_tw_b1 = (
         collider_check.tw_b1,
         collider_check.df_sv_b1,
@@ -198,6 +204,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     df_tw_b2, df_sv_b2 = tw_b2.to_pandas(), sv_b2.to_pandas()
 
     # Correct df elements for thin lens approximation
+    logging.info("Correcting beam-beam elements for thin lens approximation.")
     df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
 
     # Get corresponding data tables
@@ -211,13 +218,14 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
     # Get the dictionnary to plot separation
+    logging.info("Computing separation variables")
     dic_separation_ip = {
         f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}") for ip in [1, 2, 5, 8]
     }
-
     dic_position_ip = collider_check.return_dic_position_all_ips()
 
     # Convert the twiss variables in dic_separation_ip to pandas dataframe so that it can be saved in a pickle file
+    logging.info("Wonverting twiss and survey objects to pandas dataframes.")
     for ip in [1, 2, 5, 8]:
         for variable_to_convert in [
             "twiss_filtered",
@@ -242,6 +250,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
     # Get the footprint only if bb is on
     if compute_footprint:
+        logging.info("Computing footprints.")
         array_qx1, array_qy1 = return_footprint(
             collider_check.collider, nemitt_x, beam="lhcb1", n_turns=2000
         )
@@ -302,7 +311,12 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     # Add all thin lenses (length + strength)
     for i, row in df_tw.iterrows():
         # Correct for thin lens approximation and weird duplicates
-        if ".." in row["name"] and "f" not in row["name"].split("..")[1]:
+        if (
+            ".." in row["name"]
+            and "f" not in row["name"].split("..")[1]
+            and "entry" not in row["name"]
+            and "exit" not in row["name"]
+        ):
             name = row["name"].split("..")[0]
             try:
                 index = df_tw[df_tw.name == name].index[0]
