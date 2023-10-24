@@ -7,7 +7,9 @@ __pycache__/*
 .__*
 *.c
 *.DS_Store
-modules/*
-temp/*.pkl
+app/modules/*
+app/temp/*.pkl
 !modules/.gitkeep
 nohup.out
+app/modules/FillingPatterns
+app/modules/xmask
