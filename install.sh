@@ -10,6 +10,5 @@ cd ..
 git clone https://github.com/PyCOMPLETE/FillingPatterns.git
 pip install -e FillingPatterns
 git clone https://github.com/ColasDroin/collider_check.git
-git clone https://github.com/ColasDroin/build_collider.git
 cd ..
 xsuite-prebuild

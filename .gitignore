@@ -11,5 +11,4 @@ app/modules/*
 app/temp/*.pkl
 !modules/.gitkeep
 nohup.out
-app/modules/FillingPatterns
-app/modules/xmask
+
