@@ -207,12 +207,14 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
 
     # Get corresponding data tables
+    logging.info("Get Twiss and survey datatables.")
     table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
     table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-after-bb", twiss=True)
     table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
     table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
 
     # Get the twiss dictionnary (tune, chroma, etc + twiss at IPs)
+    logging.info("Get Twiss dictionnary.")
     dic_tw_b1 = return_twiss_dic(tw_b1)
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
