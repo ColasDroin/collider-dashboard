@@ -9,6 +9,5 @@ git submodule update
 cd ..
 git clone https://github.com/PyCOMPLETE/FillingPatterns.git
 pip install -e FillingPatterns
-git clone https://github.com/ColasDroin/collider_check.git
 cd ..
 xsuite-prebuild

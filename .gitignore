@@ -11,4 +11,3 @@ app/modules/*
 app/temp/*.pkl
 !modules/.gitkeep
 nohup.out
-

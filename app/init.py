@@ -18,7 +18,7 @@ import json
 import fillingpatterns as fp
 
 # Import collider and twiss functions
-from modules.collider_check.collider_check import ColliderCheck
+from collider_check import ColliderCheck
 
 # ==================================================================================================
 # --- Functions initialize all global variables

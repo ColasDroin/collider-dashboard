@@ -3,6 +3,7 @@ certifi
 cffi
 charset-normalizer
 click
+collider_check
 contourpy
 cycler
 dash
