@@ -10,28 +10,27 @@ logging.basicConfig(
 
 logging.info("Starting imports")
 # Import standard libraries
-import plotly.graph_objects as go
-import dash_mantine_components as dmc
-from dash import Dash, html, Input, Output, State, no_update, dcc
 import pickle
 
+import dash_mantine_components as dmc
 
 # Import initialization and plotting functions
 import init
 import plot
+import plotly.graph_objects as go
+from dash import Dash, Input, Output, State, dcc, html, no_update
 
 # Import layout functions
 from layout.configuration import return_configuration_layout
 from layout.filling import return_filling_scheme_layout
+from layout.footprint import return_footprint_layout
+from layout.header import return_header_layout
 from layout.optics import return_optics_layout
 from layout.sanity import return_sanity_layout
-from layout.survey import return_survey_layout
-from layout.header import return_header_layout
-from layout.tables import return_tables_layout
 from layout.separation import return_separation_layout
 from layout.separation_3D import return_3D_separation_layout
-from layout.footprint import return_footprint_layout
-
+from layout.survey import return_survey_layout
+from layout.tables import return_tables_layout
 
 #################### Load global variables ####################
 logging.info("Loading global variables")
@@ -143,7 +142,9 @@ def select_preloaded_collider(value):
 def select_tab(value):
     match value:
         case "display-configuration":
-            return return_configuration_layout(dic_with_bb["configuration_str"], path_job)
+            return return_configuration_layout(
+                dic_with_bb["configuration_str"], path_job
+            )
         case "display-twiss":
             return return_tables_layout()
         case "display-scheme":
@@ -192,8 +193,12 @@ def select_tab(value):
                         ],
                         position="center",
                     ),
-                    dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
-                    dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
+                    dmc.TabsPanel(
+                        sanity_before_beam_beam, value="sanity-before-beam-beam"
+                    ),
+                    dmc.TabsPanel(
+                        sanity_after_beam_beam, value="sanity-after-beam-beam"
+                    ),
                 ],
                 color="cyan",
                 value="sanity-after-beam-beam",
@@ -205,10 +210,14 @@ def select_tab(value):
         case "display-survey":
             return return_survey_layout()
         case _:
-            return return_configuration_layout(dic_with_bb["configuration_str"], path_job)
+            return return_configuration_layout(
+                dic_with_bb["configuration_str"], path_job
+            )
 
 
-@app.callback(Output("placeholder-data-table", "children"), Input("segmented-data-table", "value"))
+@app.callback(
+    Output("placeholder-data-table", "children"), Input("segmented-data-table", "value")
+)
 def select_data_table(value):
     match value:
         case "Twiss table beam 1":
@@ -274,7 +283,12 @@ def update_graph_filling(value):
         else:
             return (
                 go.Figure(),
-                {"height": "90vh", "width": "100%", "margin": "auto", "display": "none"},
+                {
+                    "height": "90vh",
+                    "width": "100%",
+                    "margin": "auto",
+                    "display": "none",
+                },
                 {"margin": "auto"},
             )
 
@@ -306,7 +320,9 @@ def update_graph_optics(tab_value, zoom_value):
             row=3,
             col=1,
         )
-        fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3 * factor, 3 * factor], row=4, col=1)
+        fig.update_yaxes(
+            title_text=r"$D_{x,y}[m]$", range=[-3 * factor, 3 * factor], row=4, col=1
+        )
 
         return fig
     else:
@@ -327,7 +343,9 @@ def update_graph_separation(value, bb):
         raise ValueError("bb should be either On or Off")
 
     if value == "v" or value == "h":
-        fig = plot.return_plot_separation(dic["dic_separation_ip"], "x" if value == "h" else "y")
+        fig = plot.return_plot_separation(
+            dic["dic_separation_ip"], "x" if value == "h" else "y"
+        )
     elif value == "||v+h||":
         fig = plot.return_plot_separation(dic["dic_separation_ip"], "xy")
     else:
@@ -370,25 +388,19 @@ def update_graph_footprint(value):
                 "Tune footprint without beam-beam effects for beam 2 and bunch "
                 + str(dic_without_bb["i_bunch_b2"])
             )
-            title_with_bb_b1 = "Tune footprint with beam-beam effects for beam 1 and bunch " + str(
-                dic_with_bb["i_bunch_b1"]
-            )
-            title_with_bb_b2 = "Tune footprint with beam-beam effects for beam 2 and bunch " + str(
-                dic_with_bb["i_bunch_b2"]
-            )
-        else:
-            title_without_bb_b1 = (
-                "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
-            )
-            title_without_bb_b2 = (
-                "Tune footprint without beam-beam effects for beam 2 (bunch number unknown)"
-            )
             title_with_bb_b1 = (
-                "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
+                "Tune footprint with beam-beam effects for beam 1 and bunch "
+                + str(dic_with_bb["i_bunch_b1"])
             )
             title_with_bb_b2 = (
-                "Tune footprint with beam-beam effects for beam 2 (bunch number unknown)"
+                "Tune footprint with beam-beam effects for beam 2 and bunch "
+                + str(dic_with_bb["i_bunch_b2"])
             )
+        else:
+            title_without_bb_b1 = "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
+            title_without_bb_b2 = "Tune footprint without beam-beam effects for beam 2 (bunch number unknown)"
+            title_with_bb_b1 = "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
+            title_with_bb_b2 = "Tune footprint with beam-beam effects for beam 2 (bunch number unknown)"
 
         return [
             plot.return_plot_footprint(
