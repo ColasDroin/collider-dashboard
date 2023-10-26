@@ -3,16 +3,14 @@
 # ==================================================================================================
 # Import from standard library
 import logging
-import pickle
 
 # Import third-party packages
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
-from dash import Dash, Input, Output, State, dcc, html, no_update
+from dash import Dash, Input, Output, dcc, html, no_update
 
 # Import initialization and plotting functions
 from .backend import init, plot
-
 # Import layout functions
 from .layout.configuration import return_configuration_layout
 from .layout.filling import return_filling_scheme_layout
@@ -35,9 +33,6 @@ dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
 )
 
-# Activating this will allow to select a collider from the dropdown menu, but will restrict the choice to preloaded colliders
-# ! Might not be up to date
-ACTIVATE_COLLIDER_DROPDOWN = False
 #################### App ####################
 logging.info("Defining app")
 app = Dash(
@@ -86,7 +81,7 @@ def build_layout():
     return layout
 
 
-app.layout = layout
+app.layout = build_layout()
 
 
 # ==================================================================================================
@@ -101,38 +96,6 @@ app.layout = layout
 def update_preloaded_collider_value_at_launch_style(_):
     if not ACTIVATE_COLLIDER_DROPDOWN:
         return {"display": "none"}
-    return no_update
-
-
-@app.callback(
-    Output("select-preloaded-collider", "value"),
-    Input("main-div", "style"),
-    State("select-preloaded-collider", "value"),
-)
-def update_preloaded_collider_value_at_launch(_, value):
-    if ACTIVATE_COLLIDER_DROPDOWN:
-        global initial_pickle_path
-        if value != initial_pickle_path:
-            return initial_pickle_path
-    return no_update
-
-
-@app.callback(
-    Output("url", "href"),
-    Input("select-preloaded-collider", "value"),
-)
-def select_preloaded_collider(value):
-    if ACTIVATE_COLLIDER_DROPDOWN:
-        global dic_without_bb, dic_with_bb, path_job, initial_pickle_path
-        if value is not None and value != initial_pickle_path:
-            try:
-                with open(value, "rb") as f:
-                    dic_without_bb, dic_with_bb = pickle.load(f)
-                path_job = value.split("collider.jsont_dic_var.pkl")[0]
-                initial_pickle_path = value
-                return "/"
-            except:
-                print("Could not load pickle file.")
     return no_update
 
 

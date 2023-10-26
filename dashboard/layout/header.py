@@ -2,40 +2,10 @@
 # --- Imports
 # ==================================================================================================
 # Import from standard library
-import os
 
 # Import third-party packages
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-
-
-# ==================================================================================================
-# --- Handle multiple collider choices
-# ==================================================================================================
-def set_collider_dropdown_options():
-    l_data = []
-    for x in sorted(os.listdir("dashboard/temp/")):
-        try:
-            temp_str = x.split("optics_")
-            if len(temp_str) > 1:
-                temp_str_2 = temp_str[1].split("_xtrack")[0]
-                if len(temp_str_2) > 0:
-                    id_collider = int(temp_str_2[0].split("_")[-1]) + 23
-                    data = {
-                        "value": os.path.join("temp", x),
-                        "label": temp_str_2[0][:-2] + f"{id_collider}",
-                    }
-                    l_data.append(data)
-        except ValueError:
-            pass
-    return l_data
-
-
-l_data = set_collider_dropdown_options()
-if len(l_data) > 0:
-    initial_pickle_path = l_data[0]["value"]
-else:
-    initial_pickle_path = None
 
 
 # ==================================================================================================
@@ -102,22 +72,6 @@ def return_header_layout():
                             fullWidth=True,
                             size="md",
                             color="cyan",
-                        ),
-                        dmc.Group(
-                            id="group-collider-dropdown",
-                            children=[
-                                # dmc.Text("Preloaded collider: "),
-                                dmc.Select(
-                                    id="select-preloaded-collider",
-                                    data=l_data,
-                                    value=initial_pickle_path,
-                                    searchable=True,
-                                    nothingFound="No options found",
-                                    size="sm",
-                                    # style={"width": 200},
-                                ),
-                            ],
-                            mb=5,
                         ),
                         dmc.Group(
                             position="right",
