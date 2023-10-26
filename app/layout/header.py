@@ -1,11 +1,18 @@
-#################### Imports ####################
-# Import standard libraries
+# ==================================================================================================
+# --- Imports
+# ==================================================================================================
+
+# Import from standard library
 import os
+
+# Import third-party packages
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 
-#################### Functions to load collider choices ####################
+# ==================================================================================================
+# --- Handle multiple collider choices
+# ==================================================================================================
 def set_collider_dropdown_options():
     l_data = []
     for x in sorted(os.listdir("temp/")):
@@ -16,7 +23,7 @@ def set_collider_dropdown_options():
                 "label": x.split("optics_")[1].split("_xtrack")[0][:-2] + f"{id_collider}",
             }
             l_data.append(data)
-        except:
+        except IndexError:
             pass
     return l_data
 
@@ -28,7 +35,9 @@ else:
     initial_pickle_path = None
 
 
-#################### Header Layout ####################
+# ==================================================================================================
+# --- Header layout
+# ==================================================================================================
 def return_header_layout():
     def create_header_link(icon, href, size=22, color="cyan"):
         return dmc.Anchor(
@@ -117,4 +126,5 @@ def return_header_layout():
             ),
         ],
     )
+    return header
     return header
