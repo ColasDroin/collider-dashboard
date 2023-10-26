@@ -1,7 +1,6 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
-
 # Import from standard library
 import os
 
@@ -17,10 +16,13 @@ def set_collider_dropdown_options():
     l_data = []
     for x in sorted(os.listdir("temp/")):
         try:
-            id_collider = int(x.split("optics_")[1].split("_xtrack")[0].split("_")[-1]) + 23
+            id_collider = (
+                int(x.split("optics_")[1].split("_xtrack")[0].split("_")[-1]) + 23
+            )
             data = {
                 "value": os.path.join("temp", x),
-                "label": x.split("optics_")[1].split("_xtrack")[0][:-2] + f"{id_collider}",
+                "label": x.split("optics_")[1].split("_xtrack")[0][:-2]
+                + f"{id_collider}",
             }
             l_data.append(data)
         except IndexError:
@@ -78,12 +80,18 @@ def return_header_layout():
                             id="tab-titles",
                             value="display-configuration",
                             data=[
-                                {"value": "display-configuration", "label": "Configuration"},
+                                {
+                                    "value": "display-configuration",
+                                    "label": "Configuration",
+                                },
                                 {"value": "display-twiss", "label": "Twiss"},
                                 {"value": "display-scheme", "label": "Scheme"},
                                 {"value": "display-sanity", "label": "Sanity checks"},
                                 {"value": "display-separation", "label": "Separation"},
-                                {"value": "display-3D-separation", "label": "3D separation"},
+                                {
+                                    "value": "display-3D-separation",
+                                    "label": "3D separation",
+                                },
                                 {"value": "display-footprint", "label": "Footprint"},
                                 {"value": "display-optics", "label": "Optics"},
                                 {"value": "display-survey", "label": "Survey"},

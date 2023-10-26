@@ -3,10 +3,10 @@
 # ==================================================================================================
 import dash_mantine_components as dmc
 
+
 # ==================================================================================================
 # --- Configuration layout
 # ==================================================================================================
-
 def return_configuration_layout(configuration_str, path_collider):
     if configuration_str is not None:
         configuration_layout = dmc.Stack(
@@ -17,7 +17,11 @@ def return_configuration_layout(configuration_str, path_collider):
                         dmc.Prism(
                             language="yaml",
                             children=configuration_str,
-                            style={"height": "90vh", "overflowY": "auto", "width": "80%"},
+                            style={
+                                "height": "90vh",
+                                "overflowY": "auto",
+                                "width": "80%",
+                            },
                         ),
                     ],
                 ),

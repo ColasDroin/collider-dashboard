@@ -4,14 +4,15 @@
 
 # Import third-party packages
 import dash_mantine_components as dmc
+
 # Import local functions
 import plot
 from dash import dcc, html
 
+
 # ==================================================================================================
 # --- Optics layout
 # ==================================================================================================
-
 def return_optics_layout(dic_with_bb):
     optics_layout = html.Div(
         children=[
@@ -45,7 +46,12 @@ def return_optics_layout(dic_with_bb):
                 min=-14,
                 max=14,
                 step=1,
-                style={"width": 150, "position": "absolute", "bottom": "3%", "right": "3%"},
+                style={
+                    "width": 150,
+                    "position": "absolute",
+                    "bottom": "3%",
+                    "right": "3%",
+                },
             ),
         ],
         # style={"height": "100vh", "width": "100%", "margin": "auto"},

@@ -6,10 +6,10 @@
 import dash_mantine_components as dmc
 from dash import dcc
 
+
 # ==================================================================================================
 # --- Filling scheme Layout
 # ==================================================================================================
-
 def return_filling_scheme_layout():
     scheme_layout = dmc.Stack(
         children=[

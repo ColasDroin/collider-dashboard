@@ -1,17 +1,25 @@
-#################### Imports ####################
+# ==================================================================================================
+# --- Imports
+# ==================================================================================================
 
-# Import standard libraries
+# Import third-party packages
 import dash_mantine_components as dmc
-from dash import html
 import numpy as np
-import xtrack as xt
+from dash import html
 
 
-#################### Sanity checks Layout ####################
-
-
+# ==================================================================================================
+# --- Sanity checks Layout
+# ==================================================================================================
 def return_sanity_layout(
-    dic_tw_b1, dic_tw_b2, l_lumi, array_b1, array_b2, polarity_alice, polarity_lhcb, energy
+    dic_tw_b1,
+    dic_tw_b2,
+    l_lumi,
+    array_b1,
+    array_b2,
+    polarity_alice,
+    polarity_lhcb,
+    energy,
 ):
     # Ensure that the polarities are defined
     polarity_alice = polarity_alice if polarity_alice is not None else "N/A"
@@ -139,13 +147,19 @@ def return_sanity_layout(
         row_lumi = html.Tr(
             [
                 (
-                    html.Td(f"{l_lumi[0]:.3e}", style={"font-weight": "bold", "color": "red"})
+                    html.Td(
+                        f"{l_lumi[0]:.3e}",
+                        style={"font-weight": "bold", "color": "red"},
+                    )
                     if l_lumi[0] > 5e34
                     else html.Td(f"{l_lumi[0]:.3e}")
                 ),
                 html.Td(f"{l_lumi[1]:.3e}"),
                 (
-                    html.Td(f"{l_lumi[2]:.3e}", style={"font-weight": "bold", "color": "red"})
+                    html.Td(
+                        f"{l_lumi[2]:.3e}",
+                        style={"font-weight": "bold", "color": "red"},
+                    )
                     if l_lumi[2] > 5e34
                     else html.Td(f"{l_lumi[2]:.3e}")
                 ),
@@ -192,13 +206,17 @@ def return_sanity_layout(
         row_PU = html.Tr(
             [
                 (
-                    html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
+                    html.Td(
+                        f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"}
+                    )
                     if l_PU[0] > 140
                     else html.Td(f"{l_PU[0]:.1f}")
                 ),
                 html.Td(f"{l_PU[1]:.3e}"),
                 (
-                    html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
+                    html.Td(
+                        f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"}
+                    )
                     if l_PU[2] > 140
                     else html.Td(f"{l_PU[2]:.1f}")
                 ),
@@ -251,7 +269,9 @@ def return_sanity_layout(
         children=[
             dmc.Group(
                 children=[
-                    dmc.Text("General observables", size="xl", style={"margin": "auto"}),
+                    dmc.Text(
+                        "General observables", size="xl", style={"margin": "auto"}
+                    ),
                     table_1,
                 ],
                 mb=10,
@@ -259,7 +279,9 @@ def return_sanity_layout(
             ),
             dmc.Group(
                 children=[
-                    dmc.Text("Beam 1 observables at IPs", size="xl", style={"margin": "auto"}),
+                    dmc.Text(
+                        "Beam 1 observables at IPs", size="xl", style={"margin": "auto"}
+                    ),
                     table_2,
                 ],
                 mb=10,
@@ -267,7 +289,9 @@ def return_sanity_layout(
             ),
             dmc.Group(
                 children=[
-                    dmc.Text("Beam 2 observables at IPs", size="xl", style={"margin": "auto"}),
+                    dmc.Text(
+                        "Beam 2 observables at IPs", size="xl", style={"margin": "auto"}
+                    ),
                     table_3,
                 ],
                 mb=10,

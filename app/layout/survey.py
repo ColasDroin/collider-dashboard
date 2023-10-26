@@ -1,13 +1,15 @@
-#################### Imports ####################
+# ==================================================================================================
+# --- Imports
+# ==================================================================================================
 
-# Import standard libraries
+# Import third-party packages
 import dash_mantine_components as dmc
-from dash import html, dcc
+from dash import dcc, html
 
 
-#################### Survey Layout ####################
-
-
+# ==================================================================================================
+# --- Survey layout
+# ==================================================================================================
 def return_survey_layout():
     survey_layout = html.Div(
         children=[
@@ -49,7 +51,11 @@ def return_survey_layout():
                                     "responsive": True,
                                     "displaylogo": False,
                                 },
-                                style={"height": "90vh", "width": "100%", "margin": "auto"},
+                                style={
+                                    "height": "90vh",
+                                    "width": "100%",
+                                    "margin": "auto",
+                                },
                             ),
                             type="circle",
                             color="cyan",

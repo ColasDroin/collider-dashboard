@@ -1,15 +1,15 @@
-#################### Imports ####################
+# ==================================================================================================
+# --- Imports
+# ==================================================================================================
 
-# Import standard libraries
+# Import third-party packages
 import dash_mantine_components as dmc
 from dash import dcc
 
-# Import functions
-import plot
 
-#################### Separation Layout ####################
-
-
+# ==================================================================================================
+# --- 3D separation Layout
+# ==================================================================================================
 def return_3D_separation_layout():
     separation_layout = (
         dmc.Center(
@@ -54,7 +54,11 @@ def return_3D_separation_layout():
                         type="circle",
                         color="cyan",
                         style={"height": "100%", "width": "100%", "margin": "auto"},
-                        parent_style={"height": "100%", "width": "100%", "margin": "auto"},
+                        parent_style={
+                            "height": "100%",
+                            "width": "100%",
+                            "margin": "auto",
+                        },
                     ),
                 ],
                 style={"width": "100%", "margin": "auto"},

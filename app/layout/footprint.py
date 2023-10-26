@@ -6,10 +6,10 @@
 import dash_mantine_components as dmc
 from dash import dcc
 
+
 # ==================================================================================================
 # --- Footprint Layout
 # ==================================================================================================
-
 def return_footprint_layout():
     footprint_layout = (
         dmc.Center(
@@ -28,7 +28,11 @@ def return_footprint_layout():
                                             "responsive": True,
                                             "displaylogo": False,
                                         },
-                                        style={"height": "45vh", "width": "45%", "margin": "auto"},
+                                        style={
+                                            "height": "45vh",
+                                            "width": "45%",
+                                            "margin": "auto",
+                                        },
                                     ),
                                     dcc.Graph(
                                         id="footprint-with-bb-b1",
@@ -39,7 +43,11 @@ def return_footprint_layout():
                                             "responsive": True,
                                             "displaylogo": False,
                                         },
-                                        style={"height": "45vh", "width": "45%", "margin": "auto"},
+                                        style={
+                                            "height": "45vh",
+                                            "width": "45%",
+                                            "margin": "auto",
+                                        },
                                     ),
                                 ],
                             ),
@@ -54,7 +62,11 @@ def return_footprint_layout():
                                             "responsive": True,
                                             "displaylogo": False,
                                         },
-                                        style={"height": "45vh", "width": "45%", "margin": "auto"},
+                                        style={
+                                            "height": "45vh",
+                                            "width": "45%",
+                                            "margin": "auto",
+                                        },
                                     ),
                                     dcc.Graph(
                                         id="footprint-with-bb-b2",
@@ -65,7 +77,11 @@ def return_footprint_layout():
                                             "responsive": True,
                                             "displaylogo": False,
                                         },
-                                        style={"height": "45vh", "width": "45%", "margin": "auto"},
+                                        style={
+                                            "height": "45vh",
+                                            "width": "45%",
+                                            "margin": "auto",
+                                        },
                                     ),
                                 ],
                             ),
@@ -73,7 +89,11 @@ def return_footprint_layout():
                         type="circle",
                         color="cyan",
                         style={"height": "100%", "width": "100%", "margin": "auto"},
-                        parent_style={"height": "100%", "width": "100%", "margin": "auto"},
+                        parent_style={
+                            "height": "100%",
+                            "width": "100%",
+                            "margin": "auto",
+                        },
                     ),
                 ],
                 style={"width": "100%", "margin": "auto"},
