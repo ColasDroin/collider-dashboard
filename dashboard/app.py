@@ -11,6 +11,7 @@ from dash import Dash, Input, Output, dcc, html, no_update
 
 # Import initialization and plotting functions
 from .backend import init, plot
+
 # Import layout functions
 from .layout.configuration import return_configuration_layout
 from .layout.filling import return_filling_scheme_layout
@@ -30,7 +31,7 @@ path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/test_dump/base_collider/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
-    path_collider, load_global_variables_from_pickle=True
+    path_collider, load_global_variables_from_pickle=False
 )
 
 #################### App ####################
@@ -391,117 +392,6 @@ def update_graph_footprint(value):
         ]
     else:
         return no_update
-
-
-# ! Uncomment this function once I find out how to store collider elements
-# @app.callback(
-#     Output("text-element", "children"),
-#     Output("title-element", "children"),
-#     Output("type-element", "children"),
-#     Output("drawer-magnets", "opened"),
-#     Input("LHC-layout", "clickData"),
-#     prevent_initial_call=False,
-# )
-# def update_text_graph_LHC_2D(clickData):
-#     if clickData is not None:
-#         if "customdata" in clickData["points"][0]:
-#             name = clickData["points"][0]["customdata"]
-#             if name.startswith("mb"):
-#                 type_text = "Dipole"
-#                 try:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name]
-#                         .knl[0]
-#                         ._expr._get_dependencies()
-#                     )
-#                 except:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
-#                         .knl[0]
-#                         ._expr._get_dependencies()
-#                     )
-#             elif name.startswith("mq"):
-#                 type_text = "Quadrupole"
-#                 try:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name]
-#                         .knl[1]
-#                         ._expr._get_dependencies()
-#                     )
-#                 except:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
-#                         .knl[1]
-#                         ._expr._get_dependencies()
-#                     )
-#             elif name.startswith("ms"):
-#                 type_text = "Sextupole"
-#                 try:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name]
-#                         .knl[2]
-#                         ._expr._get_dependencies()
-#                     )
-#                 except:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
-#                         .knl[2]
-#                         ._expr._get_dependencies()
-#                     )
-#             elif name.startswith("mo"):
-#                 type_text = "Octupole"
-#                 try:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name]
-#                         .knl[3]
-#                         ._expr._get_dependencies()
-#                     )
-#                 except:
-#                     set_var = (
-#                         collider_after_beam_beam.lhcb1.element_refs[name + "..1"]
-#                         .knl[3]
-#                         ._expr._get_dependencies()
-#                     )
-
-#             text = []
-#             for var in set_var:
-#                 name_var = str(var).split("'")[1]
-#                 val = collider_after_beam_beam.lhcb1.vars[name_var]._get_value()
-#                 expr = collider_after_beam_beam.lhcb1.vars[name_var]._expr
-#                 if expr is not None:
-#                     dependencies = collider_after_beam_beam.lhcb1.vars[
-#                         name_var
-#                     ]._expr._get_dependencies()
-#                 else:
-#                     dependencies = "No dependencies"
-#                     expr = "No expression"
-#                 targets = collider_after_beam_beam.lhcb1.vars[name_var]._find_dependant_targets()
-
-#                 text.append(dmc.Text("Name: ", weight=500))
-#                 text.append(dmc.Text(name_var, size="sm"))
-#                 text.append(dmc.Text("Element value: ", weight=500))
-#                 text.append(dmc.Text(str(val), size="sm"))
-#                 text.append(dmc.Text("Expression: ", weight=500))
-#                 text.append(dmc.Text(str(expr), size="sm"))
-#                 text.append(dmc.Text("Dependencies: ", weight=500))
-#                 text.append(dmc.Text(str(dependencies), size="sm"))
-#                 text.append(dmc.Text("Targets: ", weight=500))
-#                 if len(targets) > 10:
-#                     text.append(
-#                         dmc.Text(str(targets[:10]), size="sm"),
-#                     )
-#                     text.append(dmc.Text("...", size="sm"))
-#                 else:
-#                     text.append(dmc.Text(str(targets), size="sm"))
-
-#             return text, name, type_text, True
-
-#     return (
-#         dmc.Text("Please click on a multipole to get the corresponding knob information."),
-#         dmc.Text("Click !"),
-#         dmc.Text("Undefined type"),
-#         False,
-#     )
 
 
 #################### Launch app ####################
