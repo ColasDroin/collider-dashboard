@@ -14,7 +14,7 @@ from dash_iconify import DashIconify
 # ==================================================================================================
 def set_collider_dropdown_options():
     l_data = []
-    for x in sorted(os.listdir("app/temp/")):
+    for x in sorted(os.listdir("dashboard/temp/")):
         try:
             temp_str = x.split("optics_")
             if len(temp_str) > 1:

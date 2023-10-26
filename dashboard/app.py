@@ -1,17 +1,11 @@
-#################### Imports ####################
+# ==================================================================================================
+# --- Imports
+# ==================================================================================================
+# Import from standard library
 import logging
-
-# # Customize logging
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
-#     datefmt="%Y-%m-%d %H:%M:%S",
-# )
-
-logging.info("Starting imports")
-# Import standard libraries
 import pickle
 
+# Import third-party packages
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
 from dash import Dash, Input, Output, State, dcc, html, no_update
@@ -36,10 +30,6 @@ logging.info("Loading global variables")
 # Load dashboard variables
 path_config = None
 path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/test_dump/base_collider/xtrack_0000/collider.json"
-# "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/new_RT_optics_simplified/base_collider/xtrack_0002/collider.json"
-# "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/new_RT_optics_simplified/base_collider/xtrack_0000/collider.json"
-# "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/new_RT_optics/base_collider/xtrack_0000/collider.json"
-# "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/all_optics_2023/collider_20/xtrack_0000/collider.json"
 path_job = path_collider.split("/final_collider.json")[0]
 dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
     path_collider, load_global_variables_from_pickle=True
@@ -60,39 +50,48 @@ app = Dash(
 )
 server = app.server
 
-#################### App Layout ####################
+# ==================================================================================================
+# --- App layout
+# ==================================================================================================
 logging.info("Defining app layout")
-layout = html.Div(
-    style={"width": "90%", "margin": "auto"},
-    children=[
-        dcc.Location(id="url", refresh=True),
-        return_header_layout(),
-        dmc.Center(
-            children=[
-                html.Div(
-                    id="main-div",
-                    style={"width": "100%", "margin": "auto"},
-                    children=[
-                        html.Div(id="placeholder-tabs"),
-                    ],
-                ),
-            ],
-            style={"margin-top": "80px"},
-        ),
-    ],
-)
 
-# Dark theme
-layout = dmc.MantineProvider(
-    withGlobalStyles=True,
-    theme={"colorScheme": "dark"},
-    children=layout,
-)
+
+def build_layout():
+    layout = html.Div(
+        style={"width": "90%", "margin": "auto"},
+        children=[
+            dcc.Location(id="url", refresh=True),
+            return_header_layout(),
+            dmc.Center(
+                children=[
+                    html.Div(
+                        id="main-div",
+                        style={"width": "100%", "margin": "auto"},
+                        children=[
+                            html.Div(id="placeholder-tabs"),
+                        ],
+                    ),
+                ],
+                style={"margin-top": "80px"},
+            ),
+        ],
+    )
+
+    # Dark theme
+    layout = dmc.MantineProvider(
+        withGlobalStyles=True,
+        theme={"colorScheme": "dark"},
+        children=layout,
+    )
+    return layout
+
 
 app.layout = layout
 
 
-#################### App Callbacks ####################
+# ==================================================================================================
+# --- App callbacks
+# ==================================================================================================
 
 
 @app.callback(

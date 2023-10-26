@@ -1,3 +1,3 @@
-from app import dashboard
+from .app import app
 
-dashboard.app.run_server(debug=False, host="0.0.0.0", port=8084)
+app.run_server(debug=False, host="0.0.0.0", port=8084)

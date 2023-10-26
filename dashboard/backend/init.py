@@ -31,7 +31,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
     configuration will be deactivated."""
 
     # Path to the pickle dictionnaries (for loading and saving)
-    path_pickle = "app/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
+    path_pickle = "dashboard/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
     # Try to load the dictionnaries of variables from pickle
     if load_global_variables_from_pickle:
