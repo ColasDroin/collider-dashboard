@@ -2,23 +2,20 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
-import numpy as np
-import pandas as pd
-import xtrack as xt
-import numpy as np
-from dash import dash_table
-from dash.dash_table.Format import Format, Scheme
-import pickle
-import os
-import copy
 import logging
-import json
+import os
+import pickle
 
 # Module to compute beam-beam schedule
 import fillingpatterns as fp
+import numpy as np
+import pandas as pd
+import xtrack as xt
 
 # Import collider and twiss functions
 from collider_check import ColliderCheck
+from dash import dash_table
+from dash.dash_table.Format import Format, Scheme
 
 # ==================================================================================================
 # --- Functions initialize all global variables
@@ -34,7 +31,7 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
     configuration will be deactivated."""
 
     # Path to the pickle dictionnaries (for loading and saving)
-    path_pickle = "temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
+    path_pickle = "app/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
     # Try to load the dictionnaries of variables from pickle
     if load_global_variables_from_pickle:
@@ -95,7 +92,9 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         collider_without_bb.vars["beambeam_scale"] = 0
 
         # Add configuration to collider as metadata
-        if config is not None and (collider.metadata is None or collider.metadata == {}):
+        if config is not None and (
+            collider.metadata is None or collider.metadata == {}
+        ):
             collider.metadata = config
             collider_without_bb.metadata = config
         elif collider.metadata is not None:
@@ -184,7 +183,9 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         polarity_lhcb = None
         configuration_str = None
         # Get emittance for the computation of the normalized separation
-        logging.warning("No configuration file provided, using default values for emittances.")
+        logging.warning(
+            "No configuration file provided, using default values for emittances."
+        )
         nemitt_x = 2.2e-6
         nemitt_y = 2.2e-6
 
@@ -205,7 +206,9 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
     # Correct df elements for thin lens approximation
     logging.info("Correcting beam-beam elements for thin lens approximation.")
-    df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw_b1)
+    df_elements_corrected = return_dataframe_corrected_for_thin_lens_approx(
+        df_elements, df_tw_b1
+    )
 
     # Get corresponding data tables
     logging.info("Get Twiss and survey datatables.")
@@ -222,7 +225,8 @@ def initialize_global_variables(collider_check, compute_footprint=True):
     # Get the dictionnary to plot separation
     logging.info("Computing separation variables")
     dic_separation_ip = {
-        f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}") for ip in [1, 2, 5, 8]
+        f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}")
+        for ip in [1, 2, 5, 8]
     }
     dic_position_ip = collider_check.return_dic_position_all_ips()
 
@@ -238,13 +242,16 @@ def initialize_global_variables(collider_check, compute_footprint=True):
             "dx_sig",
             "dy_sig",
         ]:
-            if variable_to_convert == "twiss_filtered" or variable_to_convert == "survey_filtered":
-                dic_separation_ip[f"ip{ip}"][variable_to_convert]["b1"] = dic_separation_ip[
-                    f"ip{ip}"
-                ][variable_to_convert]["b1"].to_pandas()
-                dic_separation_ip[f"ip{ip}"][variable_to_convert]["b2"] = dic_separation_ip[
-                    f"ip{ip}"
-                ][variable_to_convert]["b2"].to_pandas()
+            if (
+                variable_to_convert == "twiss_filtered"
+                or variable_to_convert == "survey_filtered"
+            ):
+                dic_separation_ip[f"ip{ip}"][variable_to_convert][
+                    "b1"
+                ] = dic_separation_ip[f"ip{ip}"][variable_to_convert]["b1"].to_pandas()
+                dic_separation_ip[f"ip{ip}"][variable_to_convert][
+                    "b2"
+                ] = dic_separation_ip[f"ip{ip}"][variable_to_convert]["b2"].to_pandas()
             else:
                 dic_separation_ip[f"ip{ip}"][variable_to_convert] = np.array(
                     dic_separation_ip[f"ip{ip}"][variable_to_convert], dtype=np.float64
@@ -334,12 +341,15 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
             # Add strength
             if np.isnan(df_elements_corrected.loc[index]["knl"]).all():
                 df_elements_corrected.at[index, "knl"] = (
-                    np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
+                    np.array(
+                        [0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64
+                    )
                     if type(df_elements.loc[i]["knl"]) != float
                     else 0.0
                 )
             df_elements_corrected.at[index, "knl"] = (
-                df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
+                df_elements_corrected.loc[index, "knl"]
+                + np.array(df_elements.loc[i]["knl"])
                 if type(df_elements.loc[i]["knl"]) != float
                 else df_elements.loc[i]["knl"]
             )
@@ -402,7 +412,9 @@ def return_data_table(df, id_table, twiss=True):
                         "id": i,
                         "deletable": False,
                         "type": "numeric",
-                        "format": Format(precision=6, scheme=Scheme.decimal_or_exponent),
+                        "format": Format(
+                            precision=6, scheme=Scheme.decimal_or_exponent
+                        ),
                     }
                     if idx != idx_column_name
                     else {"name": i, "id": i, "deletable": False}
@@ -431,7 +443,11 @@ def return_data_table(df, id_table, twiss=True):
                 "minWidth": "98%",
                 "padding": "1em",
             },
-            style_header={"backgroundColor": "rgb(30, 30, 30)", "color": "white", "padding": "1em"},
+            style_header={
+                "backgroundColor": "rgb(30, 30, 30)",
+                "color": "white",
+                "padding": "1em",
+            },
             style_data={"backgroundColor": "rgb(50, 50, 50)", "color": "white"},
             style_filter={"backgroundColor": "rgb(70, 70, 70)"},  # , "color": "white"},
             style_cell={"font-family": "sans-serif", "minWidth": 95},
@@ -445,7 +461,9 @@ def return_footprint(collider, emittance, beam="lhcb1", n_turns=2000):
         nemitt_x=emittance,
         nemitt_y=emittance,
         n_turns=n_turns,
-        linear_rescale_on_knobs=[xt.LinearRescale(knob_name="beambeam_scale", v0=0.0, dv=0.05)],
+        linear_rescale_on_knobs=[
+            xt.LinearRescale(knob_name="beambeam_scale", v0=0.0, dv=0.05)
+        ],
         freeze_longitudinal=True,
     )
 

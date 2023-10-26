@@ -4,10 +4,10 @@
 
 # Import third-party packages
 import dash_mantine_components as dmc
+from dash import dcc, html
 
 # Import local functions
-import plot
-from dash import dcc, html
+from ..backend import plot
 
 
 # ==================================================================================================

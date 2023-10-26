@@ -1,6 +1,6 @@
 # Local files
-app/modules/*
-app/temp/*.pkl
+dashboard/modules/*
+dashboard/temp/*.pkl
 !modules/.gitkeep
 nohup.out
 .vscode

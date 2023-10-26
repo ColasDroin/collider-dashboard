@@ -14,18 +14,19 @@ from dash_iconify import DashIconify
 # ==================================================================================================
 def set_collider_dropdown_options():
     l_data = []
-    for x in sorted(os.listdir("temp/")):
+    for x in sorted(os.listdir("app/temp/")):
         try:
-            id_collider = (
-                int(x.split("optics_")[1].split("_xtrack")[0].split("_")[-1]) + 23
-            )
-            data = {
-                "value": os.path.join("temp", x),
-                "label": x.split("optics_")[1].split("_xtrack")[0][:-2]
-                + f"{id_collider}",
-            }
-            l_data.append(data)
-        except IndexError:
+            temp_str = x.split("optics_")
+            if len(temp_str) > 1:
+                temp_str_2 = temp_str[1].split("_xtrack")[0]
+                if len(temp_str_2) > 0:
+                    id_collider = int(temp_str_2[0].split("_")[-1]) + 23
+                    data = {
+                        "value": os.path.join("temp", x),
+                        "label": temp_str_2[0][:-2] + f"{id_collider}",
+                    }
+                    l_data.append(data)
+        except ValueError:
             pass
     return l_data
 

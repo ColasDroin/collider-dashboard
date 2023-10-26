@@ -6,7 +6,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 from plotly.subplots import make_subplots
-from resonance import get_working_diagram
+
+from .resonance import get_working_diagram
 
 
 # ==================================================================================================

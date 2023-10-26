@@ -1,36 +1,35 @@
 #################### Imports ####################
 import logging
 
-# Customize logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+# # Customize logging
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
+#     datefmt="%Y-%m-%d %H:%M:%S",
+# )
 
 logging.info("Starting imports")
 # Import standard libraries
 import pickle
 
 import dash_mantine_components as dmc
-
-# Import initialization and plotting functions
-import init
-import plot
 import plotly.graph_objects as go
 from dash import Dash, Input, Output, State, dcc, html, no_update
 
+# Import initialization and plotting functions
+from .backend import init, plot
+
 # Import layout functions
-from layout.configuration import return_configuration_layout
-from layout.filling import return_filling_scheme_layout
-from layout.footprint import return_footprint_layout
-from layout.header import return_header_layout
-from layout.optics import return_optics_layout
-from layout.sanity import return_sanity_layout
-from layout.separation import return_separation_layout
-from layout.separation_3D import return_3D_separation_layout
-from layout.survey import return_survey_layout
-from layout.tables import return_tables_layout
+from .layout.configuration import return_configuration_layout
+from .layout.filling import return_filling_scheme_layout
+from .layout.footprint import return_footprint_layout
+from .layout.header import return_header_layout
+from .layout.optics import return_optics_layout
+from .layout.sanity import return_sanity_layout
+from .layout.separation import return_separation_layout
+from .layout.separation_3D import return_3D_separation_layout
+from .layout.survey import return_survey_layout
+from .layout.tables import return_tables_layout
 
 #################### Load global variables ####################
 logging.info("Loading global variables")
@@ -544,9 +543,9 @@ def update_graph_footprint(value):
 
 
 #################### Launch app ####################
-if __name__ == "__main__":
-    logging.info("Launching app")
-    app.run_server(debug=False, host="0.0.0.0", port=8084)
+# if __name__ == "__main__":
+#     logging.info("Launching app")
+#     app.run_server(debug=False, host="0.0.0.0", port=8084)
 
 
 # Run with gunicorn dashboard:server -b :8000
