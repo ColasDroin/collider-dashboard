@@ -8,4 +8,5 @@ from .dashboard import build_app
 # ==================================================================================================
 app = build_app()
 server = app.server  # Define server for gunicorn
-app.run_server(debug=False, host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    app.run_server(debug=False, host="0.0.0.0", port=8080)
