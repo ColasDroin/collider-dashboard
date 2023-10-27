@@ -1,9 +1,12 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
+
+# Third-party packages
+from fractions import Fraction
+
 import numpy as np
 import pandas as pd
-from fractions import Fraction
 import plotly.graph_objects as go
 
 

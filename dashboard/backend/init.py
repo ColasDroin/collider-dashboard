@@ -1,18 +1,24 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
+
+# Import from standard library
 import logging
 import os
 import pickle
 
-# Module to compute beam-beam schedule
+# Package to compute beam-beam schedule
 import fillingpatterns as fp
+
+# Third-party packages
 import numpy as np
 import pandas as pd
 import xtrack as xt
 
-# Import collider and twiss functions
+# Package to check collider observables
 from collider_check import ColliderCheck
+
+# Dash imports
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme
 
@@ -46,13 +52,6 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         logging.info("Building collider.")
         # Rebuild collider
         collider = xt.Multiline.from_json(path_collider)
-        config = collider.metadata
-        if config == {}:
-            print(
-                "Warning, you provided a collider file without a configuration. Some features of"
-                " the dashboard will be missing."
-            )
-            config = None
 
         # Make a copy of the collider to load without bb after
         collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
@@ -64,12 +63,11 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
         collider_without_bb.build_trackers()
         collider_without_bb.vars["beambeam_scale"] = 0
 
-        # Add configuration to collider as metadata
-        if config is not None and (collider.metadata is None or collider.metadata == {}):
-            collider.metadata = config
-            collider_without_bb.metadata = config
-        elif collider.metadata is not None:
-            print("The collider file already contains metadata. Using it.")
+        # Check configuration
+        if collider.metadata is not None and collider.metadata != {}:
+            logging.info("The collider file contains metadata. Using it.")
+        else:
+            logging.warning("The collider file does not contain metadata. Using default values.")
 
         # Compute collider checks
         logging.info("Computing collider checks.")
@@ -153,6 +151,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         polarity_alice = None
         polarity_lhcb = None
         configuration_str = None
+
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")
         nemitt_x = 2.2e-6
@@ -305,12 +304,12 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
             if np.isnan(df_elements_corrected.loc[index]["knl"]).all():
                 df_elements_corrected.at[index, "knl"] = (
                     np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
-                    if type(df_elements.loc[i]["knl"]) != float
+                    if not isinstance(df_elements.loc[i]["knl"], float)
                     else 0.0
                 )
             df_elements_corrected.at[index, "knl"] = (
                 df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
-                if type(df_elements.loc[i]["knl"]) != float
+                if not isinstance(df_elements.loc[i]["knl"], float)
                 else df_elements.loc[i]["knl"]
             )
 
@@ -386,9 +385,6 @@ def return_data_table(df, id_table, twiss=True):
             sort_mode="multi",
             row_selectable=False,
             row_deletable=False,
-            # page_action="none",
-            # fixed_rows={"headers": True, "data": 0},
-            # fixed_columns={"headers": True, "data": 1},
             virtualization=False,
             page_size=25,
             style_table={

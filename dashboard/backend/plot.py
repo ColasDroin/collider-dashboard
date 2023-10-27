@@ -1,12 +1,15 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
+
+# Import third-party packages
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 from plotly.subplots import make_subplots
 
+# Import local packages
 from .resonance import get_working_diagram
 
 
@@ -118,9 +121,7 @@ def return_circular_multipole_trace(
             return float(x)
 
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements._order == order]["knl"].apply(
-        return_correct_strength
-    )
+    s_knl = df_elements[df_elements._order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
@@ -149,9 +150,7 @@ def return_circular_multipole_trace(
     dic_trace = {}
     for i, row in df_sv.loc[s_knl.index].iterrows():
         width = (
-            np.ceil(s_lengths[i])
-            if not np.isnan(s_lengths[i]) or np.ceil(s_lengths[i]) == 0
-            else 1
+            np.ceil(s_lengths[i]) if not np.isnan(s_lengths[i]) or np.ceil(s_lengths[i]) == 0 else 1
         )
 
         if width in dic_trace:
@@ -220,9 +219,7 @@ def return_flat_multipole_trace(
             return float(x)
 
     # Get strength of all multipoles of the requested order
-    s_knl = df_elements[df_elements._order == order]["knl"].apply(
-        return_correct_strength
-    )
+    s_knl = df_elements[df_elements._order == order]["knl"].apply(return_correct_strength)
 
     # Remove zero-strength dipoles and magnify
     s_knl = s_knl[s_knl != 0] * strength_magnification_factor
@@ -264,9 +261,7 @@ def return_flat_multipole_trace(
     dic_trace = {}
     for i, row in df_sv.loc[s_knl.index].iterrows():
         width = (
-            np.ceil(s_lengths[i])
-            if not np.isnan(s_lengths[i]) or np.ceil(s_lengths[i]) == 0
-            else 1
+            np.ceil(s_lengths[i]) if not np.isnan(s_lengths[i]) or np.ceil(s_lengths[i]) == 0 else 1
         )
         if width in dic_trace:
             dic_trace[width]["x"].extend([row["s"], row["s"], None])
@@ -445,9 +440,7 @@ def return_optic_trace(
         y=[None]
         + list(
             df_sv_temp["Z"]
-            - df_tw_temp[tw_name] ** exponent
-            * magnification_factor
-            * np.sin(df_sv_temp["theta"])
+            - df_tw_temp[tw_name] ** exponent * magnification_factor * np.sin(df_sv_temp["theta"])
         )
         + [None],
         mode="lines",
@@ -674,9 +667,7 @@ def return_plot_lattice_with_tracking(
     # Add optics traces for beam_2 if requested
     if add_optics_beam_2:
         if df_sv_2 is None or df_tw_2 is None:
-            print(
-                "Warning: df_sv_2 or df_tw_2 is None, beam_2 optics will not be plotted"
-            )
+            print("Warning: df_sv_2 or df_tw_2 is None, beam_2 optics will not be plotted")
         else:
             fig = add_optics_to_fig(
                 fig,
@@ -973,9 +964,7 @@ def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
     # Update yaxis properties
     fig.update_xaxes(range=[0, df_tw_b1["s"].iloc[-1] + 1])
     fig.update_yaxes(title_text=r"$\beta_{x,y}[m]$", range=[0, 10000], row=2, col=1)
-    fig.update_yaxes(
-        title_text=r"(Closed orbit)$_{x,y}[m]$", range=[-0.03, 0.03], row=3, col=1
-    )
+    fig.update_yaxes(title_text=r"(Closed orbit)$_{x,y}[m]$", range=[-0.03, 0.03], row=3, col=1)
     fig.update_yaxes(title_text=r"$D_{x,y}[m]$", range=[-3, 3], row=4, col=1)
     fig.update_xaxes(title_text=r"$s[m]$", row=4, col=1)
     fig.update_yaxes(fixedrange=True)
@@ -983,9 +972,7 @@ def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
     return fig
 
 
-def return_plot_filling_scheme(
-    array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule
-):
+def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule):
     # ! i_bunch_b2 is not used for now
 
     # Get indices of slots filled with bunches
@@ -1029,9 +1016,7 @@ def return_plot_filling_scheme(
     # Compute the number of LR in each experiment
     bbs = beam_beam_schedule
     series_collide_atlas_cms = bbs[bbs["collides in ATLAS/CMS"]]["# of LR in ATLAS/CMS"]
-    series_not_collide_atlas_cms = bbs[~bbs["collides in ATLAS/CMS"]][
-        "# of LR in ATLAS/CMS"
-    ]
+    series_not_collide_atlas_cms = bbs[~bbs["collides in ATLAS/CMS"]]["# of LR in ATLAS/CMS"]
     series_collide_lhcb = bbs[bbs["collides in LHCB"]]["# of LR in LHCB"]
     series_not_collide_lhcb = bbs[~bbs["collides in LHCB"]]["# of LR in LHCB"]
     series_collide_alice = bbs[bbs["collides in ALICE"]]["# of LR in ALICE"]
@@ -1134,15 +1119,9 @@ def return_plot_filling_scheme(
         dtick=1,
         fixedrange=True,
     )
-    fig.update_yaxes(
-        title_text=r"#LR in Atlas/CMS", range=[0, 52], row=2, col=1, fixedrange=True
-    )
-    fig.update_yaxes(
-        title_text=r"#LR in LHCb", range=[0, 52], row=3, col=1, fixedrange=True
-    )
-    fig.update_yaxes(
-        title_text=r"#LR in ALice", range=[0, 52], row=4, col=1, fixedrange=True
-    )
+    fig.update_yaxes(title_text=r"#LR in Atlas/CMS", range=[0, 52], row=2, col=1, fixedrange=True)
+    fig.update_yaxes(title_text=r"#LR in LHCb", range=[0, 52], row=3, col=1, fixedrange=True)
+    fig.update_yaxes(title_text=r"#LR in ALice", range=[0, 52], row=4, col=1, fixedrange=True)
     fig.update_xaxes(title_text=r"25ns slot", row=4, col=1)
     fig.update_yaxes(fixedrange=True)
 
@@ -1276,84 +1255,6 @@ def return_plot_separation(dic_separation_ip, plane):
     )
 
     return fig
-
-
-# def return_plot_separation_both_planes(dic_sep_IPs_x, dic_sep_IPs_y):
-#     fig = make_subplots(
-#         rows=2,
-#         cols=2,
-#         subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
-#         horizontal_spacing=0.2,
-#     )
-#     for idx, n_ip in enumerate([1, 2, 5, 8]):
-#         s = dic_sep_IPs_x[f"ip{n_ip}"]["s"]
-#         x_x = dic_sep_IPs_x[f"ip{n_ip}"]["x"]
-#         sep_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep"]
-#         sep_survey_x = dic_sep_IPs_x[f"ip{n_ip}"]["sep_survey"]
-#         sigma_x = dic_sep_IPs_x[f"ip{n_ip}"]["sigma"]
-
-#         x_y = dic_sep_IPs_y[f"ip{n_ip}"]["x"]
-#         sep_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep"]
-#         sep_survey_y = dic_sep_IPs_y[f"ip{n_ip}"]["sep_survey"]
-#         sigma_y = dic_sep_IPs_y[f"ip{n_ip}"]["sigma"]
-
-#         # Do the plot
-#         fig.add_trace(
-#             go.Scatter(
-#                 x=s,
-#                 y=np.sqrt(
-#                     ((x_x + sep_survey_x) / sigma_x) ** 2 + ((x_y + sep_survey_y) / sigma_y) ** 2
-#                 ),
-#                 name="Normalized separation at ip " + str(n_ip),
-#                 legendgroup=" IP " + str(n_ip),
-#                 mode="lines+markers",
-#                 line=dict(color="cyan", width=1),
-#             ),
-#             row=idx // 2 + 1,
-#             col=idx % 2 + 1,
-#             # secondary_y=True,
-#         )
-
-#         fig.add_trace(
-#             go.Scatter(
-#                 x=s,
-#                 y=[np.sqrt(sep_x**2 + sep_y**2)] * len(s),
-#                 name="Inner normalized separation at ip " + str(n_ip),
-#                 legendgroup=" IP " + str(n_ip),
-#                 mode="lines+text",
-#                 textposition="top left",
-#                 line=dict(color="white", width=1, dash="dash"),
-#                 text=[""] * (len(s) - 1) + ["Inner normalized separation"],
-#             ),
-#             row=idx // 2 + 1,
-#             col=idx % 2 + 1,
-#             # secondary_y=True,
-#         )
-
-#     for row in range(1, 3):
-#         for column in range(1, 3):
-#             fig.update_yaxes(
-#                 title_text=r"$\textrm{B-B separation }[\sigma]$",
-#                 row=row,
-#                 col=column,
-#                 linecolor="cyan",
-#                 # secondary_y=True,
-#             )
-#             fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
-
-#     # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
-#     # Use white theme for graph, centered title
-#     fig.update_layout(
-#         template="plotly_dark",
-#         title="Beam-beam separation at the different IPs",
-#         title_x=0.5,
-#         paper_bgcolor="rgba(0,0,0,0)",
-#         plot_bgcolor="rgba(0,0,0,0)",
-#         dragmode="pan",
-#         showlegend=False,
-#     )
-
-#     return fig
 
 
 def return_plot_separation_3D(dic_position_ip):
