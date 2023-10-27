@@ -32,8 +32,19 @@ configuration file.
 
 
 def init_from_collider(path_collider, load_global_variables_from_pickle=False):
-    """Initialize the app variables from a given collider json file. All features related to the
-    configuration will be deactivated."""
+    """
+    Initializes a collider from a JSON file and computes global variables from collider checks.
+
+    Args:
+        path_collider (str): Path to the JSON file containing the collider definition.
+        load_global_variables_from_pickle (bool, optional): Whether to load the global variables
+        from a pickle file instead of computing them from scratch. Defaults to False.
+
+    Returns:
+        tuple: A tuple containing two dictionaries of global variables computed from collider
+        checks, one for the collider with beam-beam interactions and one for the collider without
+        beam-beam interactions, and the path to the pickle file used to store the global variables.
+    """
 
     # Path to the pickle dictionnaries (for loading and saving)
     path_pickle = "dashboard/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
@@ -107,7 +118,21 @@ def compute_global_variables_from_collider_checks(
 
 
 def initialize_global_variables(collider_check, compute_footprint=True):
-    """Initialize global variables from a collider check object."""
+    """
+    Initializes global variables used in the simulation dashboard backend.
+
+    Parameters:
+    -----------
+    collider_check : ColliderCheck
+        An instance of the ColliderCheck class containing the collider configuration.
+    compute_footprint : bool, optional
+        Whether to compute the collider footprint or not. Default is True.
+
+    Returns:
+    --------
+    dic_global_var : dict
+        A dictionary containing the initialized global variables.
+    """
 
     if collider_check.configuration is not None:
         # Get luminosity at each IP
