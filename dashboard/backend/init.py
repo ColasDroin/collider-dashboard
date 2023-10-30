@@ -1,3 +1,6 @@
+"""Thid module initializes all global variables from a collider json, potentially embedding a 
+configuration file.
+"""
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
@@ -25,10 +28,6 @@ from dash.dash_table.Format import Format, Scheme
 # ==================================================================================================
 # --- Functions initialize all global variables
 # ==================================================================================================
-
-"""Thid module initializes all global variables from a collider json, potentially embedding a 
-configuration file.
-"""
 
 
 def init_from_collider(path_collider, load_global_variables_from_pickle=False):

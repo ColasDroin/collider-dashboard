@@ -1,3 +1,6 @@
+"""Thid module is used to produce resonance line in tune-tune plot. The code directly adapted from 
+the work of P. Belanger. See https://github.com/pbelange/BBStudies
+"""
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
@@ -11,7 +14,7 @@ import plotly.graph_objects as go
 
 
 # ==================================================================================================
-# --- Code directly adapted from P. Belanger. See https://github.com/pbelange/BBStudies
+# --- Functions
 # ==================================================================================================
 def farey(order):
     # Create array of (value,numerator,denominator)

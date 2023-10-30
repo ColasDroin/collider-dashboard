@@ -1,3 +1,5 @@
+"""Module to build the dashboard app and link the corresponding server, such that it can be executed 
+from e.g. gunicorn."""
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
