@@ -958,6 +958,27 @@ def add_scatter_trace(
     dashed=False,
     opacity=0.8,
 ):
+    """
+    Add a scatter trace to a plotly figure object.
+
+    Args:
+        fig (plotly.graph_objs.Figure): The figure object to add the trace to.
+        x (list): The x-axis data for the trace.
+        y (list): The y-axis data for the trace.
+        name (str): The name of the trace.
+        row (int): The row number of the subplot to add the trace to.
+        col (int): The column number of the subplot to add the trace to.
+        xaxis (str): The x-axis to use for the trace.
+        yaxis (str): The y-axis to use for the trace.
+        visible (str, optional): The visibility of the trace. Defaults to None.
+        color (str, optional): The color of the trace. Defaults to None.
+        legendgroup (str, optional): The legend group of the trace. Defaults to None.
+        dashed (bool, optional): Whether to use a dashed line for the trace. Defaults to False.
+        opacity (float, optional): The opacity of the trace. Defaults to 0.8.
+
+    Returns:
+        plotly.graph_objs.Figure: The updated figure object.
+    """
     fig.append_trace(
         go.Scattergl(
             x=x,
@@ -980,6 +1001,21 @@ def add_scatter_trace(
 
 
 def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
+    """
+    Returns a Plotly figure object with subplots for magnet traces, beta functions, position
+        functions, and dispersion functions.
+
+    Args:
+        df_tw_b1 (pandas.DataFrame): DataFrame containing Twiss parameters for beam 1.
+        df_tw_b2 (pandas.DataFrame): DataFrame containing Twiss parameters for beam 2.
+        df_sv (pandas.DataFrame): DataFrame containing survey data.
+        df_elements (pandas.DataFrame): DataFrame containing element data.
+        empty (bool, optional): If True, returns an empty figure. Defaults to False.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Plotly figure object with subplots for magnet elements,
+            beta functions, position functions, and dispersion functions.
+    """
     # Build figure
     fig = make_subplots(rows=4, cols=1, shared_xaxes=True)
 
@@ -1202,6 +1238,27 @@ def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
 
 
 def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_beam_schedule):
+    """
+    Returns a Plotly figure object representing the filling scheme and number of Long-Range/Head-on.
+
+    Parameters:
+    -----------
+    array_b1 : numpy.ndarray
+        Filling scheme for beam 1.
+    array_b2 : numpy.ndarray
+        Filling scheme for beam 2.
+    i_bunch_b1 : int
+        Index of the selected bunch for tracking in beam 1.
+    i_bunch_b2 : int
+        Index of the selected bunch for tracking in beam 2.
+    beam_beam_schedule : pandas.DataFrame
+        Dataframe containing the beam-beam schedule information.
+
+    Returns:
+    --------
+    fig : plotly.graph_objs._figure.Figure
+        Plotly figure object representing the filling scheme and number beam-beam interactions.
+    """
     # ! i_bunch_b2 is not used for now
 
     # Get indices of slots filled with bunches
@@ -1374,7 +1431,17 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
 
 
 def get_indices_of_interest(df_tw, element_1, element_2):
-    """Return the indices of the elements of interest."""
+    """
+    Return the indices between the two elements provided.
+
+    Args:
+        df_tw (pandas.DataFrame): DataFrame containing twiss data.
+        element_1 (str): The name of the first element of interest.
+        element_2 (str): The name of the second element of interest.
+
+    Returns:
+        list: A list of element indices located between element_1 and element_2 (excluded).
+    """
     idx_1 = df_tw.loc[df_tw["name"] == element_1].index[0]
     idx_2 = df_tw.loc[df_tw["name"] == element_2].index[0]
     if idx_2 < idx_1:
@@ -1383,6 +1450,16 @@ def get_indices_of_interest(df_tw, element_1, element_2):
 
 
 def return_plot_separation(dic_separation_ip, plane):
+    """
+    Returns a plotly figure object representing beam-beam separation at the different IPs.
+
+    Args:
+        dic_separation_ip (dict): A dictionary containing separation data for the different IPs.
+        plane (str): The plane for which separation data is to be plotted. Can be "x", "y", or "xy".
+
+    Returns:
+        go.Figure: A plotly figure object representing beam-beam separation at the different IPs.
+    """
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -1487,6 +1564,19 @@ def return_plot_separation(dic_separation_ip, plane):
 
 
 def return_plot_separation_3D(dic_position_ip):
+    """
+    Returns a 3D plotly figure showing the beam-beam separation at different interaction points (IPs).
+
+    Parameters:
+    -----------
+    dic_position_ip : dict
+        A dictionary containing the beam position data for different IPs and beams.
+
+    Returns:
+    --------
+    fig : plotly.graph_objs._figure.Figure
+        A plotly figure object containing the 3D beam-beam separation plot.
+    """
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -1550,7 +1640,28 @@ def return_plot_separation_3D(dic_position_ip):
     return fig
 
 
-def return_plot_footprint(t_array_footprint, qx, qy, title):
+def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=False):
+    """
+    Returns a Plotly figure object representing the footprint of a particle beam in the Qx-Qy plane.
+
+    Parameters:
+    -----------
+    t_array_footprint : tuple of two 1D arrays
+        The Qx and Qy coordinates of the footprint mesh.
+    qx : float
+        The horizontal tune of the beam.
+    qy : float
+        The vertical tune of the beam.
+    title : str
+        The title of the plot.
+    plot_filtered_web : bool, optional
+        Whether to plot the filtered footprint mesh. Default to False.
+
+    Returns:
+    --------
+    fig : plotly.graph_objs._figure.Figure
+        The Plotly figure object representing the footprint plot.
+    """
     palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
@@ -1559,27 +1670,29 @@ def return_plot_footprint(t_array_footprint, qx, qy, title):
     traces = get_working_diagram(order=12, color="white", alpha=0.1)
     fig.add_traces(traces)
 
-    # Filter the footprint mesh
-    # for x, y in zip(array_qx, array_qy):
-    #     # Insert additional None when dx or dy is too big
-    #     # to avoid connecting the lines
-    #     x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-    #     y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-    #     x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-    #     y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-    #     fig.add_trace(
-    #         go.Scattergl(
-    #             x=x_temp,
-    #             y=y_temp,
-    #             line_color="whitesmoke",
-    #             opacity=0.3,
-    #         )
-    #     )
+    if plot_filtered_web:
+        # Filter the footprint mesh
+        for x, y in zip(array_qx, array_qy):
+            # Insert additional None when dx or dy is too big
+            # to avoid connecting the lines
+            x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+            y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+            x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+            y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+            fig.add_trace(
+                go.Scattergl(
+                    x=x_temp,
+                    y=y_temp,
+                    line_color="whitesmoke",
+                    opacity=0.3,
+                )
+            )
     for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
-        # x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        # y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-        # x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        # y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        if plot_filtered_web:
+            x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+            y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+            x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+            y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
         x_temp = x
         y_temp = y
         fig.add_trace(
