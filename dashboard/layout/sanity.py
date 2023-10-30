@@ -21,6 +21,32 @@ def return_sanity_layout(
     polarity_lhcb,
     energy,
 ):
+    """
+    Returns the layout for the sanity check page of the dashboard.
+
+    Args:
+        dic_tw_b1 : dict
+            A twiss dictionary for beam 1.
+        dic_tw_b2 : dict
+            A twiss dictionary for beam 2.
+        l_lumi : list
+            A list containing the luminosities for each interaction point.
+        array_b1 : numpy.ndarray
+            Beam schedule for beam 1.
+        array_b2 : numpy.ndarray
+            Beam schedule for beam 2.
+        polarity_alice : str
+            The polarity of the ALICE detector (+1 or -1).
+        polarity_lhcb : str
+            The polarity of the LHCb detector (+1 or -1).
+        energy : float
+            The energy of the beam.
+
+    Returns:
+        layout : dash.development.base_component.Component
+            The layout for the sanity check page of the dashboard.
+    """
+
     # Ensure that the polarities are defined
     polarity_alice = polarity_alice if polarity_alice is not None else "N/A"
     polarity_lhcb = polarity_lhcb if polarity_lhcb is not None else "N/A"
@@ -174,8 +200,8 @@ def return_sanity_layout(
         # Assert that the arrays have the required length, and do the convolution to get number of collisions
         assert len(array_b1) == len(array_b2) == 3564
         n_collisions_ip1_and_5 = array_b1 @ array_b2
-        n_collisions_ip2 = np.roll(array_b1, -891) @ array_b2
-        n_collisions_ip8 = np.roll(array_b1, -2670) @ array_b2
+        n_collisions_ip2 = np.roll(array_b1, 891) @ array_b2
+        n_collisions_ip8 = np.roll(array_b1, 2670) @ array_b2
         l_n_collisions = [
             n_collisions_ip1_and_5,
             n_collisions_ip2,
@@ -206,17 +232,13 @@ def return_sanity_layout(
         row_PU = html.Tr(
             [
                 (
-                    html.Td(
-                        f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"}
-                    )
+                    html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
                     if l_PU[0] > 140
                     else html.Td(f"{l_PU[0]:.1f}")
                 ),
                 html.Td(f"{l_PU[1]:.3e}"),
                 (
-                    html.Td(
-                        f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"}
-                    )
+                    html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
                     if l_PU[2] > 140
                     else html.Td(f"{l_PU[2]:.1f}")
                 ),
@@ -269,9 +291,7 @@ def return_sanity_layout(
         children=[
             dmc.Group(
                 children=[
-                    dmc.Text(
-                        "General observables", size="xl", style={"margin": "auto"}
-                    ),
+                    dmc.Text("General observables", size="xl", style={"margin": "auto"}),
                     table_1,
                 ],
                 mb=10,
@@ -279,9 +299,7 @@ def return_sanity_layout(
             ),
             dmc.Group(
                 children=[
-                    dmc.Text(
-                        "Beam 1 observables at IPs", size="xl", style={"margin": "auto"}
-                    ),
+                    dmc.Text("Beam 1 observables at IPs", size="xl", style={"margin": "auto"}),
                     table_2,
                 ],
                 mb=10,
@@ -289,9 +307,7 @@ def return_sanity_layout(
             ),
             dmc.Group(
                 children=[
-                    dmc.Text(
-                        "Beam 2 observables at IPs", size="xl", style={"margin": "auto"}
-                    ),
+                    dmc.Text("Beam 2 observables at IPs", size="xl", style={"margin": "auto"}),
                     table_3,
                 ],
                 mb=10,

@@ -11,6 +11,14 @@ from dash import dcc
 # --- Footprint Layout
 # ==================================================================================================
 def return_footprint_layout():
+    """
+    Returns the layout for the footprint section of the simulation dashboard.
+
+    Returns:
+        footprint_layout : dash.development.base_component.Component
+            The layout for the footprint section of the simulation dashboard.
+
+    """
     footprint_layout = (
         dmc.Center(
             dmc.Stack(

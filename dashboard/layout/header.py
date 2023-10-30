@@ -11,6 +11,13 @@ from dash_iconify import DashIconify
 # --- Header layout
 # ==================================================================================================
 def return_header_layout():
+    """
+    Returns the layout for the header of the simulation dashboard.
+
+    Returns:
+        dmc.Header: The header layout for the simulation dashboard.
+    """
+
     def create_header_link(icon, href, size=22, color="cyan"):
         return dmc.Anchor(
             dmc.ThemeIcon(
@@ -88,5 +95,4 @@ def return_header_layout():
             ),
         ],
     )
-    return header
     return header

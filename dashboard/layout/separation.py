@@ -11,6 +11,13 @@ from dash import dcc
 # --- Separation Layout
 # ==================================================================================================
 def return_separation_layout():
+    """
+    Returns the layout for the beam separation dashboard page.
+
+    Returns:
+        separation_layout : dash.development.base_component.Component
+            The layout for the beam separation dashboard page.
+    """
     separation_layout = (
         dmc.Center(
             dmc.Stack(

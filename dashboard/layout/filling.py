@@ -11,6 +11,13 @@ from dash import dcc
 # --- Filling scheme Layout
 # ==================================================================================================
 def return_filling_scheme_layout():
+    """
+    Returns the layout for the filling scheme analysis dashboard page.
+
+    Returns:
+        scheme_layout : dash.development.base_component.Component
+            The layout for the filling scheme analysis dashboard page.
+    """
     scheme_layout = dmc.Stack(
         children=[
             dmc.Alert(

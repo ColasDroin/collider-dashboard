@@ -14,6 +14,13 @@ from .header import return_header_layout
 # --- App layout
 # ==================================================================================================
 def return_app_layout():
+    """
+    Returns the overall layout for the app.
+
+    Returns:
+        layout (dash.html.Div): App layout.
+    """
+    # function code here
     layout = html.Div(
         style={"width": "90%", "margin": "auto"},
         children=[

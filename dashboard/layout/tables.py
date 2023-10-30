@@ -11,6 +11,12 @@ from dash import dcc, html
 # --- Tables Layout
 # ==================================================================================================
 def return_tables_layout():
+    """
+    Returns the layout for the tables page of the simulation dashboard.
+
+    Returns:
+        A Dash HTML div element representing the tables page layout.
+    """
     layout = html.Div(
         children=[
             dmc.Center(

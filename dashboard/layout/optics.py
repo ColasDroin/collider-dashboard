@@ -14,6 +14,15 @@ from ..backend import plot
 # --- Optics layout
 # ==================================================================================================
 def return_optics_layout(dic_with_bb):
+    """
+    Returns the layout for the optics page of the simulation dashboard.
+
+    Args:
+        dic_with_bb (dict): A dictionary of collider (including beam-beam) observables.
+
+    Returns:
+        html.Div: A Div representing the layout for the optics tab.
+    """
     optics_layout = html.Div(
         children=[
             dcc.Loading(

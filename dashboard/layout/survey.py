@@ -11,6 +11,12 @@ from dash import dcc, html
 # --- Survey layout
 # ==================================================================================================
 def return_survey_layout():
+    """
+    Returns the layout for the survey page of the simulation dashboard.
+
+    Returns:
+        A Dash HTML div element representing the survey layout.
+    """
     survey_layout = html.Div(
         children=[
             dmc.Center(

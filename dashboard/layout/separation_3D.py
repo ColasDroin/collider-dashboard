@@ -11,6 +11,13 @@ from dash import dcc
 # --- 3D separation Layout
 # ==================================================================================================
 def return_3D_separation_layout():
+    """
+    Returns the layout for the 3D beam separation dashboard.
+
+    Returns:
+        separation_layout : dash_bootstrap_components.Center
+            Layout for the 3D beam separation dashboard.
+    """
     separation_layout = (
         dmc.Center(
             dmc.Stack(
