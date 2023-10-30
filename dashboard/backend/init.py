@@ -42,8 +42,9 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
 
     Returns:
         tuple: A tuple containing two dictionaries of global variables computed from collider
-        checks, one for the collider with beam-beam interactions and one for the collider without
-        beam-beam interactions, and the path to the pickle file used to store the global variables.
+            checks, one for the collider with beam-beam interactions and one for the collider
+            without beam-beam interactions, and the path to the pickle file used to store the global
+            variables.
     """
 
     # Path to the pickle dictionnaries (for loading and saving)
@@ -98,6 +99,21 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
 def compute_global_variables_from_collider_checks(
     collider_check_after_beam_beam, collider_check_without_beam_beam, path_pickle=None
 ):
+    """
+    Computes global variables with and without beam-beam interaction.
+
+    Args:
+        collider_check_after_beam_beam (ColliderCheck): Collider check object including beam-beam
+            interaction.
+        collider_check_without_beam_beam (ColliderCheck): Collider check object without beam-beam
+            interaction.
+        path_pickle (str, optional): Path to the pickle file to dump the dictionaries. Defaults to
+            None.
+
+    Returns:
+        tuple: A tuple containing two dictionaries, one for global variables with beam-beam
+            interaction and one for global variables without beam-beam interaction.
+    """
     # Get the global variables before and after the beam-beam
     logging.info("Computing global variables with beam beam.")
     dic_with_bb = initialize_global_variables(
@@ -119,7 +135,7 @@ def compute_global_variables_from_collider_checks(
 
 def initialize_global_variables(collider_check, compute_footprint=True):
     """
-    Initializes global variables used in the simulation dashboard backend.
+    Initializes global variables used in the simulation dashboard.
 
     Parameters:
     -----------
@@ -295,13 +311,36 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 # --- Functions to load dashboard variables
 # ==================================================================================================
 def return_dataframe_elements_from_line(line):
-    # Build a dataframe with the elements of the lines
+    """
+    Returns a pandas DataFrame containing the elements of a given line object.
+
+    Args:
+    line (Line): A Line object containing elements to be extracted into a DataFrame.
+
+    Returns:
+    df_elements (pandas.DataFrame): A DataFrame containing the elements of the given line object.
+    """
     df_elements = pd.DataFrame([x.to_dict() for x in line.elements])
     return df_elements
 
 
+# ! This function should be optimized
 def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
-    """Correct the dataframe of elements for thin lens approximation."""
+    """
+    Corrects the dataframe of elements for thin lens approximation.
+
+    Parameters:
+    -----------
+    df_elements : pandas.DataFrame
+        The dataframe of elements to be corrected.
+    df_tw : pandas.DataFrame
+        The corresponding Twiss from which the corrion is computed.
+
+    Returns:
+    --------
+    pandas.DataFrame
+        The corrected dataframe of elements.
+    """
     df_elements_corrected = df_elements.copy(deep=True)
 
     # Add all thin lenses (length + strength)
@@ -348,6 +387,26 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
 
 
 def return_twiss_dic(tw):
+    """
+    Returns a dictionary containing important Twiss parameters.
+
+    Parameters:
+    tw (Twiss): A Twiss object for the current line.
+
+    Returns:
+    dict: A dictionary containing the following keys:
+        - qx (float): Horizontal tune.
+        - qy (float): Vertical tune.
+        - dqx (float): Horizontal chromaticity.
+        - dqy (float): Vertical chromaticity.
+        - c_minus (float): Linear coupling.
+        - momentum_compaction_factor (float): Momentum compaction factor.
+        - T_rev0 (float): Revolution period.
+        - ip1 (numpy.ndarray): Momentum, position and beta functions at IP1.
+        - ip2 (numpy.ndarray): Momentum, position and beta functions at IP2.
+        - ip5 (numpy.ndarray): Momentum, position and beta functions at IP5.
+        - ip8 (numpy.ndarray): Momentum, position and beta functions at IP8.
+    """
     # Init empty dic
     dic_tw = {}
 
@@ -377,6 +436,20 @@ def return_twiss_dic(tw):
 # --- Functions to build data tables
 # ==================================================================================================
 def return_data_table(df, id_table, twiss=True):
+    """
+    Returns a (stylized) Dash DataTable object containing the twiss/survey data of a given line
+        (through the pandas dataframe input).
+
+    Args:
+        df (pandas.DataFrame): The DataFrame containing the twiss/survey data to be displayed in
+            the table.
+        id_table (str): The ID to be assigned to the DataTable object (for Dash callback).
+        twiss (bool, optional): Whether or not the DataFrame contains twiss data. Defaults to True.
+            If False, it is assumed to contain survey data.
+
+    Returns:
+        dash_table.DataTable: The DataTable object populated with the data from the input DataFrame.
+    """
     if twiss:
         df = df.drop(["W_matrix"], axis=1)
         idx_column_name = 0
@@ -436,6 +509,19 @@ def return_data_table(df, id_table, twiss=True):
 
 
 def return_footprint(collider, emittance, beam="lhcb1", n_turns=2000):
+    """
+    Calculates the collider footprint, for beam 1 or beam 2.
+
+    Args:
+        collider (Collider): A Collider object.
+        emittance (float): The emittance of the beam.
+        beam (str, optional): The name of the beam. Defaults to "lhcb1".
+        n_turns (int, optional): The number of turns to simulate to compute the footprint. Defaults
+            to 2000.
+
+    Returns:
+        tuple: A tuple containing the detuning (qx and qy values) of the footprint.
+    """
     fp_polar_xm = collider[beam].get_footprint(
         nemitt_x=emittance,
         nemitt_y=emittance,
