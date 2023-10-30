@@ -57,7 +57,16 @@ def return_radial_background_traces(df_sv):
 
 
 def return_beam_pipe_trace(df_sv):
-    # Return a Plotly trace containing the beam pipe
+    """
+    Returns a Plotly trace representing the beam pipe in the survey.
+
+    Args:
+        df_sv (pandas.DataFrame): The survey DataFrame containing the X and Z coordinates of the
+            beam pipe.
+
+    Returns:
+        plotly.graph_objs.Scattergl: The Plotly trace containing the beam coordinates.
+    """
     return go.Scattergl(
         x=df_sv["X"],
         y=df_sv["Z"],
@@ -81,14 +90,35 @@ def return_multipole_trace(
     xaxis=None,
     yaxis=None,
 ):
+    """
+    Returns a list of multipole traces (represented as a rectangle).
+
+    Args:
+        df_elements (pandas.DataFrame): A DataFrame containing the elements of the accelerator
+            lattice.
+        df_sv (pandas.DataFrame): DataFrame containing the survey data.
+        order (int): Order of the multipole to represent.
+        strength_magnification_factor (float, optional): Factor by which to (visually) magnify the
+            strength values. Defaults to 5000.
+        add_ghost_trace (bool, optional): Whether to add a ghost trace for legend purposes. Defaults
+            to True.
+        l_indices_to_keep (list, optional): List of element indices to keep (not to represent the
+            whole survey). Defaults to None.
+        flat (bool, optional): Whether to return a flat (1D) trace. Defaults to False.
+        xaxis (dict, optional): Dictionary containing the x-axis range. Defaults to None.
+        yaxis (dict, optional): Dictionary containing y-axis range. Defaults to None.
+
+    Returns:
+        plotly.graph_objs._scatter.Scatter: A trace representing a multipole of a given order.
+    """
     if flat:
         return return_flat_multipole_trace(
             df_elements,
             df_sv,
             order,
-            strength_magnification_factor=5000,
-            add_ghost_trace=True,
-            l_indices_to_keep=None,
+            strength_magnification_factor=strength_magnification_factor,
+            add_ghost_trace=add_ghost_trace,
+            l_indices_to_keep=l_indices_to_keep,
             xaxis=xaxis,
             yaxis=yaxis,
         )
@@ -97,8 +127,8 @@ def return_multipole_trace(
             df_elements,
             df_sv,
             order,
-            strength_magnification_factor=5000,
-            add_ghost_trace=True,
+            strength_magnification_factor=strength_magnification_factor,
+            add_ghost_trace=add_ghost_trace,
             l_indices_to_keep=l_indices_to_keep,
         )
 
@@ -111,6 +141,24 @@ def return_circular_multipole_trace(
     add_ghost_trace=True,
     l_indices_to_keep=None,
 ):
+    """
+    Returns a list of multipole traces (represented as a rectangle) in a 2D graph.
+
+    Args:
+        df_elements (pandas.DataFrame): A DataFrame containing the elements of the accelerator lattice.
+        df_sv (pandas.DataFrame): 1 DataFrame containing the survey data.
+        order (int): The order of the multipoles to plot (0 for dipoles, 1 for quadrupoles, etc.).
+        strength_magnification_factor (float, optional): Factor by which to (visually) magnify the
+            strength values. Defaults to 5000.
+        add_ghost_trace (bool, optional): Whether to add a ghost trace for legend purposes. Defaults
+            to True.
+        l_indices_to_keep (list, optional): List of element indices to keep (not to represent the
+            whole survey). Defaults to None.
+
+    Returns:
+        list: A list of plotly traces representing the multipoles to represent.
+    """
+
     # Get corresponding colors and name for the multipoles
     if order == 0:
         color = px.colors.qualitative.Plotly[0]
@@ -207,6 +255,27 @@ def return_flat_multipole_trace(
     xaxis=None,
     yaxis=None,
 ):
+    """
+    Returns a list of multipole traces (each represented as a rectangle) in a 1D graph.
+
+    Args:
+        df_elements (pandas.DataFrame): A DataFrame containing the elements of the accelerator
+            lattice.
+        df_sv (pandas.DataFrame): DataFrame containing the survey data.
+        order (int): Order of the multipole to represent.
+        strength_magnification_factor (float, optional): Factor by which to (visually) magnify the
+            strength values. Defaults to 5000.
+        add_ghost_trace (bool, optional): Whether to add a ghost trace for legend purposes. Defaults
+            to True.
+        l_indices_to_keep (list, optional): List of element indices to keep (not to represent the
+            whole survey). Defaults to None.
+        xaxis (dict, optional): Dictionary containing the x-axis range. Defaults to None.
+        yaxis (dict, optional): Dictionary containing y-axis range. Defaults to None.
+
+    Returns:
+        list: List of plotly traces for all multipoles of the given order.
+    """
+
     # Get corresponding colors and name for the multipoles
     if order == 0:
         color = px.colors.qualitative.Plotly[0]
@@ -322,6 +391,21 @@ def return_flat_multipole_trace(
 
 
 def return_IP_trace(df_sv, add_ghost_trace=True):
+    """
+    Returns a list of plotly traces representing the IP elements.
+
+    Parameters:
+    -----------
+    df_sv : pandas.DataFrame
+        The dataframe containing the survey data.
+    add_ghost_trace : bool, optional
+        Whether to add a ghost trace for the IP elements (for the legend). Default to True.
+
+    Returns:
+    --------
+    list of plotly.graph_objs._scattergl.Scattergl
+        The list of plotly traces representing the IP elements.
+    """
     # Get dataframe containing only IP elements
     df_ip = df_sv[df_sv["name"].str.startswith("ip")]
 
@@ -369,10 +453,24 @@ def return_optic_trace(
     df_sv,
     df_tw,
     type_trace,
-    hide_optics_traces_initially=True,
     beam_2=False,
     l_indices_to_keep=None,
 ):
+    """
+    Returns a plotly scatter trace for a given type of optics data.
+
+    Args:
+        df_sv (pandas.DataFrame): DataFrame containing the survey data.
+        df_tw (pandas.DataFrame): DataFrame containing the twiss data.
+        type_trace (str): Type of trace to plot. Must be one of "betax", "bety", "dx", "dy", "x",
+            or "y".
+        beam_2 (bool, optional): Whether to plot the trace for beam 2. Defaults to False.
+        l_indices_to_keep (list, optional): List of indices to keep, if traces arenot represented
+            all along the survey. Defaults to None.
+
+    Returns:
+        plotly.graph_objs.Scattergl: Scatter trace for the given type of trace to plot.
+    """
     # Get the right twiss dataframe and plotting parameters
     match type_trace:
         case "betax":
@@ -481,6 +579,44 @@ def add_multipoles_to_fig(
     xaxis=None,
     yaxis=None,
 ):
+    """
+    Add multipole traces to a given plotly figure.
+
+    Parameters
+    ----------
+    fig : plotly.graph_objs.Figure
+        The figure to which the multipole traces will be added.
+    df_elements : pandas.DataFrame
+        DataFrame containing the accelerator elements.
+    df_sv : pandas.DataFrame
+        DataFrame containing the accelerator survey.
+    l_indices_to_keep : list of int
+        List of indices of the elements to keep in the plot (to only represent part of the survey).
+    add_dipoles : bool
+        Whether to add dipoles to the plot.
+    add_quadrupoles : bool
+        Whether to add quadrupoles to the plot.
+    add_sextupoles : bool
+        Whether to add sextupoles to the plot.
+    add_octupoles : bool
+        Whether to add octupoles to the plot.
+    flat : bool, optional
+        Whether to make a 1D or 2D plot (default is False, i.e. 2D plot).
+    row : int, optional
+        The row index of the subplot to which the traces will be added (default is None).
+    col : int, optional
+        The column index of the subplot to which the traces will be added (default is None).
+    xaxis : str, optional
+        The x-axis type of the plot (default is None).
+    yaxis : str, optional
+        The y-axis type of the plot (default is None).
+
+    Returns
+    -------
+    plotly.graph_objs.Figure
+        The updated figure with the multipole traces added.
+    """
+
     for order, add in zip(
         [0, 1, 2, 3], [add_dipoles, add_quadrupoles, add_sextupoles, add_octupoles]
     ):
@@ -533,6 +669,40 @@ def add_optics_to_fig(
     beam_2=False,
     l_indices_to_keep=None,
 ):
+    """
+    Add optics traces to a plotly figure.
+
+    Parameters
+    ----------
+    fig : plotly.graph_objs._figure.Figure
+        The figure to which the traces will be added.
+    plot_horizontal_betatron : bool
+        Whether to add the horizontal betatron trace.
+    plot_vertical_betatron : bool
+        Whether to add the vertical betatron trace.
+    plot_horizontal_dispersion : bool
+        Whether to add the horizontal dispersion trace.
+    plot_vertical_dispersion : bool
+        Whether to add the vertical dispersion trace.
+    plot_horizontal_position : bool
+        Whether to add the horizontal position trace.
+    plot_vertical_position : bool
+        Whether to add the vertical position trace.
+    df_sv : pandas.DataFrame
+        The survey data.
+    df_tw : pandas.DataFrame
+        The twiss data.
+    beam_2 : bool, optional
+        Whether to represent the second beam (default is False).
+    l_indices_to_keep : list of int, optional
+        The indices of the elements to keep (to only represent part of the survey). Default to None.
+
+    Returns
+    -------
+    plotly.graph_objs._figure.Figure
+        The figure with the added traces.
+    """
+
     # Add horizontal betatron if requested
     if plot_horizontal_betatron:
         fig.add_trace(
@@ -626,11 +796,56 @@ def return_plot_lattice_with_tracking(
     plot_vertical_dispersion=True,
     plot_horizontal_position=True,
     plot_vertical_position=True,
-    plot_horizontal_momentum=True,
-    plot_vertical_momentum=True,
-    hide_optics_traces_initially=True,
     add_optics_beam_2=True,
 ):
+    """
+    Returns a Plotly figure showing the lattice of a particle accelerator, with beam tracking data.
+
+    Parameters:
+    -----------
+    df_sv : pandas.DataFrame
+        Dataframe containing the accelerator survey for beam 1.
+    df_elements : pandas.DataFrame
+        Dataframe containing the accelerator elements.
+    df_tw : pandas.DataFrame
+        Dataframe containing the twiss parameters of the accelerators for beam 1.
+    df_sv_2 : pandas.DataFrame, optional
+        Dataframe containing the accelerator survey for beam 2. Default to None.
+    df_tw_2 : pandas.DataFrame, optional
+        Dataframe containing the twiss parameters of the accelerators for beam 2. Default is None.
+    add_dipoles : bool, optional
+        Whether to add dipoles to the plot. Default is True.
+    add_quadrupoles : bool, optional
+        Whether to add quadrupoles to the plot. Default is True.
+    add_sextupoles : bool, optional
+        Whether to add sextupoles to the plot. Default is True.
+    add_octupoles : bool, optional
+        Whether to add octupoles to the plot. Default is True.
+    add_IP : bool, optional
+        Whether to add the interaction point to the plot. Default is True.
+    l_indices_to_keep : list of int, optional
+        List of indices of the elements to keep in the plot. Default is None (keep all elements).
+    plot_horizontal_betatron : bool, optional
+        Whether to plot the horizontal betatron function. Default is True.
+    plot_vertical_betatron : bool, optional
+        Whether to plot the vertical betatron function. Default is True.
+    plot_horizontal_dispersion : bool, optional
+        Whether to plot the horizontal dispersion. Default is True.
+    plot_vertical_dispersion : bool, optional
+        Whether to plot the vertical dispersion. Default is True.
+    plot_horizontal_position : bool, optional
+        Whether to plot the horizontal position. Default is True.
+    plot_vertical_position : bool, optional
+        Whether to plot the vertical position. Default is True.
+    add_optics_beam_2 : bool, optional
+        Whether to add optics traces for the second beam. Default is True.
+
+    Returns:
+    --------
+    fig : plotly.graph_objs._figure.Figure
+        The Plotly figure object representing the lattice with beam tracking data.
+    """
+
     # Center X coordinate (otherwise conversion to polar coordinates is not possible)
     X_centered = df_sv["X"] - np.mean(df_sv["X"])
 
