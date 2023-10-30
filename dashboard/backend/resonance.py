@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 
 # ==================================================================================================
-# --- Code adapted from P. Belanger. See https://github.com/pbelange/BBStudies
+# --- Code directly adapted from P. Belanger. See https://github.com/pbelange/BBStudies
 # ==================================================================================================
 def farey(order):
     # Create array of (value,numerator,denominator)
@@ -168,6 +168,7 @@ def get_working_diagram(
 
 
 if __name__ == "__main__":
+    # Plot example of resonance lines
     Qx_0, Qy_0 = 0.31, 0.32
     window = 0.05
     Qx_lim = [Qx_0 - 3 * window / 4, Qx_0 + window / 4]

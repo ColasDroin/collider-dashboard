@@ -17,6 +17,20 @@ from .resonance import get_working_diagram
 # --- Plotting functions
 # ==================================================================================================
 def return_radial_background_traces(df_sv):
+    """
+    Returns a list of 4 scatter traces, representing the (background) radial lines of the collider.
+        Useful when plotting the survey.
+
+    Parameters:
+    -----------
+    df_sv : pandas.DataFrame
+        A DataFrame containing the survey data of the collider.
+
+    Returns:
+    --------
+    list
+        A list of plotly.graph_objs.Scattergl objects representing the radial traces.
+    """
     # Add 4 radial lines, each parametrized with a different set of x1, x2, y1, y2
     l_traces_background = []
     for x1, x2, y1, y2 in [
