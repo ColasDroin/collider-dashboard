@@ -1,0 +1,3 @@
+# Separation
+
+::: dashboard.layout.separation

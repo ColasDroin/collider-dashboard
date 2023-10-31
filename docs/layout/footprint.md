@@ -1,0 +1,3 @@
+# Footprint
+
+::: dashboard.layout.footprint

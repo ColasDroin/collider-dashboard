@@ -1,11 +1,53 @@
 site_name: SimBoard
+repo_url: https://github.com/ColasDroin/simulation-dashboard
+site_description: A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
+site_author: Colas Droin
 
 theme:
   name: "material"
+  palette:
+    scheme: slate
+  features:
+    - navigation.sections
 
 plugins:
+ # - search
   - mkdocstrings
 
 nav:
-  - SimBoard documentation: index.md
-  - main: main.md
+  
+  - Modules documentation: dashboard.md
+
+
+nav:
+  - Welcome page: index.md
+  - Documentation:
+      - main: main.md
+      - dashboard: dashboard.md
+      - callbacks: callbacks.md
+      - Layout:
+        - layout/configuration.md
+        - layout/filling.md
+        - layout/footprint.md
+        - layout/header.md
+        - layout/main.md
+        - layout/optics.md
+        - layout/sanity.md
+        - layout/separation_3D.md
+        - layout/separation.md
+        - layout/survey.md
+        - layout/tables.md
+      - Backend:
+        - backend/init.md
+        - backend/plot.md
+        - backend/resonance.md
+
+
+  # - Pages:
+  #     - home: pages/home.md
+  #     - sidebar: pages/sidebar.md
+  #     - load_slice: pages/load_slice.md
+  #     - lipid_selection: pages/lipid_selection.md
+  #     - region_analysis: pages/region_analysis.md
+  #     - threeD_exploration: pages/threeD_exploration.md
+  #     - scRNAseq: pages/scRNAseq.md

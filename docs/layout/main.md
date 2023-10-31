@@ -1,0 +1,3 @@
+# Main
+
+::: dashboard.layout.main

@@ -1,0 +1,3 @@
+# Configuration
+
+::: dashboard.layout.configuration
