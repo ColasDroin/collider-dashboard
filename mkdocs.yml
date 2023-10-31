@@ -11,8 +11,9 @@ theme:
     - navigation.sections
 
 plugins:
- # - search
+  - search
   - mkdocstrings
+  - git-revision-date-localized
 
 nav:
   

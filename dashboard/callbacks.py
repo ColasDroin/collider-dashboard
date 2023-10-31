@@ -12,15 +12,17 @@ from dash import Input, Output, no_update
 from .backend import plot
 
 # Import layout functions
-from .layout.configuration import return_configuration_layout
-from .layout.filling import return_filling_scheme_layout
-from .layout.footprint import return_footprint_layout
-from .layout.optics import return_optics_layout
-from .layout.sanity import return_sanity_layout
-from .layout.separation import return_separation_layout
-from .layout.separation_3D import return_3D_separation_layout
-from .layout.survey import return_survey_layout
-from .layout.tables import return_tables_layout
+from .layout import (
+    return_3D_separation_layout,
+    return_configuration_layout,
+    return_filling_scheme_layout,
+    return_footprint_layout,
+    return_optics_layout,
+    return_sanity_layout,
+    return_separation_layout,
+    return_survey_layout,
+    return_tables_layout,
+)
 
 # ==================================================================================================
 # --- App callbacks

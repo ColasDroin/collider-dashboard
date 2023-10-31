@@ -11,7 +11,7 @@ from dash import Dash
 # Import local functions
 from .backend import init
 from .callbacks import all_callbacks
-from .layout.main import return_app_layout
+from .layout import return_app_layout
 
 # ==================================================================================================
 # --- Load global variables and build app
