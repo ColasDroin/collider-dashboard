@@ -1,3 +1,6 @@
+# ==================================================================================================
+# --- Imports to namespace
+# ==================================================================================================
 from .configuration import return_configuration_layout
 from .filling import return_filling_scheme_layout
 from .footprint import return_footprint_layout
