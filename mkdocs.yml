@@ -19,7 +19,6 @@ nav:
   
   - Modules documentation: dashboard.md
 
-
 nav:
   - Welcome page: index.md
   - Documentation:
@@ -43,12 +42,3 @@ nav:
         - backend/plot.md
         - backend/resonance.md
 
-
-  # - Pages:
-  #     - home: pages/home.md
-  #     - sidebar: pages/sidebar.md
-  #     - load_slice: pages/load_slice.md
-  #     - lipid_selection: pages/lipid_selection.md
-  #     - region_analysis: pages/region_analysis.md
-  #     - threeD_exploration: pages/threeD_exploration.md
-  #     - scRNAseq: pages/scRNAseq.md
