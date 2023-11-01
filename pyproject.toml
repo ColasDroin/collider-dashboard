@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "simulation-dashboard"
+version = "0.1.0"
+description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
+authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+dash = "^2.14.1"
+fillingpatterns = {git = "https://github.com/PyCOMPLETE/FillingPatterns.git"}
+numpy = "^1.26.1"
+pandas = "^2.1.2"
+xsuite = "^0.5.0"
+collider-check = "^0.1.2"
+dash-mantine-components = "^0.12.1"
+seaborn = "^0.13.0"
+dash-iconify = "^0.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
