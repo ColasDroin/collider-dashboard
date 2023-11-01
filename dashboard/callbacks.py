@@ -29,12 +29,12 @@ from .layout import (
 # ==================================================================================================
 
 
-def all_callbacks(app, dic_with_bb, dic_without_bb, path_job):
+def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
     @app.callback(Output("placeholder-tabs", "children"), Input("tab-titles", "value"))
     def select_tab(value):
         match value:
             case "display-configuration":
-                return return_configuration_layout(dic_with_bb["configuration_str"], path_job)
+                return return_configuration_layout(dic_with_bb["configuration_str"], path_collider)
             case "display-twiss":
                 return return_tables_layout()
             case "display-scheme":
@@ -96,7 +96,7 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_job):
             case "display-survey":
                 return return_survey_layout()
             case _:
-                return return_configuration_layout(dic_with_bb["configuration_str"], path_job)
+                return return_configuration_layout(dic_with_bb["configuration_str"], path_collider)
 
     @app.callback(
         Output("placeholder-data-table", "children"),

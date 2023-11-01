@@ -5,6 +5,10 @@ description = "A Dash application to visualize the observables and parameters of
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/ColasDroin/simulation-dashboard"
+packages = [
+    { include = "dashboard" },
+]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
@@ -19,6 +23,21 @@ seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+black = "^23.10.1"
+
+
+[tool.poetry.group.doc.dependencies]
+mkdocs = "^1.5.3"
+mkdocstrings = "^0.23.0"
+mkdocs-git-revision-date-localized-plugin = "^1.2.1"
+
+
+[tool.poetry.scripts]
+dashboard-launch = "dashboard.__main__:main"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+

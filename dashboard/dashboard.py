@@ -18,11 +18,9 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app():
+def build_app(path_collider="/data/collider.json"):
     # Load dashboard variables
-    path_collider = "/afs/cern.ch/work/c/cdroin/private/example_DA_study/master_study/scans/test_dump/base_collider/xtrack_0000/collider.json"
-    path_job = path_collider.split("/final_collider.json")[0]
-    dic_without_bb, dic_with_bb, initial_pickle_path = init.init_from_collider(
+    dic_without_bb, dic_with_bb = init.init_from_collider(
         path_collider, load_global_variables_from_pickle=True
     )
 
@@ -38,5 +36,5 @@ def build_app():
     )
     logging.info("Defining app layout")
     app.layout = return_app_layout()
-    all_callbacks(app, dic_with_bb, dic_without_bb, path_job)
+    all_callbacks(app, dic_with_bb, dic_without_bb, path_collider)
     return app

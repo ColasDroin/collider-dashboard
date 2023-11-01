@@ -30,7 +30,7 @@ from dash.dash_table.Format import Format, Scheme
 # ==================================================================================================
 
 
-def init_from_collider(path_collider, load_global_variables_from_pickle=False):
+def init_from_collider(path_collider):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
 
@@ -49,50 +49,55 @@ def init_from_collider(path_collider, load_global_variables_from_pickle=False):
     # Path to the pickle dictionnaries (for loading and saving)
     path_pickle = "dashboard/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
-    # Try to load the dictionnaries of variables from pickle
-    if load_global_variables_from_pickle:
-        # Check that the pickle file exists
-        if not os.path.isfile(path_pickle):
-            raise ValueError("The pickle file does not exist.")
+    # Check that the pickle file exists
+    if not os.path.isfile(path_pickle):
+        print("No data has been recorded for this computer, woudl you like to do it now?")
+        answer = input("y/n: ")
+        if answer == "n":
+            print("Exiting...")
+            exit()
+        else:
+            logging.info("Building collider.")
+            # Rebuild collider
+            collider = xt.Multiline.from_json(path_collider)
+
+            # Make a copy of the collider to load without bb after
+            collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+
+            # Load collider with bb
+            collider.build_trackers()
+
+            # Build collider before bb
+            collider_without_bb.build_trackers()
+            collider_without_bb.vars["beambeam_scale"] = 0
+
+            # Check configuration
+            if collider.metadata is not None and collider.metadata != {}:
+                logging.info("The collider file contains metadata. Using it.")
+            else:
+                logging.warning(
+                    "The collider file does not contain metadata. Using default values."
+                )
+
+            # Compute collider checks
+            logging.info("Computing collider checks.")
+            collider_check_with_bb = ColliderCheck(collider)
+            collider_check_without_bb = ColliderCheck(collider_without_bb)
+
+            # Compute global variables
+            dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
+                collider_check_with_bb,
+                collider_check_without_bb,
+                path_pickle=path_pickle,
+            )
+
+    else:
+        print("Some collider data already exists for this path, loading it.")
         logging.info("Returning global variables from pickle file.")
         with open(path_pickle, "rb") as f:
             dic_without_bb, dic_with_bb = pickle.load(f)
-        return dic_without_bb, dic_with_bb, path_pickle
 
-    else:
-        logging.info("Building collider.")
-        # Rebuild collider
-        collider = xt.Multiline.from_json(path_collider)
-
-        # Make a copy of the collider to load without bb after
-        collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
-
-        # Load collider with bb
-        collider.build_trackers()
-
-        # Build collider before bb
-        collider_without_bb.build_trackers()
-        collider_without_bb.vars["beambeam_scale"] = 0
-
-        # Check configuration
-        if collider.metadata is not None and collider.metadata != {}:
-            logging.info("The collider file contains metadata. Using it.")
-        else:
-            logging.warning("The collider file does not contain metadata. Using default values.")
-
-        # Compute collider checks
-        logging.info("Computing collider checks.")
-        collider_check_with_bb = ColliderCheck(collider)
-        collider_check_without_bb = ColliderCheck(collider_without_bb)
-
-        # Compute global variables
-        dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
-            collider_check_with_bb,
-            collider_check_without_bb,
-            path_pickle=path_pickle,
-        )
-
-        return dic_without_bb, dic_with_bb, path_pickle
+    return dic_without_bb, dic_with_bb
 
 
 def compute_global_variables_from_collider_checks(
