@@ -18,7 +18,11 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app(path_collider="dashboard/data/collider.json"):
+def build_app(path_collider):
+    if path_collider is None:
+        logging.warning("No collider path was provided. Launching example collider.")
+        path_collider = "dashboard/data/collider.json"
+
     # Load dashboard variables
     dic_without_bb, dic_with_bb = init.init_from_collider(path_collider)
 
