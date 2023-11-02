@@ -22,3 +22,4 @@ logging.basicConfig(
 # --- First log
 # ==================================================================================================
 logging.info("Starting imports")
+from .dashboard import build_app

@@ -51,7 +51,7 @@ def init_from_collider(path_collider):
 
     # Check that the pickle file exists
     if not os.path.isfile(path_pickle):
-        print("No data has been recorded for this computer, woudl you like to do it now?")
+        print("No data has been recorded for this collider, would you like to do it now?")
         answer = input("y/n: ")
         if answer == "n":
             print("Exiting...")
@@ -196,6 +196,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         polarity_alice = None
         polarity_lhcb = None
         configuration_str = None
+        energy = None
 
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")

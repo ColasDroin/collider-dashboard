@@ -11,5 +11,4 @@ from .dashboard import build_app
 # Run silently with nohup gunicorn dashboard.main:server -b :8080 &
 # Kill all gunicorn instances with pkill gunicorn
 # ==================================================================================================
-app = build_app()
-server = app.server  # Define server for gunicorn
+app, server = build_app()  # server needed for gunicorn

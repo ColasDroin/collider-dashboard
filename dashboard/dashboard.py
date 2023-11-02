@@ -18,11 +18,9 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app(path_collider="/data/collider.json"):
+def build_app(path_collider="dashboard/data/collider.json"):
     # Load dashboard variables
-    dic_without_bb, dic_with_bb = init.init_from_collider(
-        path_collider, load_global_variables_from_pickle=True
-    )
+    dic_without_bb, dic_with_bb = init.init_from_collider(path_collider)
 
     #################### App ####################
     logging.info("Defining app")
@@ -37,4 +35,4 @@ def build_app(path_collider="/data/collider.json"):
     logging.info("Defining app layout")
     app.layout = return_app_layout()
     all_callbacks(app, dic_with_bb, dic_without_bb, path_collider)
-    return app
+    return app, app.server
