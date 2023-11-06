@@ -266,19 +266,25 @@ def initialize_global_variables(collider_check, compute_footprint=True):
                 )
 
     # Get the footprint only if bb is on
+    array_qx1 = np.array([])
+    array_qy1 = np.array([])
+    array_qx2 = np.array([])
+    array_qy2 = np.array([])
     if compute_footprint:
         logging.info("Computing footprints.")
-        array_qx1, array_qy1 = return_footprint(
-            collider_check.collider, nemitt_x, beam="lhcb1", n_turns=2000
-        )
-        array_qx2, array_qy2 = return_footprint(
-            collider_check.collider, nemitt_x, beam="lhcb2", n_turns=2000
-        )
-    else:
-        array_qx1 = np.array([])
-        array_qy1 = np.array([])
-        array_qx2 = np.array([])
-        array_qy2 = np.array([])
+        try:
+            array_qx1, array_qy1 = return_footprint(
+                collider_check.collider, nemitt_x, beam="lhcb1", n_turns=2000
+            )
+            array_qx2, array_qy2 = return_footprint(
+                collider_check.collider, nemitt_x, beam="lhcb2", n_turns=2000
+            )
+        except KeyError:
+            logging.warning(
+                "Could not compute footprint as 'beambeam_scale' is probably non existent."
+            )
+        except AssertionError:
+            logging.warning(AssertionError)
 
     # Store everything in a dictionnary
     dic_global_var = {
