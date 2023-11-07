@@ -18,13 +18,13 @@ This will install the required packages and build the application.
 For personal usage, the simplest way to use the dashboard is to run the package from the command line, providing the path of a collider json file:
 
 ```bash
-python -m collider-dashboard --path path_to_collider.json
+python -m collider_dashboard --path path_to_collider.json
 ```
 
 If needed, one can specify the port on which the dashboard will be deployed:
 
 ```bash
-python -m collider-dashboard --path path_to_collider.json --port 8080
+python -m collider_dashboard --path path_to_collider.json --port 8080
 ```
 
 After computing some temporary variables (this may take a while the first time), this will deploy a local server and open the dashboard in a browser window.
