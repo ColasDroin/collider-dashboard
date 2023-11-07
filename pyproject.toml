@@ -50,7 +50,7 @@ priority = "supplemental"
 enable = true
 vcs = "git"
 format = "{base}.{distance}"
-bump = true
+bump = true # test
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
