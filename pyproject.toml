@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collider-dashboard"
-version = "0.1.0"
+version = "0.0.0"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
@@ -45,7 +45,9 @@ name = "testpypi"
 url = "https://test.pypi.org/"
 priority = "supplemental"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
 
+[tool.poetry-dynamic-versioning]
+enable = true
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
