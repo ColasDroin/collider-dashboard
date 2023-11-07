@@ -19,6 +19,7 @@ logging.basicConfig(
 )
 
 # ==================================================================================================
-# --- First log
+# --- Import build_app to namespace
 # ==================================================================================================
 logging.info("Starting imports")
+from .dashboard import build_app
