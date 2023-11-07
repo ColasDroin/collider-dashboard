@@ -340,7 +340,6 @@ def return_dataframe_elements_from_line(line):
     return df_elements
 
 
-# ! This function should be optimized
 def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     """
     Corrects the dataframe of elements for thin lens approximation.
@@ -357,47 +356,53 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     pandas.DataFrame
         The corrected dataframe of elements.
     """
+
     df_elements_corrected = df_elements.copy(deep=True)
 
+    # Get duplicated elements
+    df_tw_duplicated_elements = df_tw[
+        df_tw.name.str.contains("^(?!.*(?:entry|exit|[^f]*f[^.]*$)).*\.{2}.*", regex=True)
+    ]
+
+    # Get original elements
+    df_tw_original_elements = df_tw[
+        df_tw.name.isin(df_tw_duplicated_elements.name.str.split("..", regex=False).str[0])
+    ]
+
     # Add all thin lenses (length + strength)
-    for i, row in df_tw.iterrows():
+    for i, row in df_tw_duplicated_elements.iterrows():
         # Correct for thin lens approximation and weird duplicates
-        if (
-            ".." in row["name"]
-            and "f" not in row["name"].split("..")[1]
-            and "entry" not in row["name"]
-            and "exit" not in row["name"]
-        ):
-            name = row["name"].split("..")[0]
-            try:
-                index = df_tw[df_tw.name == name].index[0]
-            except IndexError:
-                print(f"IndexError trying to correct slicing for {name}")
-                continue
+        name = row["name"].split("..")[0]
+        try:
+            index = df_tw_original_elements[df_tw_original_elements.name == name].index[0]
+        except IndexError:
+            print(f"IndexError trying to correct slicing for {name}")
+            continue
 
-            # Add length
-            if np.isnan(df_elements_corrected.loc[index]["length"]):
-                df_elements_corrected.at[index, "length"] = 0.0
-            df_elements_corrected.at[index, "length"] += df_elements.loc[i]["length"]
+        # Add length
+        if np.isnan(df_elements_corrected.loc[index]["length"]):
+            df_elements_corrected.at[index, "length"] = 0.0
+        df_elements_corrected.at[index, "length"] += df_elements.loc[i]["length"]
 
-            # Add strength
-            if np.isnan(df_elements_corrected.loc[index]["knl"]).all():
-                df_elements_corrected.at[index, "knl"] = (
-                    np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
-                    if not isinstance(df_elements.loc[i]["knl"], float)
-                    else 0.0
-                )
+        # Add strength
+        if np.isnan(df_elements_corrected.loc[index]["knl"]).all():
             df_elements_corrected.at[index, "knl"] = (
-                df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
+                np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
                 if not isinstance(df_elements.loc[i]["knl"], float)
-                else df_elements.loc[i]["knl"]
+                else 0.0
             )
 
-            # Replace order
-            df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
+        df_elements_corrected.at[index, "knl"] = (
+            df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
+            if not isinstance(df_elements.loc[i]["knl"], float)
+            else df_elements.loc[i]["knl"]
+        )
 
-            # Drop row
-            df_elements_corrected.drop(i, inplace=True)
+        # Replace order
+        df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
+
+    # Drop all duplicate rows
+    df_elements_corrected.drop(index=df_tw_duplicated_elements.index, inplace=True)
 
     return df_elements_corrected
 
