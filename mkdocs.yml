@@ -12,7 +12,7 @@ theme:
 
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings # search packages in the src folder
   - git-revision-date-localized
 
 nav:
@@ -22,7 +22,6 @@ nav:
 nav:
   - Welcome page: index.md
   - Documentation:
-      - main: main.md
       - dashboard: dashboard.md
       - callbacks: callbacks.md
       - Layout:
