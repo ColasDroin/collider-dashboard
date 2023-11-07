@@ -9,6 +9,7 @@ configuration file.
 import logging
 import os
 import pickle
+from importlib.resources import files
 
 # Package to compute beam-beam schedule
 import fillingpatterns as fp
@@ -47,7 +48,8 @@ def init_from_collider(path_collider):
     """
 
     # Path to the pickle dictionnaries (for loading and saving)
-    path_pickle = "dashboard/temp/" + path_collider.replace("/", "_") + "t_dic_var.pkl"
+    temp_path = str(files("dashboard")) + "/temp/"
+    path_pickle = temp_path + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
     # Check that the pickle file exists
     if not os.path.isfile(path_pickle):
