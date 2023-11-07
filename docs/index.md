@@ -1,4 +1,4 @@
-# Welcome to the Simboard documentation.
+# Welcome to the Simboard documentation
 
 Please use the navigation bar on the left, or the search field on top to navigate through the documentation.
 
@@ -11,7 +11,6 @@ pip install simulation-dashboard
 ```
 
 This will install the required packages and build the application.
-
 
 ## Usage
 
@@ -39,7 +38,6 @@ gunicorn my-awesome-dashboard:server -b :8080
 ```
 
 Note that, as the dashboard deals with global variables, it is not thread-safe. It is therefore recommended to run it with a single worker (it's the case by default).
-
 
 ## Project repository
 

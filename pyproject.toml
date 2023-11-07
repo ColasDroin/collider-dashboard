@@ -32,6 +32,7 @@ black = "^23.10.1"
 mkdocs = "^1.5.3"
 mkdocstrings = "^0.23.0"
 mkdocs-git-revision-date-localized-plugin = "^1.2.1"
+mkdocs-material = "^9.4.8"
 
 
 [tool.poetry.scripts]
