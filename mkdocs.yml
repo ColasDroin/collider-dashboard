@@ -1,4 +1,4 @@
-site_name: SimBoard
+site_name: ColliderDashboard
 repo_url: https://github.com/ColasDroin/simulation-dashboard
 site_description: A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
 site_author: Colas Droin

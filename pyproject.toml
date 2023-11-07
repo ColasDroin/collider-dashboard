@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "simulation-dashboard"
+name = "collider-dashboard"
 version = "0.1.1"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]

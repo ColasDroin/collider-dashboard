@@ -1,6 +1,6 @@
 # Local files
-dashboard/modules/*
-dashboard/temp/*.pkl
+collider_dashboard/modules/*
+collider_dashboard/temp/*.pkl
 !modules/.gitkeep
 nohup.out
 .vscode
