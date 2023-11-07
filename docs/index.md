@@ -12,6 +12,7 @@ pip install simulation-dashboard
 
 This will install the required packages and build the application.
 
+
 ## Usage
 
 The simplest way to use the dashboard is to run the package from the command line, providing the path of a collider json file:
