@@ -1,7 +1,6 @@
 # Collider Dashboard
 
 A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
-
 ## Installation
 
 The dashboard can be installed from PyPI with pip:
@@ -15,7 +14,7 @@ This will install the required packages and build the application.
 
 ## Usage
 
-For personal usage, the simplest way to use the dashboard is to run the package from the command line, providing the path of a collider json file:
+For personal usage, the simplest way to use the dashboard is to run the package as a development server from the command line, providing the path of a collider json file:
 
 ```bash
 python -m collider_dashboard --path path_to_collider.json
@@ -38,7 +37,7 @@ from collider_dashboard import build_app
 app, server = build_app(path_to_collider.json, port=8080)
 ```
 
-The dashboard can then be deployed on a remote server, e.g. with gunicorn:
+The dashboard can then be deployed e.g. with gunicorn:
 
 ```bash
 gunicorn my-awesome-dashboard:server -b :8080
