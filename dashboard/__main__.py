@@ -29,7 +29,7 @@ if __name__ == "__main__":
     if path_collider is None:
         print("No collider path was provided. Launching example collider.")
         package_path = str(files("dashboard"))
-        path_collider = package_path + "data/collider.json"
+        path_collider = package_path + "/data/collider.json"
     if port is None:
         print("No port was provided. Launching on port 8080.")
         port = 8080

@@ -11,9 +11,6 @@ import os
 import pickle
 from importlib.resources import files
 
-# Package to compute beam-beam schedule
-import fillingpatterns as fp
-
 # Third-party packages
 import numpy as np
 import pandas as pd
@@ -25,6 +22,9 @@ from collider_check import ColliderCheck
 # Dash imports
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme
+
+# Package to compute beam-beam schedule
+from .fillingpatterns import FillingPattern
 
 # ==================================================================================================
 # --- Functions initialize all global variables
@@ -131,7 +131,9 @@ def compute_global_variables_from_collider_checks(
     )
 
     if path_pickle is not None:
-        # Dump the dictionnaries in a pickle file
+        # Dump the dictionnaries in a pickle file, creating the directory if it does not exist
+        if not os.path.isdir(os.path.dirname(path_pickle)):
+            os.makedirs(os.path.dirname(path_pickle))
         logging.info("Dumping global variables into a pickle file.")
         with open(path_pickle, "wb") as f:
             pickle.dump((dic_without_bb, dic_with_bb), f)
@@ -178,7 +180,7 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
         # Get the beam-beam schedule
         logging.info("Computing beam-beam schedule.")
-        patt = fp.FillingPattern.from_json(collider_check.path_filling_scheme)
+        patt = FillingPattern.from_json(collider_check.path_filling_scheme)
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule
 
