@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collider-dashboard"
-version = "0.1.1"
+version = "0.1.0"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
@@ -37,7 +37,7 @@ mkdocs-material = "^9.4.8"
 
 
 # [tool.poetry.scripts]
-# dashboard-launch = "dashboard.__main__:main"
+# dashboard-launch = "collider_dashboard.__main__:main"
 
 
 [[tool.poetry.source]]
