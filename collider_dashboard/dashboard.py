@@ -1,4 +1,5 @@
 """Module to build the dashboard app."""
+
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
@@ -29,7 +30,7 @@ def build_app(path_collider):
     logging.info("Defining app")
     app = Dash(
         __name__,
-        title="Dashboard for current simulation",
+        title="Collider dashboard",
         external_scripts=[
             "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"
         ],
