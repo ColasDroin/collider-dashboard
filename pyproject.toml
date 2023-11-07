@@ -13,7 +13,6 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 dash = "^2.14.1"
-fillingpatterns = {git = "https://github.com/PyCOMPLETE/FillingPatterns.git"}
 numpy = "^1.26.1"
 pandas = "^2.1.2"
 xsuite = "^0.5.0"
@@ -37,8 +36,14 @@ mkdocs-git-revision-date-localized-plugin = "^1.2.1"
 mkdocs-material = "^9.4.8"
 
 
-[tool.poetry.scripts]
-dashboard-launch = "dashboard.__main__:main"
+# [tool.poetry.scripts]
+# dashboard-launch = "dashboard.__main__:main"
+
+
+[[tool.poetry.source]]
+name = "testpypi"
+url = "https://test.pypi.org/"
+priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]
