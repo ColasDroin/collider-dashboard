@@ -1,4 +1,5 @@
 """Module containing the callbacks for the app."""
+
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
@@ -241,8 +242,9 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
     @app.callback(
         Output("beam-separation-3D", "figure"),
         Input("chips-sep-bb-3D", "value"),
+        Input("chips-ip-3D", "value"),
     )
-    def update_graph_separation_3D(bb):
+    def update_graph_separation_3D(bb, ip):
         if bb == "On":
             dic = dic_with_bb
         elif bb == "Off":
@@ -250,7 +252,7 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
         else:
             raise ValueError("bb should be either On or Off")
 
-        fig = plot.return_plot_separation_3D(dic["dic_position_ip"])
+        fig = plot.return_plot_separation_3D(dic["dic_position_ip"], ip.lower().replace(" ", ""))
 
         return fig
 

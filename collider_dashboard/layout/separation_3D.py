@@ -26,23 +26,48 @@ def return_3D_separation_layout():
                         children=[
                             dmc.Group(
                                 children=[
-                                    dmc.Text("Beam-beam: "),
-                                    dmc.ChipGroup(
-                                        [
-                                            dmc.Chip(
-                                                x,
-                                                value=x,
-                                                variant="outline",
-                                                color="cyan",
-                                            )
-                                            for x in ["On", "Off"]
+                                    dmc.Group(
+                                        children=[
+                                            dmc.Text("Beam-beam: "),
+                                            dmc.ChipGroup(
+                                                [
+                                                    dmc.Chip(
+                                                        x,
+                                                        value=x,
+                                                        variant="outline",
+                                                        color="cyan",
+                                                    )
+                                                    for x in ["On", "Off"]
+                                                ],
+                                                id="chips-sep-bb-3D",
+                                                value="Off",
+                                                mb=0,
+                                            ),
                                         ],
-                                        id="chips-sep-bb-3D",
-                                        value="Off",
-                                        mb=0,
+                                        pt=5,
+                                    ),
+                                    dmc.Space(w="xl"),
+                                    dmc.Group(
+                                        children=[
+                                            dmc.Text("IP: "),
+                                            dmc.ChipGroup(
+                                                [
+                                                    dmc.Chip(
+                                                        x,
+                                                        value=x,
+                                                        variant="outline",
+                                                        color="cyan",
+                                                    )
+                                                    for x in ["IP 1", "IP 2", "IP 5", "IP 8"]
+                                                ],
+                                                id="chips-ip-3D",
+                                                value="IP 1",
+                                                mb=0,
+                                            ),
+                                        ],
+                                        pt=5,
                                     ),
                                 ],
-                                pt=5,
                             ),
                         ],
                     ),

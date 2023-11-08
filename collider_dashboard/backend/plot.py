@@ -4,6 +4,9 @@
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
+# Import from standard library
+import logging
+from functools import lru_cache
 
 # Import third-party packages
 import numpy as np
@@ -1566,7 +1569,7 @@ def return_plot_separation(dic_separation_ip, plane):
     return fig
 
 
-def return_plot_separation_3D(dic_position_ip):
+def return_plot_separation_3D(dic_position_ip, ip="ip1"):
     """
     Returns a 3D plotly figure showing the beam-beam separation at different interaction points (IPs).
 
@@ -1580,67 +1583,112 @@ def return_plot_separation_3D(dic_position_ip):
     fig : plotly.graph_objs._figure.Figure
         A plotly figure object containing the 3D beam-beam separation plot.
     """
+    logging.info("Starting computation 3D beam-beam separation")
+
     fig = make_subplots(
-        rows=2,
-        cols=2,
-        subplot_titles=("IP 1", "IP 2", "IP 5", "IP 8"),
+        rows=1,
+        cols=1,
+        # subplot_titles="IP 1",
         specs=[
-            [{"type": "scatter3d"}, {"type": "scatter3d"}],
-            [{"type": "scatter3d"}, {"type": "scatter3d"}],
+            [{"type": "scatter3d"}],
         ],
         horizontal_spacing=0.05,
         vertical_spacing=0.05,
     )
 
-    for idx, ip in enumerate(["ip1", "ip2", "ip5", "ip8"]):
-        for beam, color in zip(["lhcb1", "lhcb2"], ["teal", "tomato"]):
-            s = dic_position_ip[beam]["tw"][ip]["s"].to_numpy()
-            x = dic_position_ip[beam]["tw"][ip]["x"].to_numpy()
-            X = dic_position_ip[beam]["sv"][ip]["X"].to_numpy()
-            y = dic_position_ip[beam]["tw"][ip]["y"].to_numpy()
-            Y = dic_position_ip[beam]["sv"][ip]["Y"].to_numpy()
-            bx = dic_position_ip[beam]["tw"][ip]["betx"].to_numpy()
-            by = dic_position_ip[beam]["tw"][ip]["bety"].to_numpy()
-            w = np.sqrt((bx + by) / 2)
+    logging.info("Starting ip " + str(ip))
+    for beam, color in zip(["lhcb1", "lhcb2"], ["teal", "tomato"]):
+        s = dic_position_ip[beam]["tw"][ip]["s"].to_numpy()
+        x = dic_position_ip[beam]["tw"][ip]["x"].to_numpy()
+        X = dic_position_ip[beam]["sv"][ip]["X"].to_numpy()
+        y = dic_position_ip[beam]["tw"][ip]["y"].to_numpy()
+        # Y = dic_position_ip[beam]["sv"][ip]["Y"].to_numpy()
+        bx = dic_position_ip[beam]["tw"][ip]["betx"].to_numpy()
+        by = dic_position_ip[beam]["tw"][ip]["bety"].to_numpy()
+        w = np.sqrt((bx + by) / 2)
 
-            for i in range(s.shape[0] - 2):
-                fig.add_trace(
-                    go.Scatter3d(
-                        x=s[i : i + 3],
-                        y=x[i : i + 3] + X[i : i + 3],
-                        z=y[i : i + 3],
-                        mode="lines",
-                        line=dict(color=color, width=w[i + 1]),
-                        showlegend=False,
-                    ),
-                    row=idx // 2 + 1,
-                    col=idx % 2 + 1,
-                )
+        if beam == "lhcb2":
+            s = s[::-1]
+            x = x[::-1]
+            X = X[::-1]
+            y = y[::-1]
+            bx = bx[::-1]
+            by = by[::-1]
+            w = w[::-1]
 
-                range_s = (s[0] - 5, s[-1] + 5)
-                range_x = range_y = (
-                    np.min((np.min((x + X)), np.min(y))) - 0.01,
-                    np.max((np.max((x + X)), np.max(y))) + 0.01,
-                )
-                fig.update_scenes(
-                    xaxis=dict(title="s[m]", range=range_s),
-                    yaxis=dict(title="x[m]", range=range_x),
-                    zaxis=dict(title="y[m]", range=range_y),
-                    aspectmode="cube",
-                    row=idx // 2 + 1,
-                    col=idx % 2 + 1,
-                )
+        for i in range(0, int(s.shape[0] / 2) - 20, 10):
+            fig.add_trace(
+                go.Scatter3d(
+                    x=s[i - 5 : i + 6],
+                    y=x[i - 5 : i + 6] + X[i - 5 : i + 6],
+                    z=y[i - 5 : i + 6],
+                    mode="lines",
+                    line=dict(color=color, width=w[i]),
+                    showlegend=False,
+                ),
+                row=1,
+                col=1,
+            )
+        for i in range(int(s.shape[0] / 2) + 20, s.shape[0], 10):
+            fig.add_trace(
+                go.Scatter3d(
+                    x=s[i - 5 : i + 6],
+                    y=x[i - 5 : i + 6] + X[i - 5 : i + 6],
+                    z=y[i - 5 : i + 6],
+                    mode="lines",
+                    line=dict(color=color, width=w[i]),
+                    showlegend=False,
+                ),
+                row=1,
+                col=1,
+            )
+        for i in range(int(s.shape[0] / 2) - 18, int(s.shape[0] / 2) + 19, 1):
+            fig.add_trace(
+                go.Scatter3d(
+                    x=s[i : i + 3],
+                    y=x[i : i + 3] + X[i : i + 3],
+                    z=y[i : i + 3],
+                    mode="lines",
+                    line=dict(color=color, width=w[i + 1]),
+                    showlegend=False,
+                ),
+                row=1,
+                col=1,
+            )
+    range_s = (s[0] - 5, s[-1] + 5)
+    range_x = range_y = (
+        np.min((np.min((x + X)), np.min(y))) - 0.01,
+        np.max((np.max((x + X)), np.max(y))) + 0.01,
+    )
+    fig.update_scenes(
+        xaxis=dict(title="s[m]", range=range_s),
+        yaxis=dict(title="x[m]", range=range_x),
+        zaxis=dict(title="y[m]", range=range_y),
+        aspectmode="cube",
+        row=1,
+        col=1,
+    )
     fig.update_layout(
         autosize=False,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        title="3D Beam-beam separation at the different IPs",
+        title="3D Beam-beam separation",
         title_x=0.5,
+        title_y=0.95,
         margin=dict(l=20, r=20, b=10, t=30),  # , pad=10),
     )
-
+    logging.info("Returning 3D beam-beam separation figure")
     return fig
+
+
+@lru_cache(maxsize=20)
+def compute_footprint_mesh():
+    # Get resonance lines first
+    traces = get_working_diagram(
+        Qx_range=[0.28, 0.35], Qy_range=[0.28, 0.35], order=12, color="white", alpha=0.1
+    )
+    return traces
 
 
 def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=False):
@@ -1665,58 +1713,74 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
     fig : plotly.graph_objs._figure.Figure
         The Plotly figure object representing the footprint plot.
     """
+    logging.info("Starting computation footprint figure")
     palette = sns.color_palette("Spectral", 10).as_hex()
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
+    if array_qx.shape[0] > 0:
 
-    # Plot resonance lines first
-    traces = get_working_diagram(order=12, color="white", alpha=0.1)
-    fig.add_traces(traces)
+        # Get resonance lines first
+        fig.add_traces(compute_footprint_mesh())
 
-    if plot_filtered_web:
-        # Filter the footprint mesh
-        for x, y in zip(array_qx, array_qy):
-            # Insert additional None when dx or dy is too big
-            # to avoid connecting the lines
-            x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-            y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-            x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-            y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+        if plot_filtered_web:
+            # Filter the footprint mesh
+            for x, y in zip(array_qx, array_qy):
+                # Insert additional None when dx or dy is too big
+                # to avoid connecting the lines
+                x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+                y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+                x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+                y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+                fig.add_trace(
+                    go.Scattergl(
+                        x=x_temp,
+                        y=y_temp,
+                        line_color="whitesmoke",
+                        opacity=0.3,
+                    )
+                )
+        for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
+            if plot_filtered_web:
+                x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+                y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
+                x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+                y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
+            x_temp = x
+            y_temp = y
             fig.add_trace(
                 go.Scattergl(
                     x=x_temp,
                     y=y_temp,
-                    line_color="whitesmoke",
-                    opacity=0.3,
-                )
+                    line_color=palette[9 - idx],
+                    mode="markers",
+                ),
             )
-    for idx, (x, y) in enumerate(zip(array_qx.T, array_qy.T)):
-        if plot_filtered_web:
-            x_temp = np.insert(x, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-            y_temp = np.insert(y, np.where(np.abs(np.diff(x)) > 0.003)[0] + 1, None)
-            x_temp = np.insert(x_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-            y_temp = np.insert(y_temp, np.where(np.abs(np.diff(y)) > 0.003)[0] + 1, None)
-        x_temp = x
-        y_temp = y
+
         fig.add_trace(
             go.Scattergl(
-                x=x_temp,
-                y=y_temp,
-                line_color=palette[9 - idx],
+                x=[qx % 1],
+                y=[qy % 1],
                 mode="markers",
-            ),
+                marker_color="white",
+                marker_size=10,
+                marker_symbol="x",
+            )
         )
 
-    fig.add_trace(
-        go.Scattergl(
-            x=[qx % 1],
-            y=[qy % 1],
-            mode="markers",
-            marker_color="white",
-            marker_size=10,
-            marker_symbol="x",
+        fig.update_layout(
+            xaxis=dict(
+                range=[
+                    np.percentile(array_qx, 10) - 0.001,
+                    np.percentile(array_qy, 90) + 0.001,
+                ],
+            ),
+            yaxis=dict(
+                range=[
+                    np.percentile(array_qx, 10) - 0.003,
+                    np.percentile(array_qy, 90) + 0.003,
+                ],
+            ),
         )
-    )
 
     fig.update_yaxes(
         scaleanchor="x",
@@ -1728,18 +1792,6 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
         title_x=0.5,
         xaxis_title="Qx",
         yaxis_title="Qy",
-        xaxis=dict(
-            range=[
-                np.percentile(array_qx, 10) - 0.001,
-                np.percentile(array_qy, 90) + 0.001,
-            ],
-        ),
-        yaxis=dict(
-            range=[
-                np.percentile(array_qx, 10) - 0.003,
-                np.percentile(array_qy, 90) + 0.003,
-            ],
-        ),
         # width=500,
         # height=500,
         showlegend=False,
@@ -1750,4 +1802,7 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
         dragmode="pan",
     )
 
+    logging.info("Returning footprint figure")
+    return fig
+    logging.info("Returning footprint figure")
     return fig
