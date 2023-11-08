@@ -32,14 +32,17 @@ from .fillingpatterns import FillingPattern
 # ==================================================================================================
 
 
-def init_from_collider(path_collider):
+def init_from_collider(path_collider, force_reload=False, ignore_footprint=False):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
 
     Args:
         path_collider (str): Path to the JSON file containing the collider definition.
-        load_global_variables_from_pickle (bool, optional): Whether to load the global variables
-        from a pickle file instead of computing them from scratch. Defaults to False.
+        force_reload (bool, optional): If False, tries to to load the global variables
+            from a pickle file instead of computing them from scratch. Otherwise, force the
+            (re-)computation of the global variables. Defaults to False.
+        ignore_footprint (bool, optional): If True, does not compute the footprints to gain loading
+            time. Defaults to False.
 
     Returns:
         tuple: A tuple containing two dictionaries of global variables computed from collider
@@ -53,46 +56,44 @@ def init_from_collider(path_collider):
     path_pickle = temp_path + path_collider.replace("/", "_") + "t_dic_var.pkl"
 
     # Check that the pickle file exists
-    if not os.path.isfile(path_pickle):
-        print("No data has been recorded for this collider, would you like to do it now?")
-        answer = input("y/n: ")
-        if answer == "n":
-            print("Exiting...")
-            exit()
+    if not os.path.isfile(path_pickle) or force_reload:
+        print(
+            "No data has been recorded for this collider, or force_reload is True. Recomputing the"
+            " dashboard collider data now."
+        )
+
+        logging.info("Building collider.")
+        # Rebuild collider
+        collider = xt.Multiline.from_json(path_collider)
+
+        # Make a copy of the collider to load without bb after
+        collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+
+        # Load collider with bb
+        collider.build_trackers()
+
+        # Build collider before bb
+        collider_without_bb.build_trackers()
+        collider_without_bb.vars["beambeam_scale"] = 0
+
+        # Check configuration
+        if collider.metadata is not None and collider.metadata != {}:
+            logging.info("The collider file contains metadata. Using it.")
         else:
-            logging.info("Building collider.")
-            # Rebuild collider
-            collider = xt.Multiline.from_json(path_collider)
+            logging.warning("The collider file does not contain metadata. Using default values.")
 
-            # Make a copy of the collider to load without bb after
-            collider_without_bb = xt.Multiline.from_dict(collider.to_dict())
+        # Compute collider checks
+        logging.info("Computing collider checks.")
+        collider_check_with_bb = ColliderCheck(collider)
+        collider_check_without_bb = ColliderCheck(collider_without_bb)
 
-            # Load collider with bb
-            collider.build_trackers()
-
-            # Build collider before bb
-            collider_without_bb.build_trackers()
-            collider_without_bb.vars["beambeam_scale"] = 0
-
-            # Check configuration
-            if collider.metadata is not None and collider.metadata != {}:
-                logging.info("The collider file contains metadata. Using it.")
-            else:
-                logging.warning(
-                    "The collider file does not contain metadata. Using default values."
-                )
-
-            # Compute collider checks
-            logging.info("Computing collider checks.")
-            collider_check_with_bb = ColliderCheck(collider)
-            collider_check_without_bb = ColliderCheck(collider_without_bb)
-
-            # Compute global variables
-            dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
-                collider_check_with_bb,
-                collider_check_without_bb,
-                path_pickle=path_pickle,
-            )
+        # Compute global variables
+        dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(
+            collider_check_with_bb,
+            collider_check_without_bb,
+            path_pickle=path_pickle,
+            ignore_footprint=ignore_footprint,
+        )
 
     else:
         print("Some collider data already exists for this path, loading it.")
@@ -104,7 +105,10 @@ def init_from_collider(path_collider):
 
 
 def compute_global_variables_from_collider_checks(
-    collider_check_after_beam_beam, collider_check_without_beam_beam, path_pickle=None
+    collider_check_after_beam_beam,
+    collider_check_without_beam_beam,
+    path_pickle=None,
+    ignore_footprint=False,
 ):
     """
     Computes global variables with and without beam-beam interaction.
@@ -124,11 +128,11 @@ def compute_global_variables_from_collider_checks(
     # Get the global variables before and after the beam-beam
     logging.info("Computing global variables with beam beam.")
     dic_with_bb = initialize_global_variables(
-        collider_check_after_beam_beam, compute_footprint=True
+        collider_check_after_beam_beam, compute_footprint=not ignore_footprint
     )
     logging.info("Computing global variables without beam beam.")
     dic_without_bb = initialize_global_variables(
-        collider_check_without_beam_beam, compute_footprint=True
+        collider_check_without_beam_beam, compute_footprint=not ignore_footprint
     )
 
     if path_pickle is not None:

@@ -19,12 +19,12 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app(path_collider):
-    if path_collider is None:
-        logging.warning("No collider path was provided. Launching example collider.")
+def build_app(path_collider, force_reload=False, ignore_footprint=False):
 
     # Load dashboard variables
-    dic_without_bb, dic_with_bb = init.init_from_collider(path_collider)
+    dic_without_bb, dic_with_bb = init.init_from_collider(
+        path_collider, force_reload=force_reload, ignore_footprint=ignore_footprint
+    )
 
     #################### App ####################
     logging.info("Defining app")
