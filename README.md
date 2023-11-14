@@ -17,13 +17,13 @@ This will install the required packages and build the application.
 For personal usage, the simplest way to use the dashboard is to run the package as a development server from the command line, providing a few arguments:
 
 ```bash
-python -m collider_dashboard --collider-path path_to_collider.json --port 8080 --force-reload --ignore--footprint
+python -m collider_dashboard --collider-path path_to_collider.json --port 8080 --force-reload --ignore-footprint
 ```
 
 - `--collider-path`, or `-c`, sets the path to the collider configuration file. Default value to the path of a dummy collider used for testing.
 - `--port`, or `-p`, sets the port on which the dashboard will be deployed. Default value to `8080``.
 - `--force-reload`, or `-f`,  sets a boolean indicating whether the collider dashboard data should be reloaded if already existing.
-- '--ignore-footprint', or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time. 
+- '--ignore-footprint', or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time.
 
 After computing some temporary variables (this may take a while the first time), this will deploy a local server and open the dashboard in a browser window.
 

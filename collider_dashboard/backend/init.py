@@ -233,10 +233,10 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
     # Get corresponding data tables
     logging.info("Get Twiss and survey datatables.")
-    table_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
-    table_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-after-bb", twiss=True)
-    table_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
-    table_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
+    table_sv_b1, df_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
+    table_tw_b1, df_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-after-bb", twiss=True)
+    table_sv_b2, df_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
+    table_tw_b2, df_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
 
     # Get the twiss dictionnary (tune, chroma, etc + twiss at IPs)
     logging.info("Get Twiss dictionnary.")
@@ -510,6 +510,13 @@ def return_data_table(df, id_table, twiss=True):
             row_deletable=False,
             virtualization=False,
             page_size=25,
+            page_current=0,
+            # page_action="custom",
+            # filter_action="custom",
+            # filter_query="",
+            # sort_action="custom",
+            # sort_mode="multi",
+            # sort_by=[],
             style_table={
                 # "height": "100%",
                 "maxHeight": "75vh",
@@ -530,7 +537,7 @@ def return_data_table(df, id_table, twiss=True):
             style_cell={"font-family": "sans-serif", "minWidth": 95},
         ),
     )
-    return table
+    return table, df
 
 
 def return_footprint(collider, emittance, beam="lhcb1", n_turns=2000):

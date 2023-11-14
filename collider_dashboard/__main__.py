@@ -29,7 +29,7 @@ def main(path_collider, port=8080, force_reload=False, ignore_footprint=False):
     app, _ = build_app(
         path_collider, force_reload, ignore_footprint
     )  # server not needed for local deployment
-    app.run_server(debug=False, host="0.0.0.0", port=port)
+    app.run_server(debug=True, host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":
