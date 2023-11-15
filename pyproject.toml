@@ -16,11 +16,11 @@ dash = "^2.14.1"
 numpy = "^1.26.1"
 pandas = "^2.1.2"
 xsuite = "^0.5.0"
-collider-check = "^0.1.2"
 dash-mantine-components = "^0.12.1"
 seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
+collider-check = "^0.1.4"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -40,10 +40,10 @@ mkdocs-material = "^9.4.8"
 # dashboard-launch = "collider_dashboard.__main__:main"
 
 
-[[tool.poetry.source]]
-name = "testpypi"
-url = "https://test.pypi.org/"
-priority = "supplemental"
+# [[tool.poetry.source]]
+# name = "testpypi"
+# url = "https://test.pypi.org/"
+# priority = "supplemental"
 
 
 
