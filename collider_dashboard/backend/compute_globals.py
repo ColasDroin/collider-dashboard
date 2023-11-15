@@ -200,6 +200,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
 
         # Get the beam-beam schedule
         logging.info("Computing beam-beam schedule.")
+        print("ICI", collider_check.path_filling_scheme)
         patt = FillingPattern.from_json(collider_check.path_filling_scheme)
         patt.compute_beam_beam_schedule(n_lr_per_side=26)
         bbs = patt.b1.bb_schedule

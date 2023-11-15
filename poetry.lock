@@ -286,13 +286,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "collider-check"
-version = "0.1.2"
+version = "0.1.3"
 description = "A small package that provides functions to check the observables in a collider, using a collider built with Xsuite."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "collider-check-0.1.2.tar.gz", hash = "sha256:6a628430491de26ab454edbca20bde27c34e97aa26b1053ee212aa779c274a68"},
-    {file = "collider_check-0.1.2-py3-none-any.whl", hash = "sha256:8a8c9d104710bd35ea17749ffa05853f3271f5b1427250371c00642176b4607d"},
+    {file = "collider-check-0.1.3.tar.gz", hash = "sha256:15c127cdad55225adfc8d57f970046e6ca48c75f95719d964a0307c6478b46b5"},
+    {file = "collider_check-0.1.3-py3-none-any.whl", hash = "sha256:899af94ade77b9aa1e5dead07635535c626c26ec0f1a9fabd5f6986ac2bfc3fe"},
 ]
 
 [package.dependencies]
