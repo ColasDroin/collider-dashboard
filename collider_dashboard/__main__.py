@@ -16,7 +16,7 @@ from .dashboard import build_app
 # ==================================================================================================
 # --- Launch app
 # ==================================================================================================
-def main(path_collider, port=8080, force_reload=False, ignore_footprint=False):
+def main(path_collider, port=8080, force_reload=False, ignore_footprint=False, debug=False):
 
     # Log the initial configuration
     logging.info("Launching app with the following parameters:")
@@ -29,7 +29,7 @@ def main(path_collider, port=8080, force_reload=False, ignore_footprint=False):
     app, _ = build_app(
         path_collider, force_reload, ignore_footprint
     )  # server not needed for local deployment
-    app.run_server(debug=True, host="0.0.0.0", port=port)
+    app.run_server(debug=debug, host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":
@@ -77,15 +77,31 @@ if __name__ == "__main__":
         help="Ignore the footprint computation.",
         required=False,
     )
+
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Launch the app in debugging mode.",
+        required=False,
+    )
+
     args = parser.parse_args()
     collider_path = args.collider_path
     port = args.port
     force_reload = args.force_reload
     ignore_footprint = args.ignore_footprint
+    debug = args.debug
 
     # Warn that the default collider is used if needed
     if collider_path == example_collider_path:
         logging.warning("No collider path was provided. Launching example collider.")
 
     # Launch the app
-    main(collider_path, port=port, force_reload=force_reload, ignore_footprint=ignore_footprint)
+    main(
+        collider_path,
+        port=port,
+        force_reload=force_reload,
+        ignore_footprint=ignore_footprint,
+        debug=debug,
+    )
