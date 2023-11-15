@@ -389,7 +389,10 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
 
     df_elements_corrected = df_elements.copy(deep=True)
 
-    # Get duplicated elements (those which contain '..' or 'entry' or 'exit' in their name)
+    # Get duplicated elements, according to regex, whose name:
+    # - does not contain the words "entry" or "exit" or ends with "f".
+    # - does not contain a period before the end of the string.
+    # - contain exactly two consecutive periods.
     df_tw_duplicated_elements = df_tw[
         df_tw.name.str.contains("^(?!.*(?:entry|exit|[^f]*f[^.]*$)).*\.{2}.*", regex=True)
     ]
@@ -514,7 +517,7 @@ def return_data_table(df, id_table, twiss=True, simplify_tw=True):
 
     # Simplify the dataframe removing all duplicated elements, entry and exit
     if simplify_tw:
-        df = df[~df.name.str.contains("^(?!.*(?:entry|exit|[^f]*f[^.]*$)).*\.{2}.*", regex=True)]
+        df = df[df["name"].str.contains(r"^(?:(?!\.\.|entry|exit).)*$", regex=True)]
 
     table = (
         dash_table.DataTable(

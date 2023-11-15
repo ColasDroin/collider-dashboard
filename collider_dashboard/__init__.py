@@ -9,7 +9,10 @@ import logging
 # ==================================================================================================
 # --- Package version
 # ==================================================================================================
-__version__ = importlib.metadata.version("collider-dashboard")
+try:
+    __version__ = importlib.metadata.version("collider-dashboard")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "unknown"
 # ==================================================================================================
 # --- Customize logging
 # ==================================================================================================
