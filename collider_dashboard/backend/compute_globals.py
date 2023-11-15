@@ -16,10 +16,8 @@ from importlib.resources import files
 import numpy as np
 import pandas as pd
 import xtrack as xt
-
 # Package to check collider observables
 from collider_check import ColliderCheck
-
 # Dash imports
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme
@@ -277,7 +275,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
     dic_position_ip = collider_check.return_dic_position_all_ips()
 
     # Convert the twiss variables in dic_separation_ip to pandas dataframe so that it can be saved in a pickle file
-    logging.info("Wonverting twiss and survey objects to pandas dataframes.")
+    logging.info("Converting twiss and survey objects to pandas dataframes.")
     for ip in [1, 2, 5, 8]:
         for variable_to_convert in [
             "twiss_filtered",

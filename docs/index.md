@@ -10,7 +10,11 @@ The dashboard can be installed from PyPI with pip:
 pip install collider-dashboard
 ```
 
-This will install the required packages and build the application.
+This will install the required packages and build the application. If you haven't done it already, it is recommended to prebuild the Xsuite kernel to gain some computation time:
+
+```bash
+xsuite-prebuild
+```
 
 ## Usage
 
@@ -45,7 +49,3 @@ gunicorn my-awesome-dashboard:server -b :8080
 ```
 
 Note that, as the dashboard deals with global variables, it is not thread-safe. It is therefore recommended to run it with a single worker (it's the case by default).
-
-## Project repository
-
-Please visit the [project webpage](https://github.com/ColasDroin/collider-dashboard) for more information about the project.
