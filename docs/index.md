@@ -24,6 +24,7 @@ python -m collider_dashboard --collider-path path_to_collider.json --port 8080 -
 - `--port`, or `-p`, sets the port on which the dashboard will be deployed. Default value to `8080``.
 - `--force-reload`, or `-f`,  sets a boolean indicating whether the collider dashboard data should be reloaded if already existing. Optional.
 - `--ignore-footprint`, or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time. Optional.
+- `--simplify`, or `-s`, sets a boolean indicating whether the Twiss/Survey tables should be simplified (removode duplicates and entry/exit marker elements) to gain computation time. Optional.
 - `--debug`, or `-d`, sets a boolean indicating whether the dashboard should be run in debug mode. Optional.
 
 After computing some temporary variables (this may take a while the first time), this will deploy a local server and open the dashboard in a browser window.
@@ -34,7 +35,7 @@ Alternatively, one can import the dashboard as a module and use it in a custom s
 # my-awesome-dashboard.py
 
 from collider_dashboard import build_app
-app, server = build_app(path_to_collider.json, port=8080 force_reload=False, ignore_footprint=False, debug = False)
+app, server = build_app(path_to_collider.json, port=8080 force_reload=False, ignore_footprint=False, debug = False, simplify_tw=True)
 ```
 
 The dashboard can then be deployed e.g. with gunicorn:

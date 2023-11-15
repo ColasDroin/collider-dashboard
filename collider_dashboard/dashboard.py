@@ -10,7 +10,7 @@ import logging
 from dash import Dash
 
 # Import local functions
-from .backend import init
+from .backend import compute_globals
 from .callbacks import all_callbacks
 from .layout import return_app_layout
 
@@ -19,11 +19,14 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app(path_collider, force_reload=False, ignore_footprint=False):
+def build_app(path_collider, force_reload=False, ignore_footprint=False, simplify_tw=True):
 
     # Load dashboard variables
-    dic_without_bb, dic_with_bb = init.init_from_collider(
-        path_collider, force_reload=force_reload, ignore_footprint=ignore_footprint
+    dic_without_bb, dic_with_bb = compute_globals.init_from_collider(
+        path_collider,
+        force_reload=force_reload,
+        ignore_footprint=ignore_footprint,
+        simplify_tw=simplify_tw,
     )
 
     #################### App ####################

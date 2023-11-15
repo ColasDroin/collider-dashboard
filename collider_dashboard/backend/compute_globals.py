@@ -32,7 +32,7 @@ from .fillingpatterns import FillingPattern
 # ==================================================================================================
 
 
-def init_from_collider(path_collider, force_reload=False, ignore_footprint=False):
+def init_from_collider(path_collider, force_reload=False, ignore_footprint=False, simplify_tw=True):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
 
@@ -43,6 +43,8 @@ def init_from_collider(path_collider, force_reload=False, ignore_footprint=False
             (re-)computation of the global variables. Defaults to False.
         ignore_footprint (bool, optional): If True, does not compute the footprints to gain loading
             time. Defaults to False.
+        simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by
+            removing duplicated elements to speed up computations. Defaults to True.
 
     Returns:
         tuple: A tuple containing two dictionaries of global variables computed from collider
@@ -93,6 +95,7 @@ def init_from_collider(path_collider, force_reload=False, ignore_footprint=False
             collider_check_without_bb,
             path_pickle=path_pickle,
             ignore_footprint=ignore_footprint,
+            simplify_tw=simplify_tw,
         )
 
     else:
@@ -109,6 +112,7 @@ def compute_global_variables_from_collider_checks(
     collider_check_without_beam_beam,
     path_pickle=None,
     ignore_footprint=False,
+    simplify_tw=True,
 ):
     """
     Computes global variables with and without beam-beam interaction.
@@ -120,6 +124,11 @@ def compute_global_variables_from_collider_checks(
             interaction.
         path_pickle (str, optional): Path to the pickle file to dump the dictionaries. Defaults to
             None.
+        ignore_footprint (bool, optional): If True, does not compute the footprints to gain loading
+            time. Defaults to False.
+        simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by
+            removing duplicated elements to speed up computations. Defaults to True.
+
 
     Returns:
         tuple: A tuple containing two dictionaries, one for global variables with beam-beam
@@ -128,11 +137,15 @@ def compute_global_variables_from_collider_checks(
     # Get the global variables before and after the beam-beam
     logging.info("Computing global variables with beam beam.")
     dic_with_bb = initialize_global_variables(
-        collider_check_after_beam_beam, compute_footprint=not ignore_footprint
+        collider_check_after_beam_beam,
+        compute_footprint=not ignore_footprint,
+        simplify_tw=simplify_tw,
     )
     logging.info("Computing global variables without beam beam.")
     dic_without_bb = initialize_global_variables(
-        collider_check_without_beam_beam, compute_footprint=not ignore_footprint
+        collider_check_without_beam_beam,
+        compute_footprint=not ignore_footprint,
+        simplify_tw=simplify_tw,
     )
 
     if path_pickle is not None:
@@ -146,7 +159,7 @@ def compute_global_variables_from_collider_checks(
     return dic_without_bb, dic_with_bb
 
 
-def initialize_global_variables(collider_check, compute_footprint=True):
+def initialize_global_variables(collider_check, compute_footprint=True, simplify_tw=True):
     """
     Initializes global variables used in the simulation dashboard.
 
@@ -156,6 +169,8 @@ def initialize_global_variables(collider_check, compute_footprint=True):
         An instance of the ColliderCheck class containing the collider configuration.
     compute_footprint : bool, optional
         Whether to compute the collider footprint or not. Default is True.
+    simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by removing
+        duplicated elements to speed up computations. Defaults to True.
 
     Returns:
     --------
@@ -233,10 +248,21 @@ def initialize_global_variables(collider_check, compute_footprint=True):
 
     # Get corresponding data tables
     logging.info("Get Twiss and survey datatables.")
-    table_sv_b1, df_sv_b1 = return_data_table(df_sv_b1, "id-df-sv-b1-after-bb", twiss=False)
-    table_tw_b1, df_tw_b1 = return_data_table(df_tw_b1, "id-df-tw-b1-after-bb", twiss=True)
-    table_sv_b2, df_sv_b2 = return_data_table(df_sv_b2, "id-df-sv-b2-after-bb", twiss=False)
-    table_tw_b2, df_tw_b2 = return_data_table(df_tw_b2, "id-df-tw-b2-after-bb", twiss=True)
+    if simplify_tw:
+        logging.info("Simplifying Twiss and survey datatables as requested.")
+
+    table_sv_b1, df_sv_b1 = return_data_table(
+        df_sv_b1, "id-df-sv-b1-after-bb", twiss=False, simplify_tw=simplify_tw
+    )
+    table_tw_b1, df_tw_b1 = return_data_table(
+        df_tw_b1, "id-df-tw-b1-after-bb", twiss=True, simplify_tw=simplify_tw
+    )
+    table_sv_b2, df_sv_b2 = return_data_table(
+        df_sv_b2, "id-df-sv-b2-after-bb", twiss=False, simplify_tw=simplify_tw
+    )
+    table_tw_b2, df_tw_b2 = return_data_table(
+        df_tw_b2, "id-df-tw-b2-after-bb", twiss=True, simplify_tw=simplify_tw
+    )
 
     # Get the twiss dictionnary (tune, chroma, etc + twiss at IPs)
     logging.info("Get Twiss dictionnary.")
@@ -363,7 +389,7 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
 
     df_elements_corrected = df_elements.copy(deep=True)
 
-    # Get duplicated elements
+    # Get duplicated elements (those which contain '..' or 'entry' or 'exit' in their name)
     df_tw_duplicated_elements = df_tw[
         df_tw.name.str.contains("^(?!.*(?:entry|exit|[^f]*f[^.]*$)).*\.{2}.*", regex=True)
     ]
@@ -460,7 +486,7 @@ def return_twiss_dic(tw):
 # ==================================================================================================
 # --- Functions to build data tables
 # ==================================================================================================
-def return_data_table(df, id_table, twiss=True):
+def return_data_table(df, id_table, twiss=True, simplify_tw=True):
     """
     Returns a (stylized) Dash DataTable object containing the twiss/survey data of a given line
         (through the pandas dataframe input).
@@ -471,6 +497,8 @@ def return_data_table(df, id_table, twiss=True):
         id_table (str): The ID to be assigned to the DataTable object (for Dash callback).
         twiss (bool, optional): Whether or not the DataFrame contains twiss data. Defaults to True.
             If False, it is assumed to contain survey data.
+        simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by
+            removing duplicated elements to speed up computations. Defaults to True.
 
     Returns:
         dash_table.DataTable: The DataTable object populated with the data from the input DataFrame.
@@ -483,6 +511,10 @@ def return_data_table(df, id_table, twiss=True):
 
     # Change order of columns such that name is first
     df = df[["name"] + [col for col in df.columns if col != "name"]]
+
+    # Simplify the dataframe removing all duplicated elements, entry and exit
+    if simplify_tw:
+        df = df[~df.name.str.contains("^(?!.*(?:entry|exit|[^f]*f[^.]*$)).*\.{2}.*", regex=True)]
 
     table = (
         dash_table.DataTable(

@@ -16,7 +16,14 @@ from .dashboard import build_app
 # ==================================================================================================
 # --- Launch app
 # ==================================================================================================
-def main(path_collider, port=8080, force_reload=False, ignore_footprint=False, debug=False):
+def main(
+    path_collider,
+    port=8080,
+    force_reload=False,
+    ignore_footprint=False,
+    simplify_tw=True,
+    debug=False,
+):
 
     # Log the initial configuration
     logging.info("Launching app with the following parameters:")
@@ -24,10 +31,15 @@ def main(path_collider, port=8080, force_reload=False, ignore_footprint=False, d
     logging.info(f"Port: {port}")
     logging.info(f"Force reload: {force_reload}")
     logging.info(f"Ignore footprint: {ignore_footprint}")
+    logging.info(f"Simplify Twiss tables: {simplify_tw}")
+    logging.info(f"Debug: {debug}")
 
     # Build and run the app
     app, _ = build_app(
-        path_collider, force_reload, ignore_footprint
+        path_collider,
+        force_reload=force_reload,
+        ignore_footprint=ignore_footprint,
+        simplify_tw=simplify_tw,
     )  # server not needed for local deployment
     app.run_server(debug=debug, host="0.0.0.0", port=port)
 
@@ -77,7 +89,13 @@ if __name__ == "__main__":
         help="Ignore the footprint computation.",
         required=False,
     )
-
+    parser.add_argument(
+        "-s",
+        "--simplify",
+        action="store_true",
+        help="simplify the Twiss tables.",
+        required=False,
+    )
     parser.add_argument(
         "-d",
         "--debug",
@@ -91,6 +109,7 @@ if __name__ == "__main__":
     port = args.port
     force_reload = args.force_reload
     ignore_footprint = args.ignore_footprint
+    simplify_tw = args.simplify
     debug = args.debug
 
     # Warn that the default collider is used if needed
@@ -103,5 +122,6 @@ if __name__ == "__main__":
         port=port,
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
+        simplify_tw=simplify_tw,
         debug=debug,
     )
