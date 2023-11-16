@@ -16,8 +16,10 @@ from importlib.resources import files
 import numpy as np
 import pandas as pd
 import xtrack as xt
+
 # Package to check collider observables
 from collider_check import ColliderCheck
+
 # Dash imports
 from dash import dash_table
 from dash.dash_table.Format import Format, Scheme
@@ -30,7 +32,9 @@ from .fillingpatterns import FillingPattern
 # ==================================================================================================
 
 
-def init_from_collider(path_collider, force_reload=False, ignore_footprint=False, simplify_tw=True):
+def init_from_collider(
+    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True
+):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
 
@@ -84,8 +88,10 @@ def init_from_collider(path_collider, force_reload=False, ignore_footprint=False
 
         # Compute collider checks
         logging.info("Computing collider checks.")
-        collider_check_with_bb = ColliderCheck(collider)
-        collider_check_without_bb = ColliderCheck(collider_without_bb)
+        collider_check_with_bb = ColliderCheck(collider, path_filling_scheme=path_scheme)
+        collider_check_without_bb = ColliderCheck(
+            collider_without_bb, path_filling_scheme=path_scheme
+        )
 
         # Compute global variables
         dic_without_bb, dic_with_bb = compute_global_variables_from_collider_checks(

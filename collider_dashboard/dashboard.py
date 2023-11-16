@@ -19,11 +19,14 @@ from .layout import return_app_layout
 # ==================================================================================================
 
 
-def build_app(path_collider, force_reload=False, ignore_footprint=False, simplify_tw=True):
+def build_app(
+    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True
+):
 
     # Load dashboard variables
     dic_without_bb, dic_with_bb = compute_globals.init_from_collider(
         path_collider,
+        path_scheme=path_scheme,
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,

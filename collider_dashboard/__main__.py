@@ -18,6 +18,7 @@ from .dashboard import build_app
 # ==================================================================================================
 def main(
     path_collider,
+    path_scheme=None,
     port=8080,
     force_reload=False,
     ignore_footprint=False,
@@ -28,6 +29,7 @@ def main(
     # Log the initial configuration
     logging.info("Launching app with the following parameters:")
     logging.info(f"Collider path: {path_collider}")
+    logging.info(f"Filling path: {path_scheme}")
     logging.info(f"Port: {port}")
     logging.info(f"Force reload: {force_reload}")
     logging.info(f"Ignore footprint: {ignore_footprint}")
@@ -37,6 +39,7 @@ def main(
     # Build and run the app
     app, _ = build_app(
         path_collider,
+        path_scheme=path_scheme,
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,
@@ -68,6 +71,14 @@ if __name__ == "__main__":
         default=example_collider_path,
     )
     parser.add_argument(
+        "-f",
+        "--filling-path",
+        type=str,
+        help="Path of the filling scheme (defaults is the one in the configuration collider).",
+        required=False,
+        default=example_collider_path,
+    )
+    parser.add_argument(
         "-p",
         "--port",
         type=int,
@@ -76,7 +87,7 @@ if __name__ == "__main__":
         default=8080,
     )
     parser.add_argument(
-        "-f",
+        "-r",
         "--force-reload",
         action="store_true",
         help="Force the update of the collider.",
@@ -106,6 +117,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     collider_path = args.collider_path
+    path_scheme = args.filling_path
     port = args.port
     force_reload = args.force_reload
     ignore_footprint = args.ignore_footprint
@@ -119,6 +131,7 @@ if __name__ == "__main__":
     # Launch the app
     main(
         collider_path,
+        path_scheme=path_scheme,
         port=port,
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
