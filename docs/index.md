@@ -40,7 +40,14 @@ Alternatively, one can import the dashboard as a module and use it in a custom s
 # my-awesome-dashboard.py
 
 from collider_dashboard import build_app
-app, server = build_app(path_to_collider.json, port=8080 force_reload=False, ignore_footprint=False, debug = False, simplify_tw=True)
+app, server = build_app(path_to_collider.json, 
+                        path_scheme=path_to_scheme.json, 
+                        port=8080, 
+                        force_reload=False, 
+                        ignore_footprint=False, 
+                        debug = False, 
+                        simplify_tw=True
+                )
 ```
 
 The dashboard can then be deployed e.g. with gunicorn:
