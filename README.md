@@ -2,8 +2,13 @@
 
 <p align="center">
     <img src="https://badgen.net/static/license/MIT/blue">
-    <img src="https://badgen.net/static/Poetry/1.6.1/orange">
+    <img src="https://badgen.net/static/Package%20Manager/Poetry/orange">
+    <img src="https://badgen.net/static/Dash/2.14.1/green">
+    <img src="https://badgen.net/static/Code%20style/Black/black">
+    <img src="https://badgen.net/github/release/collider-dashboard/collider-dashboard">
+    <img src="https://badgen.net/github/commits/collider-dashboard/collider-dashboard">
 </p>
+
 
 A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
 
