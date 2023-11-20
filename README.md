@@ -1,10 +1,18 @@
 # Collider Dashboard
 
 <p align="center">
+    <a href="https://opensource.org/license/mit/">
     <img src="https://badgen.net/static/license/MIT/blue">
+    </a>
+    <a href="https://python-poetry.org/">
     <img src="https://badgen.net/static/Package%20Manager/Poetry/orange">
+    </a>
+    <a href="https://dash.plotly.com/">
     <img src="https://badgen.net/static/Dash/2.14.1/green">
-    <img src="https://badgen.net/static/Code%20style/Black/black">
+    </a>
+    <a href="https://black.readthedocs.io/en/stable/">
+    <img src="https://badgen.net/static/Code%20style/Black/blhttps://opensource.org/license/mit/ack">
+    </a>
     <img src="https://badgen.net/github/release/colasdroin/collider-dashboard">
     <img src="https://badgen.net/github/commits/colasdroin/collider-dashboard">
 </p>
