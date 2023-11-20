@@ -48,7 +48,7 @@ def return_header_layout():
                     style={"width": "100%"},
                     children=[
                         dmc.Text(
-                            "SimBoard",
+                            "ColBoard",
                             size=25,
                             color="cyan",
                             weight="bold",
