@@ -21,7 +21,7 @@ xsuite-prebuild
 For personal usage, the simplest way to use the dashboard is to run the package as a development server from the command line, providing a few arguments:
 
 ```bash
-python -m collider_dashboard --collider-path path_to_collider.json --filling-path path_to_scheme.json --port 8080 --force-reload --ignore-footprint --simplify --debug
+python -m collider_dashboard --collider-path path_to_collider.json --filling-path path_to_scheme.json --port 8080 --force-reload --ignore-footprint --full-twiss --debug
 ```
 
 - `--collider-path`, or `-c`, sets the path to the collider configuration file. Default value to the path of a dummy collider used for testing.
