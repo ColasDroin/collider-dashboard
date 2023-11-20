@@ -179,7 +179,7 @@ def return_circular_multipole_trace(
     elif order == 3:
         color = px.colors.qualitative.Plotly[2]
         name = "Octupoles"
-        strength_magnification_factor = strength_magnification_factor / 20
+        strength_magnification_factor = strength_magnification_factor / 40
 
     # Function to filter magnet strength
     def return_correct_strength(x):
