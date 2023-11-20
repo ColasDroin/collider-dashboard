@@ -33,7 +33,7 @@ def main(
     logging.info(f"Port: {port}")
     logging.info(f"Force reload: {force_reload}")
     logging.info(f"Ignore footprint: {ignore_footprint}")
-    logging.info(f"Simplify Twiss tables: {simplify_tw}")
+    logging.info(f"Full Twiss tables: {not simplify_tw}")
     logging.info(f"Debug: {debug}")
 
     # Build and run the app
@@ -101,10 +101,10 @@ if __name__ == "__main__":
         required=False,
     )
     parser.add_argument(
-        "-s",
-        "--simplify",
+        "-t",
+        "--full-twiss",
         action="store_true",
-        help="simplify the Twiss tables.",
+        help="Compute full Twiss tables.",
         required=False,
     )
     parser.add_argument(
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     port = args.port
     force_reload = args.force_reload
     ignore_footprint = args.ignore_footprint
-    simplify_tw = args.simplify
+    simplify_tw = not args.full_twiss
     debug = args.debug
 
     # Warn that the default collider is used if needed

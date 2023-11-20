@@ -29,7 +29,7 @@ python -m collider_dashboard --collider-path path_to_collider.json --filling-pat
 - `--port`, or `-p`, sets the port on which the dashboard will be deployed. Default value to `8080``.
 - `--force-reload`, or `-r`,  sets a boolean indicating whether the collider dashboard data should be reloaded if already existing. Optional.
 - `--ignore-footprint`, or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time. Optional.
-- `--simplify`, or `-s`, sets a boolean indicating whether the Twiss/Survey tables should be simplified (remove duplicates and entry/exit elements) to gain computation time. Recommended but optional.
+- `--full-twiss`, or `-t`, sets a boolean indicating whether the Twiss/Survey tables should be computed fully (not removing duplicates and entry/exit elements), at the expense of computation time. Optional.
 - `--debug`, or `-d`, sets a boolean indicating whether the dashboard should be run in debug mode. Optional.
 
 After computing some temporary variables (this may take a while the first time), this will deploy a local server and open the dashboard in a browser window.

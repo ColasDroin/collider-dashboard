@@ -1451,8 +1451,8 @@ def get_indices_of_interest(df_tw, element_1, element_2):
     idx_1 = df_tw.loc[df_tw["name"] == element_1].index[0]
     idx_2 = df_tw.loc[df_tw["name"] == element_2].index[0]
     if idx_2 < idx_1:
-        return list(range(0, idx_2)) + list(range(idx_1, len(df_tw)))
-    return list(range(idx_1, idx_2))
+        return df_tw.loc[: idx_2 + 1].index.union(df_tw.loc[idx_1:].index) 
+    return df_tw.loc[idx_1 : idx_2 + 1].index
 
 
 def return_plot_separation(dic_separation_ip, plane):
@@ -1805,4 +1805,5 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
     logging.info("Returning footprint figure")
     return fig
     logging.info("Returning footprint figure")
+    return fig
     return fig

@@ -268,12 +268,12 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         df_tw_b2, "id-df-tw-b2-after-bb", twiss=True, simplify_tw=simplify_tw
     )
 
-    # Get the twiss dictionnary (tune, chroma, etc + twiss at IPs)
-    logging.info("Get Twiss dictionnary.")
+    # Get the twiss dictionary (tune, chroma, etc + twiss at IPs)
+    logging.info("Get Twiss dictionary.")
     dic_tw_b1 = return_twiss_dic(tw_b1)
     dic_tw_b2 = return_twiss_dic(tw_b2)
 
-    # Get the dictionnary to plot separation
+    # Get the dictionary to plot separation
     logging.info("Computing separation variables")
     dic_separation_ip = {
         f"ip{ip}": collider_check.compute_separation_variables(ip=f"ip{ip}") for ip in [1, 2, 5, 8]
@@ -325,7 +325,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         except AssertionError:
             logging.warning(AssertionError)
 
-    # Store everything in a dictionnary
+    # Store everything in a dictionary
     dic_global_var = {
         "l_lumi": l_lumi,
         "dic_tw_b1": dic_tw_b1,
