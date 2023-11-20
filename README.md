@@ -1,5 +1,10 @@
 # Collider Dashboard
 
+<p align="center">
+    <img src="https://badgen.net/static/license/MIT/blue">
+    <img src="https://badgen.net/static/Poetry/1.6.1/orange">
+</p>
+
 A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
 
 ## Installation
