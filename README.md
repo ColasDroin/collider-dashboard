@@ -11,7 +11,7 @@
     <img src="https://badgen.net/static/Dash/2.14.1/green">
     </a>
     <a href="https://black.readthedocs.io/en/stable/">
-    <img src="https://badgen.net/static/Code%20style/Black/blhttps://opensource.org/license/mit/ack">
+    <img src="https://badgen.net/static/Code%20style/Black/black">
     </a>
     <img src="https://badgen.net/github/release/colasdroin/collider-dashboard">
     <img src="https://badgen.net/github/commits/colasdroin/collider-dashboard">
