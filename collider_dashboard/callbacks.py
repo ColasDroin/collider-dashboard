@@ -18,12 +18,65 @@ from .layout import (
     return_configuration_layout,
     return_filling_scheme_layout,
     return_footprint_layout,
+    return_knobs_layout,
     return_optics_layout,
     return_sanity_layout,
     return_separation_layout,
     return_survey_layout,
     return_tables_layout,
 )
+
+
+# ==================================================================================================
+# --- Functions used by callbacks
+# ==================================================================================================
+def return_tabs_sanity(dic_with_bb, dic_without_bb):
+    sanity_after_beam_beam = return_sanity_layout(
+        dic_with_bb["dic_tw_b1"],
+        dic_with_bb["dic_tw_b2"],
+        dic_with_bb["l_lumi"],
+        dic_with_bb["array_b1"],
+        dic_with_bb["array_b2"],
+        dic_with_bb["polarity_alice"],
+        dic_with_bb["polarity_lhcb"],
+        dic_with_bb["energy"],
+    )
+    sanity_before_beam_beam = return_sanity_layout(
+        dic_without_bb["dic_tw_b1"],
+        dic_without_bb["dic_tw_b2"],
+        dic_without_bb["l_lumi"],
+        dic_without_bb["array_b1"],
+        dic_without_bb["array_b2"],
+        dic_without_bb["polarity_alice"],
+        dic_without_bb["polarity_lhcb"],
+        dic_with_bb["energy"],
+    )
+    tabs_sanity = dmc.Tabs(
+        [
+            dmc.TabsList(
+                [
+                    dmc.Tab(
+                        "Before beam-beam",
+                        value="sanity-before-beam-beam",
+                        style={"font-size": "1.1rem"},
+                    ),
+                    dmc.Tab(
+                        "After beam beam",
+                        value="sanity-after-beam-beam",
+                        style={"font-size": "1.1rem"},
+                    ),
+                ],
+                position="center",
+            ),
+            dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
+            dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
+        ],
+        color="cyan",
+        value="sanity-after-beam-beam",
+    )
+
+    return tabs_sanity
+
 
 # ==================================================================================================
 # --- App callbacks
@@ -36,6 +89,8 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
         match value:
             case "display-configuration":
                 return return_configuration_layout(dic_with_bb["configuration_str"], path_collider)
+            case "display-knobs":
+                return return_knobs_layout(dic_with_bb["dic_knob_str"])
             case "display-twiss":
                 return return_tables_layout()
             case "display-scheme":
@@ -47,57 +102,23 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
             case "display-footprint":
                 return return_footprint_layout()
             case "display-sanity":
-                sanity_after_beam_beam = return_sanity_layout(
-                    dic_with_bb["dic_tw_b1"],
-                    dic_with_bb["dic_tw_b2"],
-                    dic_with_bb["l_lumi"],
-                    dic_with_bb["array_b1"],
-                    dic_with_bb["array_b2"],
-                    dic_with_bb["polarity_alice"],
-                    dic_with_bb["polarity_lhcb"],
-                    dic_with_bb["energy"],
-                )
-                sanity_before_beam_beam = return_sanity_layout(
-                    dic_without_bb["dic_tw_b1"],
-                    dic_without_bb["dic_tw_b2"],
-                    dic_without_bb["l_lumi"],
-                    dic_without_bb["array_b1"],
-                    dic_without_bb["array_b2"],
-                    dic_without_bb["polarity_alice"],
-                    dic_without_bb["polarity_lhcb"],
-                    dic_with_bb["energy"],
-                )
-                tabs_sanity = dmc.Tabs(
-                    [
-                        dmc.TabsList(
-                            [
-                                dmc.Tab(
-                                    "Before beam-beam",
-                                    value="sanity-before-beam-beam",
-                                    style={"font-size": "1.1rem"},
-                                ),
-                                dmc.Tab(
-                                    "After beam beam",
-                                    value="sanity-after-beam-beam",
-                                    style={"font-size": "1.1rem"},
-                                ),
-                            ],
-                            position="center",
-                        ),
-                        dmc.TabsPanel(sanity_before_beam_beam, value="sanity-before-beam-beam"),
-                        dmc.TabsPanel(sanity_after_beam_beam, value="sanity-after-beam-beam"),
-                    ],
-                    color="cyan",
-                    value="sanity-after-beam-beam",
-                )
-                return tabs_sanity
-
+                return return_tabs_sanity(dic_with_bb, dic_without_bb)
             case "display-optics":
                 return return_optics_layout(dic_with_bb)
             case "display-survey":
                 return return_survey_layout()
             case _:
                 return return_configuration_layout(dic_with_bb["configuration_str"], path_collider)
+
+    @app.callback(
+        Output("prism-knob_info", "children"),
+        Input("select-knob_info", "value"),
+    )
+    def select_knob_info(knob):
+        if knob is not None:
+            return dic_with_bb["dic_knob_str"][knob]
+        else:
+            return no_update
 
     @app.callback(
         Output("placeholder-data-table", "children"),

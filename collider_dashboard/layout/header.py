@@ -61,6 +61,7 @@ def return_header_layout():
                                     "value": "display-configuration",
                                     "label": "Configuration",
                                 },
+                                {"value": "display-knobs", "label": "Knobs"},
                                 {"value": "display-twiss", "label": "Twiss"},
                                 {"value": "display-scheme", "label": "Scheme"},
                                 {"value": "display-sanity", "label": "Sanity checks"},

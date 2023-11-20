@@ -2,6 +2,7 @@
 # --- Imports to namespace
 # ==================================================================================================
 from .configuration import return_configuration_layout
+from .knob import return_knobs_layout
 from .filling import return_filling_scheme_layout
 from .footprint import return_footprint_layout
 from .header import return_header_layout

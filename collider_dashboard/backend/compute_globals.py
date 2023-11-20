@@ -7,9 +7,11 @@ configuration file.
 # ==================================================================================================
 
 # Import from standard library
+import io
 import logging
 import os
 import pickle
+from contextlib import redirect_stdout
 from importlib.resources import files
 
 # Third-party packages
@@ -325,6 +327,10 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         except AssertionError:
             logging.warning(AssertionError)
 
+    # Get knobs
+    logging.info("Getting knobs.")
+    dic_knob_str = compute_knob_str(collider_check)
+
     # Store everything in a dictionary
     dic_global_var = {
         "l_lumi": l_lumi,
@@ -352,6 +358,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         "polarity_lhcb": polarity_lhcb,
         "energy": energy,
         "configuration_str": configuration_str,
+        "dic_knob_str": dic_knob_str,
     }
 
     return dic_global_var
@@ -605,3 +612,19 @@ def return_footprint(collider, emittance, beam="lhcb1", n_turns=2000):
     qy = fp_polar_xm.qy
 
     return qx, qy
+
+
+def compute_knob_str(collider_check):
+    whole_str = ""
+    l_knobs = []
+    with io.StringIO() as buf, redirect_stdout(buf):
+        for k in collider_check.collider.vars.keys():
+            collider_check.collider.vars[k]._info()
+            l_knobs.append(k)
+            print("****")
+        whole_str = buf.getvalue()
+
+    l_knob_str = whole_str.split("****\n")
+    d_knob_str = {knob: knob_str for knob, knob_str in zip(l_knobs, l_knob_str)}
+
+    return d_knob_str

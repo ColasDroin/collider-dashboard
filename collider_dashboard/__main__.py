@@ -76,7 +76,7 @@ if __name__ == "__main__":
         type=str,
         help="Path of the filling scheme (defaults is the one in the configuration collider).",
         required=False,
-        default=example_collider_path,
+        default=None,
     )
     parser.add_argument(
         "-p",
