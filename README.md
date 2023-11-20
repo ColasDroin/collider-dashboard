@@ -5,8 +5,8 @@
     <img src="https://badgen.net/static/Package%20Manager/Poetry/orange">
     <img src="https://badgen.net/static/Dash/2.14.1/green">
     <img src="https://badgen.net/static/Code%20style/Black/black">
-    <img src="https://badgen.net/github/release/collider-dashboard/collider-dashboard">
-    <img src="https://badgen.net/github/commits/collider-dashboard/main">
+    <img src="https://badgen.net/github/release/colasdroin/collider-dashboard">
+    <img src="https://badgen.net/github/commits/colasdroin/collider-dashboard">
 </p>
 
 
