@@ -619,7 +619,7 @@ def compute_knob_str(collider_check):
     l_knobs = []
     with io.StringIO() as buf, redirect_stdout(buf):
         for k in collider_check.collider.vars.keys():
-            collider_check.collider.vars[k]._info()
+            collider_check.collider.vars[k]._info(limit = None)
             l_knobs.append(k)
             print("****")
         whole_str = buf.getvalue()
