@@ -488,7 +488,7 @@ def return_twiss_dic(tw):
     for ip in [1, 2, 5, 8]:
         dic_tw["ip" + str(ip)] = (
             tw.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety"]
+            .cols["s", "x", "px", "y", "py", "betx", "bety", "dx_zeta", "dy_zeta"]
             .to_pandas()
             .to_numpy()
             .squeeze()

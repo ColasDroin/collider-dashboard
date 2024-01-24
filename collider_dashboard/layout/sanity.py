@@ -76,9 +76,6 @@ def return_sanity_layout(
             html.Td(f'{dic_tw_b1["dqx"]:.2f}'),
             html.Td(f'{dic_tw_b1["dqy"]:.2f}'),
             html.Td(f'{dic_tw_b1["c_minus"]:.4f}'),
-            html.Td(str(polarity_alice)),
-            html.Td(str(polarity_lhcb)),
-            # html.Td(f'{dic_tw_b1["momentum_compaction_factor"]:.4f}'),
         ]
     )
     row2 = html.Tr(
@@ -89,9 +86,6 @@ def return_sanity_layout(
             html.Td(f'{dic_tw_b2["dqx"]:.2f}'),
             html.Td(f'{dic_tw_b2["dqy"]:.2f}'),
             html.Td(f'{dic_tw_b2["c_minus"]:.4f}'),
-            html.Td(str(polarity_alice)),
-            html.Td(str(polarity_lhcb)),
-            # html.Td(f'{dic_tw_b2["momentum_compaction_factor"]:.4f}'),
         ]
     )
     body_1 = [html.Tbody([row1, row2])]
@@ -104,12 +98,14 @@ def return_sanity_layout(
                 [
                     html.Th("IP"),
                     html.Th("s [m]"),
-                    html.Th("x [m]"),
-                    html.Th("px"),
-                    html.Th("y [m]"),
-                    html.Th("py"),
-                    html.Th("betx [m]"),
-                    html.Th("bety [m]"),
+                    html.Th("x [mm]"),
+                    html.Th("px [µrad]"),
+                    html.Th("y [mm]"),
+                    html.Th("py [µrad]"),
+                    html.Th("betx [cm]"),
+                    html.Th("bety [cm]"),
+                    html.Th("dx_zeta [µrad]"),
+                    html.Th("dy_zeta [µrad]"),
                 ]
             )
         )
@@ -125,12 +121,14 @@ def return_sanity_layout(
                 [
                     html.Td(row_values_1[0]),
                     html.Td(f"{row_values_1[1]:.3f}"),
-                    html.Td(f"{row_values_1[2]:.4e}"),
-                    html.Td(f"{row_values_1[3]:.4e}"),
-                    html.Td(f"{row_values_1[4]:.4e}"),
-                    html.Td(f"{row_values_1[5]:.4e}"),
-                    html.Td(f"{row_values_1[6]:.4e}"),
-                    html.Td(f"{row_values_1[7]:.4e}"),
+                    html.Td(f"{(row_values_1[2]*1e3):.3f}"),
+                    html.Td(f"{(row_values_1[3]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[4]*1e3):.3f}"),
+                    html.Td(f"{(row_values_1[5]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[6]*1e2):.3f}"),
+                    html.Td(f"{(row_values_1[7]*1e2):.3f}"),
+                    html.Td(f"{(row_values_1[8]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[9]*1e6):.3f}"),
                 ]
             )
         )
@@ -140,12 +138,14 @@ def return_sanity_layout(
                 [
                     html.Td(row_values_2[0]),
                     html.Td(f"{row_values_2[1]:.3f}"),
-                    html.Td(f"{row_values_2[2]:.4e}"),
-                    html.Td(f"{row_values_2[3]:.4e}"),
-                    html.Td(f"{row_values_2[4]:.4e}"),
-                    html.Td(f"{row_values_2[5]:.4e}"),
-                    html.Td(f"{row_values_2[6]:.4e}"),
-                    html.Td(f"{row_values_2[7]:.4e}"),
+                    html.Td(f"{(row_values_2[2]*1e3):.3f}"),
+                    html.Td(f"{(row_values_2[3]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[4]*1e3):.3f}"),
+                    html.Td(f"{(row_values_2[5]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[6]*1e2):.3f}"),
+                    html.Td(f"{(row_values_2[7]*1e2):.3f}"),
+                    html.Td(f"{(row_values_2[8]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[9]*1e6):.3f}"),
                 ]
             )
         )
@@ -233,16 +233,16 @@ def return_sanity_layout(
             [
                 (
                     html.Td(f"{l_PU[0]:.1f}", style={"font-weight": "bold", "color": "red"})
-                    if l_PU[0] > 140
+                    if l_PU[0] > 160
                     else html.Td(f"{l_PU[0]:.1f}")
                 ),
-                html.Td(f"{l_PU[1]:.3e}"),
+                html.Td(f"{l_PU[1]:.4f}"),
                 (
                     html.Td(f"{l_PU[2]:.1f}", style={"font-weight": "bold", "color": "red"})
-                    if l_PU[2] > 140
+                    if l_PU[2] > 160
                     else html.Td(f"{l_PU[2]:.1f}")
                 ),
-                html.Td(f"{l_PU[3]:.3e}"),
+                html.Td(f"{l_PU[3]:.4f}"),
             ]
         )
         body_5 = [html.Tbody([row_PU])]
@@ -281,7 +281,7 @@ def return_sanity_layout(
         [
             html.Td(str(polarity_alice)),
             html.Td(str(polarity_lhcb)),
-            html.Td(str(energy)),
+            html.Td(f"{energy:.5f}"),
         ]
     )
     body_6 = [html.Tbody([row_other])]
