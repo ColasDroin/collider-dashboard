@@ -484,15 +484,28 @@ def return_twiss_dic(tw):
     dic_tw["momentum_compaction_factor"] = tw["momentum_compaction_factor"]
     dic_tw["T_rev0"] = tw["T_rev0"]
 
+
+    # ! Update this when the Twiss object is updated with dpx_zeta and dpy_zeta
+    # ! Then remove try except statement
     # Load observables at IPs
-    for ip in [1, 2, 5, 8]:
-        dic_tw["ip" + str(ip)] = (
-            tw.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety", "dx_zeta", "dy_zeta"]
-            .to_pandas()
-            .to_numpy()
-            .squeeze()
-        )
+    try:
+        for ip in [1, 2, 5, 8]:
+            dic_tw["ip" + str(ip)] = (
+                tw.rows[f"ip{ip}"]
+                .cols["s", "x", "px", "y", "py", "betx", "bety", "dx_zeta", "dy_zeta", "dpx_zeta", "dpy_zeta"]
+                .to_pandas()
+                .to_numpy()
+                .squeeze()
+            )
+    except:
+        for ip in [1, 2, 5, 8]:
+            dic_tw["ip" + str(ip)] = (
+                tw.rows[f"ip{ip}"]
+                .cols["s", "x", "px", "y", "py", "betx", "bety", "dx_zeta", "dy_zeta"]
+                .to_pandas()
+                .to_numpy()
+                .squeeze()
+            )        
 
     return dic_tw
 
