@@ -106,8 +106,8 @@ def return_sanity_layout(
                     html.Th("bety [cm]"),
                     html.Th("dx_zeta [µrad]"),
                     html.Th("dy_zeta [µrad]"),
-                    html.Th("dpx_zeta"),
-                    html.Th("dpy_zeta"),
+                    html.Th("dpx_zeta [µrad/m]"),
+                    html.Th("dpy_zeta [µrad/m]"),
                 ]
             )
         )
@@ -118,81 +118,43 @@ def return_sanity_layout(
         row_values_1 = dic_tw_b1[f"ip{ip}"]
         row_values_2 = dic_tw_b2[f"ip{ip}"]
 
-        # ! Update when dpx_zeta is added to twiss. Remove try/except 
-        try:
-            l_rows_1.append(
-                html.Tr(
-                    [
-                        html.Td(row_values_1[0]),
-                        html.Td(f"{row_values_1[1]:.3f}"),
-                        html.Td(f"{(row_values_1[2]*1e3):.3f}"),
-                        html.Td(f"{(row_values_1[3]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[4]*1e3):.3f}"),
-                        html.Td(f"{(row_values_1[5]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[6]*1e2):.3f}"),
-                        html.Td(f"{(row_values_1[7]*1e2):.3f}"),
-                        html.Td(f"{(row_values_1[8]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[9]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[10]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[11]*1e6):.3f}"),
-                    ]
-                )
+        l_rows_1.append(
+            html.Tr(
+                [
+                    html.Td(row_values_1[0]),
+                    html.Td(f"{row_values_1[1]:.3f}"),
+                    html.Td(f"{(row_values_1[2]*1e3):.3f}"),
+                    html.Td(f"{(row_values_1[3]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[4]*1e3):.3f}"),
+                    html.Td(f"{(row_values_1[5]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[6]*1e2):.3f}"),
+                    html.Td(f"{(row_values_1[7]*1e2):.3f}"),
+                    html.Td(f"{(row_values_1[8]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[9]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[10]*1e6):.3f}"),
+                    html.Td(f"{(row_values_1[11]*1e6):.3f}"),
+                ]
             )
-        except:
-            l_rows_1.append(
-                html.Tr(
-                    [
-                        html.Td(row_values_1[0]),
-                        html.Td(f"{row_values_1[1]:.3f}"),
-                        html.Td(f"{(row_values_1[2]*1e3):.3f}"),
-                        html.Td(f"{(row_values_1[3]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[4]*1e3):.3f}"),
-                        html.Td(f"{(row_values_1[5]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[6]*1e2):.3f}"),
-                        html.Td(f"{(row_values_1[7]*1e2):.3f}"),
-                        html.Td(f"{(row_values_1[8]*1e6):.3f}"),
-                        html.Td(f"{(row_values_1[9]*1e6):.3f}"),
-                    ]
-                )
-            )            
+        )         
 
-        # ! Update when dpx_zeta is added to twiss. Remove try/except 
-        try:
-            l_rows_2.append(
-                html.Tr(
-                    [
-                        html.Td(row_values_2[0]),
-                        html.Td(f"{row_values_2[1]:.3f}"),
-                        html.Td(f"{(row_values_2[2]*1e3):.3f}"),
-                        html.Td(f"{(row_values_2[3]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[4]*1e3):.3f}"),
-                        html.Td(f"{(row_values_2[5]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[6]*1e2):.3f}"),
-                        html.Td(f"{(row_values_2[7]*1e2):.3f}"),
-                        html.Td(f"{(row_values_2[8]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[9]*1e6):.3f}"),
-                    ]
-                )
+        l_rows_2.append(
+            html.Tr(
+                [
+                    html.Td(row_values_2[0]),
+                    html.Td(f"{row_values_2[1]:.3f}"),
+                    html.Td(f"{(row_values_2[2]*1e3):.3f}"),
+                    html.Td(f"{(row_values_2[3]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[4]*1e3):.3f}"),
+                    html.Td(f"{(row_values_2[5]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[6]*1e2):.3f}"),
+                    html.Td(f"{(row_values_2[7]*1e2):.3f}"),
+                    html.Td(f"{(row_values_2[8]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[9]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[10]*1e6):.3f}"),
+                    html.Td(f"{(row_values_2[11]*1e6):.3f}"),
+                ]
             )
-        except:
-            l_rows_2.append(
-                html.Tr(
-                    [
-                        html.Td(row_values_2[0]),
-                        html.Td(f"{row_values_2[1]:.3f}"),
-                        html.Td(f"{(row_values_2[2]*1e3):.3f}"),
-                        html.Td(f"{(row_values_2[3]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[4]*1e3):.3f}"),
-                        html.Td(f"{(row_values_2[5]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[6]*1e2):.3f}"),
-                        html.Td(f"{(row_values_2[7]*1e2):.3f}"),
-                        html.Td(f"{(row_values_2[8]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[9]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[10]*1e6):.3f}"),
-                        html.Td(f"{(row_values_2[11]*1e6):.3f}"),
-                    ]
-                )
-            )
+        )
 
     body_2 = [html.Tbody(l_rows_1)]
     body_3 = [html.Tbody(l_rows_2)]
