@@ -40,6 +40,7 @@ def return_tabs_sanity(dic_with_bb, dic_without_bb):
         dic_with_bb["polarity_alice"],
         dic_with_bb["polarity_lhcb"],
         dic_with_bb["energy"],
+        dic_with_bb["cross_section"],
     )
     sanity_before_beam_beam = return_sanity_layout(
         dic_without_bb["dic_tw_b1"],
@@ -50,6 +51,7 @@ def return_tabs_sanity(dic_with_bb, dic_without_bb):
         dic_without_bb["polarity_alice"],
         dic_without_bb["polarity_lhcb"],
         dic_with_bb["energy"],
+        dic_with_bb["cross_section"],
     )
     tabs_sanity = dmc.Tabs(
         [

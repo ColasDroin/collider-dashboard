@@ -20,6 +20,7 @@ def return_sanity_layout(
     polarity_alice,
     polarity_lhcb,
     energy,
+    cross_section_PU = 81e-27,
 ):
     """
     Returns the layout for the sanity check page of the dashboard.
@@ -201,8 +202,6 @@ def return_sanity_layout(
         body_4 = [html.Tbody([row_lumi])]
         table_4 = dmc.Table(header_3 + body_4)
 
-        # Pile-up
-        cross_section = 81e-27
         # Assert that the arrays have the required length, and do the convolution to get number of collisions
         assert len(array_b1) == len(array_b2) == 3564
         n_collisions_ip1_and_5 = array_b1 @ array_b2
@@ -216,7 +215,7 @@ def return_sanity_layout(
         ]
         n_turn_per_second = 1 / dic_tw_b1["T_rev0"]
         l_PU = [
-            lumi / n_col * cross_section / n_turn_per_second
+            lumi / n_col * cross_section_PU / n_turn_per_second
             for lumi, n_col in zip(l_lumi, l_n_collisions)
         ]
 

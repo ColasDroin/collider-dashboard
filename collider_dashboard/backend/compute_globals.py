@@ -35,7 +35,7 @@ from .fillingpatterns import FillingPattern
 
 
 def init_from_collider(
-    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True
+    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True, type_particles = 'proton'
 ):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
@@ -92,7 +92,7 @@ def init_from_collider(
         logging.info("Computing collider checks.")
         collider_check_with_bb = ColliderCheck(collider, path_filling_scheme=path_scheme)
         collider_check_without_bb = ColliderCheck(
-            collider_without_bb, path_filling_scheme=path_scheme
+            collider_without_bb, path_filling_scheme=path_scheme, type_particles = 'proton'
         )
 
         # Compute global variables
@@ -203,6 +203,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
 
         # Get energy
         energy = collider_check.energy
+        cross_section = collider_check.cross_section
 
         # Get the beam-beam schedule
         logging.info("Computing beam-beam schedule.")
@@ -227,6 +228,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         polarity_lhcb = None
         configuration_str = None
         energy = None
+        cross_section = None
 
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")
@@ -357,6 +359,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         "polarity_alice": polarity_alice,
         "polarity_lhcb": polarity_lhcb,
         "energy": energy,
+        "cross_section": cross_section,
         "configuration_str": configuration_str,
         "dic_knob_str": dic_knob_str,
     }

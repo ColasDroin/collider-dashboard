@@ -20,7 +20,7 @@ from .layout import return_app_layout
 
 
 def build_app(
-    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True
+    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True, type_particles = 'proton'
 ):
 
     # Load dashboard variables
@@ -30,6 +30,7 @@ def build_app(
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,
+        type_particles = type_particles,
     )
 
     #################### App ####################

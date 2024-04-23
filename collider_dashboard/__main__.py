@@ -23,6 +23,7 @@ def main(
     force_reload=False,
     ignore_footprint=False,
     simplify_tw=True,
+    type_particles = 'proton',
     debug=False,
 ):
 
@@ -43,6 +44,8 @@ def main(
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,
+        type_particles=type_particles,
+        
     )  # server not needed for local deployment
     app.run_server(debug=debug, host="0.0.0.0", port=port)
 
@@ -114,6 +117,14 @@ if __name__ == "__main__":
         help="Launch the app in debugging mode.",
         required=False,
     )
+    parser.add_argument(
+        "-a",
+        "--type-particles",
+        type=str,
+        help="Types of particles to consider (proton, lead).",
+        required=False,
+        default='proton',
+    )
 
     args = parser.parse_args()
     collider_path = args.collider_path
@@ -122,6 +133,7 @@ if __name__ == "__main__":
     force_reload = args.force_reload
     ignore_footprint = args.ignore_footprint
     simplify_tw = not args.full_twiss
+    type_particles = args.type_particles
     debug = args.debug
 
     # Warn that the default collider is used if needed
@@ -136,5 +148,6 @@ if __name__ == "__main__":
         force_reload=force_reload,
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,
+        type_particles=type_particles,
         debug=debug,
     )
