@@ -1,4 +1,4 @@
-"""Thid module initializes all global variables from a collider json, potentially embedding a 
+"""Thid module initializes all global variables from a collider json, potentially embedding a
 configuration file.
 """
 
@@ -35,7 +35,12 @@ from .fillingpatterns import FillingPattern
 
 
 def init_from_collider(
-    path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True, type_particles = 'proton'
+    path_collider,
+    path_scheme=None,
+    force_reload=False,
+    ignore_footprint=False,
+    simplify_tw=True,
+    type_particles="proton",
 ):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
@@ -90,9 +95,11 @@ def init_from_collider(
 
         # Compute collider checks
         logging.info("Computing collider checks.")
-        collider_check_with_bb = ColliderCheck(collider, path_filling_scheme=path_scheme)
+        collider_check_with_bb = ColliderCheck(
+            collider, path_filling_scheme=path_scheme, type_particles=type_particles
+        )
         collider_check_without_bb = ColliderCheck(
-            collider_without_bb, path_filling_scheme=path_scheme, type_particles = 'proton'
+            collider_without_bb, path_filling_scheme=path_scheme, type_particles=type_particles
         )
 
         # Compute global variables
@@ -491,7 +498,19 @@ def return_twiss_dic(tw):
     for ip in [1, 2, 5, 8]:
         dic_tw["ip" + str(ip)] = (
             tw.rows[f"ip{ip}"]
-            .cols["s", "x", "px", "y", "py", "betx", "bety", "dx_zeta", "dy_zeta", "dpx_zeta", "dpy_zeta"]
+            .cols[
+                "s",
+                "x",
+                "px",
+                "y",
+                "py",
+                "betx",
+                "bety",
+                "dx_zeta",
+                "dy_zeta",
+                "dpx_zeta",
+                "dpy_zeta",
+            ]
             .to_pandas()
             .to_numpy()
             .squeeze()
@@ -622,7 +641,7 @@ def compute_knob_str(collider_check):
     l_knobs = []
     with io.StringIO() as buf, redirect_stdout(buf):
         for k in collider_check.collider.vars.keys():
-            collider_check.collider.vars[k]._info(limit = None)
+            collider_check.collider.vars[k]._info(limit=None)
             l_knobs.append(k)
             print("****")
         whole_str = buf.getvalue()
