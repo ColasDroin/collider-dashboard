@@ -446,7 +446,7 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         )
 
         # Replace order
-        df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
+        df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["order"]
 
     # Drop all duplicate rows
     df_elements_corrected.drop(index=df_tw_duplicated_elements.index, inplace=True)
