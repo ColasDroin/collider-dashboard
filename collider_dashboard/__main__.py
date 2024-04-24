@@ -35,6 +35,7 @@ def main(
     logging.info(f"Force reload: {force_reload}")
     logging.info(f"Ignore footprint: {ignore_footprint}")
     logging.info(f"Full Twiss tables: {not simplify_tw}")
+    logging.info(f"Particles type: {type_particles}")
     logging.info(f"Debug: {debug}")
 
     # Build and run the app
