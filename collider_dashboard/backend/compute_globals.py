@@ -387,7 +387,17 @@ def return_dataframe_elements_from_line(line):
     Returns:
     df_elements (pandas.DataFrame): A DataFrame containing the elements of the given line object.
     """
-    df_elements = pd.DataFrame([x.to_dict() for x in line.elements])
+    # df_elements = pd.DataFrame([x.to_dict() for x in line.elements])
+    df_elements = pd.DataFrame(
+        [
+            {
+                varname: getattr(x, varname)
+                for varname in ["length", "knl", "ksl", "_order"]
+                if hasattr(x, varname)
+            }
+            for x in line.elements
+        ]
+    )
     return df_elements
 
 
@@ -453,7 +463,7 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         )
 
         # Replace order
-        df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["order"]
+        df_elements_corrected.at[index, "_order"] = df_elements.loc[i]["_order"]
 
     # Drop all duplicate rows
     df_elements_corrected.drop(index=df_tw_duplicated_elements.index, inplace=True)
