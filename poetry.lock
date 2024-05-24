@@ -272,13 +272,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "collider-check"
-version = "0.2.1"
+version = "0.2.2"
 description = "A small package that provides functions to check the observables in a collider, using a collider built with Xsuite."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "collider_check-0.2.1-py3-none-any.whl", hash = "sha256:e6976ba82b06dcfd086941a1947e25dd3394b7f4b822c601a126c9629ec533be"},
-    {file = "collider_check-0.2.1.tar.gz", hash = "sha256:1c57f6adce78a2706c932ee7c97c7fe46421874c982cfc2520d53b4228f1c523"},
+    {file = "collider_check-0.2.2-py3-none-any.whl", hash = "sha256:51b87527687ff9497f7b3292831f44aad883b4fa8ea297e9ec0239ef38da797d"},
+    {file = "collider_check-0.2.2.tar.gz", hash = "sha256:eea6fa82c313a43910468f11ddf3feed347167f1fce37feefc6dccd65bab52ba"},
 ]
 
 [package.dependencies]
@@ -2236,4 +2236,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.13"
-content-hash = "6e17c2a820e10dcdc17480e041acffa0b7e15ee4b60734d2bbf7aca2b7fbccc6"
+content-hash = "2263b74cf4180114ee44e40c9565613104f926684a45ff404a6a637bbde7a0ce"

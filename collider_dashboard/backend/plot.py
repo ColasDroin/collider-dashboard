@@ -1,5 +1,4 @@
-"""Thid module contains all the functions used to produce graphs in the app.
-"""
+"""Thid module contains all the functions used to produce graphs in the app."""
 
 # ==================================================================================================
 # --- Imports
@@ -1451,7 +1450,7 @@ def get_indices_of_interest(df_tw, element_1, element_2):
     idx_1 = df_tw.loc[df_tw["name"] == element_1].index[0]
     idx_2 = df_tw.loc[df_tw["name"] == element_2].index[0]
     if idx_2 < idx_1:
-        return df_tw.loc[: idx_2 + 1].index.union(df_tw.loc[idx_1:].index) 
+        return df_tw.loc[: idx_2 + 1].index.union(df_tw.loc[idx_1:].index)
     return df_tw.loc[idx_1 : idx_2 + 1].index
 
 
@@ -1478,6 +1477,7 @@ def return_plot_separation(dic_separation_ip, plane):
     )
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_separation_ip[f"ip{n_ip}"]["s"]
+        l_scale_strength = dic_separation_ip[f"ip{n_ip}"]["l_scale_strength"]
         if plane == "x" or plane == "y":
             sep = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"])
             sep_sigma = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"])
@@ -1499,6 +1499,7 @@ def return_plot_separation(dic_separation_ip, plane):
                     legendgroup=" IP " + str(n_ip),
                     mode="lines+markers",
                     line=dict(color="coral", width=1),
+                    marker=dict(opacity=l_scale_strength),
                 ),
                 row=idx // 2 + 1,
                 col=idx % 2 + 1,
@@ -1514,6 +1515,7 @@ def return_plot_separation(dic_separation_ip, plane):
                 legendgroup=" IP " + str(n_ip),
                 mode="lines+markers",
                 line=dict(color="cyan", width=1),
+                marker=dict(opacity=l_scale_strength),
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
@@ -1718,7 +1720,6 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
     array_qx, array_qy = t_array_footprint
     fig = go.Figure()
     if array_qx.shape[0] > 0:
-
         # Get resonance lines first
         fig.add_traces(compute_footprint_mesh())
 
