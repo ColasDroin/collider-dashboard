@@ -212,10 +212,13 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         energy = collider_check.energy
         cross_section = collider_check.cross_section
 
+        # Get number of LR per side
+        n_lr_per_side = collider_check.n_lr_per_side
+
         # Get the beam-beam schedule
         logging.info("Computing beam-beam schedule.")
         patt = FillingPattern.from_json(collider_check.path_filling_scheme)
-        patt.compute_beam_beam_schedule(n_lr_per_side=26)
+        patt.compute_beam_beam_schedule(n_lr_per_side=n_lr_per_side)
         bbs = patt.b1.bb_schedule
 
         # Get polarity Alice and LHCb
