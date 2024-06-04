@@ -272,7 +272,7 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "collider-check"
-version = "0.2.2"
+version = "0.2.4"
 description = "A small package that provides functions to check the observables in a collider, using a collider built with Xsuite."
 optional = false
 python-versions = ">=3.10"

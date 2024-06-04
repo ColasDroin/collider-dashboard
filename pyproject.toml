@@ -20,7 +20,7 @@ dash-mantine-components = "^0.12.1"
 seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
-collider-check = "^0.2.2"
+collider-check = "^0.2.4"
 
 
 [tool.poetry.group.dev.dependencies]
