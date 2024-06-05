@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collider-dashboard"
-version = "1.3.6.0"
+version = "1.3.7.0"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
