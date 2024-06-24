@@ -413,7 +413,7 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     df_elements : pandas.DataFrame
         The dataframe of elements to be corrected.
     df_tw : pandas.DataFrame
-        The corresponding Twiss from which the corrion is computed.
+        The corresponding Twiss from which the correction is computed.
 
     Returns:
     --------
@@ -436,6 +436,14 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         df_tw.name.isin(df_tw_duplicated_elements.name.str.split("..", regex=False).str[0])
     ]
 
+    # Add drifts (original elements end with ..0) using concat
+    df_tw_original_elements = pd.concat(
+        [
+            df_tw_original_elements,
+            df_tw[df_tw.name.str.contains(r"^(?:(?!\.\.|entry|exit).)*$", regex=True)],
+        ]
+    )
+
     # Add all thin lenses (length + strength)
     for i, row in df_tw_duplicated_elements.iterrows():
         # Correct for thin lens approximation and weird duplicates
@@ -443,7 +451,6 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         try:
             index = df_tw_original_elements[df_tw_original_elements.name == name].index[0]
         except IndexError:
-            print(f"IndexError trying to correct slicing for {name}")
             continue
 
         # Add length
@@ -454,15 +461,15 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         # Add strength
         if np.isnan(df_elements_corrected.loc[index]["knl"]).all():
             df_elements_corrected.at[index, "knl"] = (
-                np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
-                if not isinstance(df_elements.loc[i]["knl"], float)
-                else 0.0
+                0.0
+                if isinstance(df_elements.loc[i]["knl"], float)
+                else np.array([0.0] * df_elements.loc[i]["knl"].shape[0], dtype=np.float64)
             )
 
         df_elements_corrected.at[index, "knl"] = (
-            df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
-            if not isinstance(df_elements.loc[i]["knl"], float)
-            else df_elements.loc[i]["knl"]
+            df_elements.loc[i]["knl"]
+            if isinstance(df_elements.loc[i]["knl"], float)
+            else df_elements_corrected.loc[index, "knl"] + np.array(df_elements.loc[i]["knl"])
         )
 
         # Replace order
@@ -509,7 +516,7 @@ def return_twiss_dic(tw):
 
     # Load observables at IPs
     for ip in [1, 2, 5, 8]:
-        dic_tw["ip" + str(ip)] = (
+        dic_tw[f"ip{str(ip)}"] = (
             tw.rows[f"ip{ip}"]
             .cols[
                 "s",
