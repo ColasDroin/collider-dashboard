@@ -15,12 +15,13 @@ python = ">=3.10, <3.13"
 dash = "^2.14.1"
 numpy = "^1.26.1"
 pandas = "^2.1.2"
-xsuite = "^0.14.0"
+xsuite = "^0.16.1"
 dash-mantine-components = "^0.12.1"
 seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
 collider-check = "^0.2.4"
+xtrack = {git = "git@github.com:ColasDroin/xtrack", rev = "lumi_with_crabs"}
 
 
 [tool.poetry.group.dev.dependencies]

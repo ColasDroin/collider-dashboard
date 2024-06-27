@@ -22,7 +22,7 @@ from .layout import return_app_layout
 def build_app(
     path_collider, path_scheme=None, force_reload=False, ignore_footprint=False, simplify_tw=True, type_particles = 'proton'
 ):
-
+    
     # Load dashboard variables
     dic_without_bb, dic_with_bb = compute_globals.init_from_collider(
         path_collider,

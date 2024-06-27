@@ -30,10 +30,10 @@ def return_general_observables_header():
     ]
 
 
-def return_general_observables_values(dic_tw):
+def return_general_observables_values(dic_tw, beam_index):
     return html.Tr(
         [
-            html.Td("1"),
+            html.Td(f"{beam_index}"),
             html.Td(f'{dic_tw["qx"]:.5f}'),
             html.Td(f'{dic_tw["qy"]:.5f}'),
             html.Td(f'{dic_tw["dqx"]:.2f}'),
@@ -45,8 +45,8 @@ def return_general_observables_values(dic_tw):
 
 def return_general_observables_layout(dic_tw_b1, dic_tw_b2):
     header = return_general_observables_header()
-    row1 = return_general_observables_values(dic_tw_b1)
-    row2 = return_general_observables_values(dic_tw_b2)
+    row1 = return_general_observables_values(dic_tw_b1, 1)
+    row2 = return_general_observables_values(dic_tw_b2, 2)
     body = [html.Tbody([row1, row2])]
     return dmc.Table(header + body)
 
@@ -80,6 +80,8 @@ def check_for_flat_optics(px, py, betx, bety, dx_zeta, dy_zeta):
     py_html = html.Td(f"{(py*1e6):.3f}")
     dx_zeta_html = html.Td(f"{(dx_zeta*1e6):.3f}")
     dy_zeta_html = html.Td(f"{(dy_zeta*1e6):.3f}")
+    betx_html = html.Td(f"{(betx*1e2):.3f}")
+    bety_html = html.Td(f"{(bety*1e2):.3f}")
 
     # Check if the optics is flat, and if yes ensure that the beta is large in the same plane
     # as the crossing angle
@@ -102,7 +104,11 @@ def check_for_flat_optics(px, py, betx, bety, dx_zeta, dy_zeta):
                 f"{(dy_zeta*1e6):.3f}",
                 style={"color": "red", "font-weight": "bold"},
             )
-    return px_html, py_html, dx_zeta_html, dy_zeta_html
+
+        if large_angle != large_plane or (crab_on and large_crab != large_plane):
+            betx_html = html.Td(f"{(betx*1e2):.3f}", style={"color": "red", "font-weight": "bold"})
+            bety_html = html.Td(f"{(bety*1e2):.3f}", style={"color": "red", "font-weight": "bold"})
+    return px_html, py_html, dx_zeta_html, dy_zeta_html, betx_html, bety_html
 
 
 def return_IP_specific_observables_values(dic_tw):
@@ -113,7 +119,7 @@ def return_IP_specific_observables_values(dic_tw):
 
         # Check if the optics is flat, and if yes ensure that the beta is large in the same plane
         # as the crossing angle
-        px_html, py_html, dx_zeta_html, dy_zeta_html = check_for_flat_optics(
+        px_html, py_html, dx_zeta_html, dy_zeta_html, betx_html, bety_html = check_for_flat_optics(
             px, py, betx, bety, dx_zeta, dy_zeta
         )
 
@@ -126,8 +132,8 @@ def return_IP_specific_observables_values(dic_tw):
                     px_html,
                     html.Td(f"{(y*1e3):.3f}"),
                     py_html,
-                    html.Td(f"{(betx*1e2):.3f}"),
-                    html.Td(f"{(bety*1e2):.3f}"),
+                    betx_html,
+                    bety_html,
                     dx_zeta_html,
                     dy_zeta_html,
                     html.Td(f"{(dpx_zeta*1e6):.3f}"),
@@ -369,54 +375,7 @@ def return_sanity_layout_tables(
     return table_1, table_2, table_3, table_4, table_5, table_6
 
 
-def return_sanity_layout_global(
-    dic_tw_b1,
-    dic_tw_b2,
-    l_lumi,
-    array_b1,
-    array_b2,
-    polarity_alice,
-    polarity_lhcb,
-    energy,
-    cross_section_PU=81e-27,
-):
-    """
-    Returns the layout for the sanity check page of the dashboard.
-
-    Args:
-        dic_tw_b1 : dict
-            A twiss dictionary for beam 1.
-        dic_tw_b2 : dict
-            A twiss dictionary for beam 2.
-        l_lumi : list
-            A list containing the luminosities for each interaction point.
-        array_b1 : numpy.ndarray
-            Beam schedule for beam 1.
-        array_b2 : numpy.ndarray
-            Beam schedule for beam 2.
-        polarity_alice : str
-            The polarity of the ALICE detector (+1 or -1).
-        polarity_lhcb : str
-            The polarity of the LHCb detector (+1 or -1).
-        energy : float
-            The energy of the beam.
-
-    Returns:
-        layout : dash.development.base_component.Component
-            The layout for the sanity check page of the dashboard.
-    """
-    table_1, table_2, table_3, table_4, table_5, table_6 = return_sanity_layout_tables(
-        dic_tw_b1,
-        dic_tw_b2,
-        l_lumi,
-        array_b1,
-        array_b2,
-        polarity_alice,
-        polarity_lhcb,
-        energy,
-        cross_section_PU,
-    )
-
+def return_final_sanity_layout(table_1, table_2, table_3, table_4, table_5, table_6):
     return dmc.Stack(
         children=[
             dmc.Group(
@@ -470,3 +429,89 @@ def return_sanity_layout_global(
         ],
         style={"width": "90%", "margin": "auto"},
     )
+
+
+def compute_alert_beta_beating(dic_with_bb, dic_without_bb):
+    # Ensure the beta-beating is below 10%
+    alert_hbeat = None
+    alert_vbeat = None
+    for ip in [1, 2, 5, 8]:
+        betx_b1_with_bb = dic_with_bb["dic_tw_b1"][f"ip{ip}"][6]
+        bety_b1_with_bb = dic_with_bb["dic_tw_b1"][f"ip{ip}"][7]
+        betx_b1_without_bb = dic_without_bb["dic_tw_b1"][f"ip{ip}"][6]
+        bety_b1_without_bb = dic_without_bb["dic_tw_b1"][f"ip{ip}"][7]
+
+        if abs(betx_b1_with_bb - betx_b1_without_bb) / betx_b1_without_bb > 0.1:
+            alert_hbeat = dmc.Text(
+                "The horizontal relative beta-beating due to beam-beam is above 10% for beam 1 in at least one IP, please check the configuration",
+                size="l",
+                style={"margin": "auto"},
+                color="tomato",
+            )
+        if abs(bety_b1_with_bb - bety_b1_without_bb) / bety_b1_without_bb > 0.1:
+            alert_vbeat = dmc.Text(
+                "The vertical relative beta-beating due to beam-beam is above 10% for beam 1 in at least one IP, please check the configuration",
+                size="l",
+                style={"margin": "auto"},
+                color="tomato",
+            )
+
+    return alert_hbeat, alert_vbeat
+
+
+def return_sanity_layout_global(
+    dic_with_bb,
+    dic_without_bb,
+):
+    """
+    Returns the layout for the sanity check page of the dashboard, for both beams.
+
+    Args:
+        dic_with_bb : dict
+            The dictionnary of global variables for beam 1 and beam 2 with beam-beam effects.
+        dic_without_bb : dict
+            The dictionnary of global variables for beam 1 and beam 2 without beam-beam effects.
+
+    Returns:
+        layout : dash.development.base_component.Component
+            The layout for the sanity check page of the dashboard.
+    """
+
+    # First ensure that the beta-beat is below 10%
+    alert_hbeat, alert_vbeat = compute_alert_beta_beating(dic_with_bb, dic_without_bb)
+
+    l_layout = []
+    for dic in [dic_with_bb, dic_without_bb]:
+        # Get tables
+        table_1, table_2, table_3, table_4, table_5, table_6 = return_sanity_layout_tables(
+            dic["dic_tw_b1"],
+            dic["dic_tw_b2"],
+            dic["l_lumi"],
+            dic["array_b1"],
+            dic["array_b2"],
+            dic["polarity_alice"],
+            dic["polarity_lhcb"],
+            dic["energy"],
+            dic["cross_section"],
+        )
+
+        # Return the final layout
+        layout = return_final_sanity_layout(
+            table_1,
+            table_2,
+            table_3,
+            table_4,
+            table_5,
+            table_6,
+        )
+
+        # Add the alert at the top if needed
+        if alert_hbeat is not None:
+            layout.children.insert(0, alert_hbeat)
+        if alert_vbeat is not None:
+            layout.children.insert(0, alert_vbeat)
+
+        # Add the layout to the list
+        l_layout.append(layout)
+
+    return l_layout

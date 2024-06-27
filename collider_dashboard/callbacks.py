@@ -20,7 +20,7 @@ from .layout import (
     return_footprint_layout,
     return_knobs_layout,
     return_optics_layout,
-    return_sanity_layout,
+    return_sanity_layout_global,
     return_separation_layout,
     return_survey_layout,
     return_tables_layout,
@@ -31,29 +31,11 @@ from .layout import (
 # --- Functions used by callbacks
 # ==================================================================================================
 def return_tabs_sanity(dic_with_bb, dic_without_bb):
-    sanity_after_beam_beam = return_sanity_layout(
-        dic_with_bb["dic_tw_b1"],
-        dic_with_bb["dic_tw_b2"],
-        dic_with_bb["l_lumi"],
-        dic_with_bb["array_b1"],
-        dic_with_bb["array_b2"],
-        dic_with_bb["polarity_alice"],
-        dic_with_bb["polarity_lhcb"],
-        dic_with_bb["energy"],
-        dic_with_bb["cross_section"],
+    sanity_after_beam_beam, sanity_before_beam_beam = return_sanity_layout_global(
+        dic_with_bb, dic_without_bb
     )
-    sanity_before_beam_beam = return_sanity_layout(
-        dic_without_bb["dic_tw_b1"],
-        dic_without_bb["dic_tw_b2"],
-        dic_without_bb["l_lumi"],
-        dic_without_bb["array_b1"],
-        dic_without_bb["array_b2"],
-        dic_without_bb["polarity_alice"],
-        dic_without_bb["polarity_lhcb"],
-        dic_with_bb["energy"],
-        dic_with_bb["cross_section"],
-    )
-    tabs_sanity = dmc.Tabs(
+
+    return dmc.Tabs(
         [
             dmc.TabsList(
                 [
@@ -76,8 +58,6 @@ def return_tabs_sanity(dic_with_bb, dic_without_bb):
         color="cyan",
         value="sanity-after-beam-beam",
     )
-
-    return tabs_sanity
 
 
 # ==================================================================================================
