@@ -74,58 +74,64 @@ def return_IP_specific_observables_header():
     ]
 
 
+def check_for_flat_optics(px, py, betx, bety, dx_zeta, dy_zeta):
+    # Get html objects for crossing angle and crabs
+    px_html = html.Td(f"{(px*1e6):.3f}")
+    py_html = html.Td(f"{(py*1e6):.3f}")
+    dx_zeta_html = html.Td(f"{(dx_zeta*1e6):.3f}")
+    dy_zeta_html = html.Td(f"{(dy_zeta*1e6):.3f}")
+
+    # Check if the optics is flat, and if yes ensure that the beta is large in the same plane
+    # as the crossing angle
+    if betx / bety > 1.2 or betx / bety < 0.8:
+        large_plane = "x" if betx > bety else "y"
+        large_angle = "x" if abs(px) > abs(py) else "y"
+        if large_angle != large_plane:
+            px_html = html.Td(f"{(px*1e6):.3f}", style={"color": "red", "font-weight": "bold"})
+            py_html = html.Td(f"{(py*1e6):.3f}", style={"color": "red", "font-weight": "bold"})
+
+        # Check if the crabs are on and if the large crab is in the same plane as the crossing angle
+        crab_on = max(abs(dx_zeta), abs(dy_zeta)) > 50 * 1e-6
+        large_crab = "x" if abs(dx_zeta) > abs(dy_zeta) else "y"
+        if crab_on and large_crab != large_plane:
+            dx_zeta_html = html.Td(
+                f"{(dx_zeta*1e6):.3f}",
+                style={"color": "red", "font-weight": "bold"},
+            )
+            dy_zeta_html = html.Td(
+                f"{(dy_zeta*1e6):.3f}",
+                style={"color": "red", "font-weight": "bold"},
+            )
+    return px_html, py_html, dx_zeta_html, dy_zeta_html
+
+
 def return_IP_specific_observables_values(dic_tw):
     l_rows = []
     for ip in [1, 2, 5, 8]:
         row_values = dic_tw[f"ip{ip}"]
-
-        # Get html objects for crossing angle and crabs
-        px_html = html.Td(f"{(row_values[3]*1e6):.3f}")
-        py_html = html.Td(f"{(row_values[5]*1e6):.3f}")
-        dx_zeta_html = html.Td(f"{(row_values[8]*1e6):.3f}")
-        dy_zeta_html = html.Td(f"{(row_values[9]*1e6):.3f}")
+        ip_val, s, x, px, y, py, betx, bety, dx_zeta, dy_zeta, dpx_zeta, dpy_zeta = row_values
 
         # Check if the optics is flat, and if yes ensure that the beta is large in the same plane
         # as the crossing angle
-        if row_values[6] / row_values[7] > 1.2 or row_values[6] / row_values[7] < 0.8:
-            large_plane = "x" if row_values[6] > row_values[7] else "y"
-            large_angle = "x" if abs(row_values[3]) > abs(row_values[5]) else "y"
-            if large_angle != large_plane:
-                px_html = html.Td(
-                    f"{(row_values[3]*1e6):.3f}", style={"color": "red", "font-weight": "bold"}
-                )
-                py_html = html.Td(
-                    f"{(row_values[5]*1e6):.3f}", style={"color": "red", "font-weight": "bold"}
-                )
-
-            # Check if the crabs are on and if the large crab is in the same plane as the crossing angle
-            crab_on = max(abs(row_values[8]), abs(row_values[9])) > 50 * 1e-6
-            large_crab = "x" if abs(row_values[8]) > abs(row_values[9]) else "y"
-            if crab_on and large_crab != large_plane:
-                dx_zeta_html = html.Td(
-                    f"{(row_values[8]*1e6):.3f}",
-                    style={"color": "red", "font-weight": "bold"},
-                )
-                dy_zeta_html = html.Td(
-                    f"{(row_values[9]*1e6):.3f}",
-                    style={"color": "red", "font-weight": "bold"},
-                )
+        px_html, py_html, dx_zeta_html, dy_zeta_html = check_for_flat_optics(
+            px, py, betx, bety, dx_zeta, dy_zeta
+        )
 
         l_rows.append(
             html.Tr(
                 [
-                    html.Td(row_values[0]),
-                    html.Td(f"{row_values[1]:.3f}"),
-                    html.Td(f"{(row_values[2]*1e3):.3f}"),
+                    html.Td(ip_val),
+                    html.Td(f"{s:.3f}"),
+                    html.Td(f"{(x*1e3):.3f}"),
                     px_html,
-                    html.Td(f"{(row_values[4]*1e3):.3f}"),
+                    html.Td(f"{(y*1e3):.3f}"),
                     py_html,
-                    html.Td(f"{(row_values[6]*1e2):.3f}"),
-                    html.Td(f"{(row_values[7]*1e2):.3f}"),
+                    html.Td(f"{(betx*1e2):.3f}"),
+                    html.Td(f"{(bety*1e2):.3f}"),
                     dx_zeta_html,
                     dy_zeta_html,
-                    html.Td(f"{(row_values[10]*1e6):.3f}"),
-                    html.Td(f"{(row_values[11]*1e6):.3f}"),
+                    html.Td(f"{(dpx_zeta*1e6):.3f}"),
+                    html.Td(f"{(dpy_zeta*1e6):.3f}"),
                 ]
             )
         )
