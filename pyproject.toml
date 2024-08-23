@@ -13,9 +13,9 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
 dash = "^2.14.1"
-numpy = "^1.26.1"
+numpy = "^2.1.0"
 pandas = "^2.1.2"
-xsuite = "^0.16.1"
+xsuite = "^0.16.3"
 dash-mantine-components = "^0.12.1"
 seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
