@@ -436,13 +436,14 @@ def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
         df_tw.name.isin(df_tw_duplicated_elements.name.str.split("..", regex=False).str[0])
     ]
 
-    # Add drifts (original elements end with ..0) using concat
-    df_tw_original_elements = pd.concat(
-        [
-            df_tw_original_elements,
-            df_tw[df_tw.name.str.contains(r"^(?:(?!\.\.|entry|exit).)*$", regex=True)],
-        ]
-    )
+    # ? Remove drifts for now as it doesn't change the output and make computation faster
+    # # Add drifts (original elements end with ..0) using concat
+    # df_tw_original_elements = pd.concat(
+    #     [
+    #         df_tw_original_elements,
+    #         df_tw[df_tw.name.str.contains(r"^(?:(?!\.\.|entry|exit).)*$", regex=True)],
+    #     ]
+    # )
 
     # Add all thin lenses (length + strength)
     for i, row in df_tw_duplicated_elements.iterrows():
