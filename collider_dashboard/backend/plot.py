@@ -639,7 +639,7 @@ def add_multipoles_to_fig(
                     yaxis=yaxis,
                 )
                 for trace in l_traces:
-                    fig.append_trace(
+                    fig.add_trace(
                         trace,
                         row=row,
                         col=col,
@@ -984,7 +984,7 @@ def add_scatter_trace(
     Returns:
         plotly.graph_objs.Figure: The updated figure object.
     """
-    fig.append_trace(
+    fig.add_trace(
         go.Scattergl(
             x=x,
             y=y,
@@ -1273,7 +1273,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
     fig = make_subplots(rows=4, cols=1, shared_xaxes=True)
 
     # Add the filling scheme for beam 1
-    fig.append_trace(
+    fig.add_trace(
         go.Scattergl(
             x=non_zero_indices_b1,
             y=array_b1[non_zero_indices_b1],
@@ -1289,7 +1289,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
     )
 
     # Add the filling scheme for beam 2
-    fig.append_trace(
+    fig.add_trace(
         go.Scattergl(
             x=non_zero_indices_b2,
             y=array_b2[non_zero_indices_b2] * 2,
@@ -1323,7 +1323,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
             series_not_collide_alice,
         ],
     ):
-        fig.append_trace(
+        fig.add_trace(
             go.Scattergl(
                 x=series_collide.index,
                 y=series_collide,
@@ -1340,7 +1340,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
             row=row,
             col=1,
         )
-        fig.append_trace(
+        fig.add_trace(
             go.Scattergl(
                 x=series_not_collide.index,
                 y=series_not_collide,
@@ -1359,7 +1359,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
         )
 
     # Traces for legend
-    fig.append_trace(
+    fig.add_trace(
         go.Scattergl(
             x=series_collide_atlas_cms.index[:1],
             y=series_collide_atlas_cms.values[:1],
@@ -1373,7 +1373,7 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
         row=2,
         col=1,
     )
-    fig.append_trace(
+    fig.add_trace(
         go.Scattergl(
             x=series_not_collide_atlas_cms.index[:1],
             y=series_not_collide_atlas_cms.values[:1],
