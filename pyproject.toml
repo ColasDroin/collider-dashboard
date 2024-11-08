@@ -21,7 +21,7 @@ seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
 collider-check = "^0.2.7"
-xtrack = {git = "git@github.com:ColasDroin/xtrack", rev = "lumi_with_crabs"}
+# xtrack = {git = "git@github.com:ColasDroin/xtrack", rev = "lumi_with_crabs"}
 
 
 [tool.poetry.group.dev.dependencies]
