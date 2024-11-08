@@ -31,7 +31,7 @@ pip install collider-dashboard
 This will install the required packages and build the application. If you haven't done it already, it is recommended to prebuild the Xsuite kernel to gain some computation time:
 
 ```bash
-xsuite-prebuild
+xsuite-prebuild regenerate
 ```
 
 ## Usage
