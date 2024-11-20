@@ -288,13 +288,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "collider-check"
-version = "0.2.8"
+version = "0.3.0"
 description = "A small package that provides functions to check the observables in a collider, using a collider built with Xsuite."
 optional = false
 python-versions = "<3.13,>=3.10"
 files = [
-    {file = "collider_check-0.2.8-py3-none-any.whl", hash = "sha256:63c725a3a14082b7360d9fbecf8542a76079db302a090f2709945160d81e65f2"},
-    {file = "collider_check-0.2.8.tar.gz", hash = "sha256:b9e2c3c78077f0b9d1df89b37c3f9120ee41b0624bcdf75d56f9b224f156893d"},
+    {file = "collider_check-0.3.0-py3-none-any.whl", hash = "sha256:d8075368e57e326e5618721054e98d077943717e3db96a501975d89feb1f26eb"},
+    {file = "collider_check-0.3.0.tar.gz", hash = "sha256:59d6ca764bd523c87984c35fb0855662d68957618976b0067bda0fc1d44c0314"},
 ]
 
 [package.dependencies]
@@ -1953,4 +1953,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.13"
-content-hash = "71972956dcf5a9202abe07100e0fd7461fba2812316345afecac94608bae67ac"
+content-hash = "12fffdfc37615ae80c9e9ca90039e657b2daf974fdbfd10a748f445dee4fd8d3"

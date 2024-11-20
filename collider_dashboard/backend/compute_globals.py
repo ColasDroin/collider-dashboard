@@ -240,7 +240,22 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         # Get emittance for the computation of the normalized separation
         logging.warning("No configuration file provided, using default values for emittances.")
         nemitt_x = 2.2e-6
-        nemitt_y = 2.2e-6
+        # nemitt_y = 2.2e-6
+
+        # Assume 7 TeV for protons and 82 * 7 TeV for Pb ions
+        if collider_check.type_particles == "proton":
+            logging.warning(
+                "No configuration file provided, using default values for energy for protons (7 TeV)."
+            )
+            energy = 7000
+        elif collider_check.type_particles == "lead":
+            logging.warning(
+                "No configuration file provided, using default values for energy for ions (7 Z TeV)."
+            )
+            energy = 82 * 7000
+        else:
+            logging.warning("No type of particles provided. Assuming protons for energy.")
+            energy = 7000
 
     # Get elements of the line (only done for b1, should be identical for b2)
     logging.info("Getting beam-beam elements for plotting.")

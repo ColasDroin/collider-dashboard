@@ -48,7 +48,7 @@ python -m collider_dashboard --collider-path path_to_collider.json --filling-pat
 - `--force-reload`, or `-r`,  sets a boolean indicating whether the collider dashboard data should be reloaded if already existing. Optional.
 - `--ignore-footprint`, or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time. Optional.
 - `--full-twiss`, or `-t`, sets a boolean indicating whether the Twiss/Survey tables should be computed fully (not removing duplicates and entry/exit elements), at the expense of computation time. Optional.
-- `--type-particles`, or `-a`, sets the type of particles to be used for the collider. Default value to `proton`.
+- `--type-particles`, or `-a`, sets the type of particles to be used for the collider. Default value is inferred from the config is present in the metadata of the collider. Otherwise, must be provided as "proton" or "lead".
 - `--debug`, or `-d`, sets a boolean indicating whether the dashboard should be run in debug mode. Optional.
 
 After computing some temporary variables (this may take a while the first time), this will deploy a local server and open the dashboard in a browser window.
@@ -77,3 +77,7 @@ gunicorn my-awesome-dashboard:server -b :8080
 ```
 
 Note that, as the dashboard deals with global variables, it is not thread-safe. It is therefore recommended to run it with a single worker (it's the case by default).
+
+## Collider metadata
+
+The dashboard will work with or without a configuration file embedded as metadata in the collider json file. If the metadata is present, the dashboard will use it to infer the type of particles, the filling scheme path, etc. Otherwise, some data and tabs might not be available.
