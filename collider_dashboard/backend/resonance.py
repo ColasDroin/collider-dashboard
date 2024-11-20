@@ -1,5 +1,6 @@
-"""Thid module is used to produce resonance line in tune-tune plot. The code directly adapted from 
-the work of P. Belanger. See https://github.com/pbelange/BBStudies
+"""Thid module is used to produce resonance line in tune-tune plot. The code is directly adapted
+from the work of P. Belanger and has not been corrected (not pep8 compliant).
+See https://github.com/pbelange/BBStudies
 """
 # ==================================================================================================
 # --- Imports

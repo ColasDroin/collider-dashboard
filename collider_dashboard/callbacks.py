@@ -93,14 +93,11 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
                 return return_configuration_layout(dic_with_bb["configuration_str"], path_collider)
 
     @app.callback(
-        Output("prism-knob_info", "children"),
-        Input("select-knob_info", "value"),
-    )
+            Output("prism-knob_info", "children"),
+            Input("select-knob_info", "value"),
+        )
     def select_knob_info(knob):
-        if knob is not None:
-            return dic_with_bb["dic_knob_str"][knob]
-        else:
-            return no_update
+        return dic_with_bb["dic_knob_str"][knob] if knob is not None else no_update
 
     @app.callback(
         Output("placeholder-data-table", "children"),
@@ -120,9 +117,9 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
                 return dic_with_bb["table_tw_b1"]
 
     @app.callback(
-        Output("LHC-layout", "figure"),
-        Input("chips-ip", "value"),
-    )
+                Output("LHC-layout", "figure"),
+                Input("chips-ip", "value"),
+            )
     def update_graph_LHC_layout(l_values):
         l_indices_to_keep = []
         for val in l_values:
@@ -130,7 +127,7 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
             # Get indices of elements to keep (# ! implemented only for beam 1)
             l_indices_to_keep.extend(
                 plot.get_indices_of_interest(
-                    dic_with_bb["df_tw_b1"], "ip" + str_ind_1, "ip" + str_ind_2
+                    dic_with_bb["df_tw_b1"], f"ip{str_ind_1}", f"ip{str_ind_2}"
                 )
             )
 
@@ -220,10 +217,10 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
             return no_update
 
     @app.callback(
-        Output("beam-separation", "figure"),
-        Input("chips-sep", "value"),
-        Input("chips-sep-bb", "value"),
-    )
+            Output("beam-separation", "figure"),
+            Input("chips-sep", "value"),
+            Input("chips-sep-bb", "value"),
+        )
     def update_graph_separation(value, bb):
         if bb == "On":
             dic = dic_with_bb
@@ -232,7 +229,7 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
         else:
             raise ValueError("bb should be either On or Off")
 
-        if value == "v" or value == "h":
+        if value in ["v", "h"]:
             fig = plot.return_plot_separation(
                 dic["dic_separation_ip"], "x" if value == "h" else "y"
             )
@@ -260,70 +257,69 @@ def all_callbacks(app, dic_with_bb, dic_without_bb, path_collider):
         return fig
 
     @app.callback(
-        Output("footprint-without-bb-b1", "figure"),
-        Output("footprint-without-bb-b2", "figure"),
-        Output("footprint-with-bb-b1", "figure"),
-        Output("footprint-with-bb-b2", "figure"),
-        Input("tab-titles", "value"),
-    )
+            Output("footprint-without-bb-b1", "figure"),
+            Output("footprint-without-bb-b2", "figure"),
+            Output("footprint-with-bb-b1", "figure"),
+            Output("footprint-with-bb-b2", "figure"),
+            Input("tab-titles", "value"),
+        )
     def update_graph_footprint(value):
-        if value == "display-footprint":
-            if dic_without_bb["i_bunch_b1"] is not None:
-                title_without_bb_b1 = (
-                    "Tune footprint without beam-beam effects for beam 1 and bunch "
-                    + str(dic_without_bb["i_bunch_b1"])
-                )
-                title_without_bb_b2 = (
-                    "Tune footprint without beam-beam effects for beam 2 and bunch "
-                    + str(dic_without_bb["i_bunch_b2"])
-                )
-                title_with_bb_b1 = (
-                    "Tune footprint with beam-beam effects for beam 1 and bunch "
-                    + str(dic_with_bb["i_bunch_b1"])
-                )
-                title_with_bb_b2 = (
-                    "Tune footprint with beam-beam effects for beam 2 and bunch "
-                    + str(dic_with_bb["i_bunch_b2"])
-                )
-            else:
-                title_without_bb_b1 = (
-                    "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
-                )
-                title_without_bb_b2 = (
-                    "Tune footprint without beam-beam effects for beam 2 (bunch number unknown)"
-                )
-                title_with_bb_b1 = (
-                    "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
-                )
-                title_with_bb_b2 = (
-                    "Tune footprint with beam-beam effects for beam 2 (bunch number unknown)"
-                )
-
-            return [
-                plot.return_plot_footprint(
-                    dic_without_bb["footprint_b1"],
-                    dic_without_bb["dic_tw_b1"]["qx"],
-                    dic_without_bb["dic_tw_b1"]["qy"],
-                    title=title_without_bb_b1,
-                ),
-                plot.return_plot_footprint(
-                    dic_without_bb["footprint_b2"],
-                    dic_without_bb["dic_tw_b2"]["qx"],
-                    dic_without_bb["dic_tw_b2"]["qy"],
-                    title=title_without_bb_b2,
-                ),
-                plot.return_plot_footprint(
-                    dic_with_bb["footprint_b1"],
-                    dic_without_bb["dic_tw_b1"]["qx"],
-                    dic_without_bb["dic_tw_b1"]["qy"],
-                    title=title_with_bb_b1,
-                ),
-                plot.return_plot_footprint(
-                    dic_with_bb["footprint_b2"],
-                    dic_without_bb["dic_tw_b2"]["qx"],
-                    dic_without_bb["dic_tw_b2"]["qy"],
-                    title=title_with_bb_b2,
-                ),
-            ]
-        else:
+        if value != "display-footprint":
             return no_update
+        if dic_without_bb["i_bunch_b1"] is not None:
+            title_without_bb_b1 = (
+                "Tune footprint without beam-beam effects for beam 1 and bunch "
+                + str(dic_without_bb["i_bunch_b1"])
+            )
+            title_without_bb_b2 = (
+                "Tune footprint without beam-beam effects for beam 2 and bunch "
+                + str(dic_without_bb["i_bunch_b2"])
+            )
+            title_with_bb_b1 = (
+                "Tune footprint with beam-beam effects for beam 1 and bunch "
+                + str(dic_with_bb["i_bunch_b1"])
+            )
+            title_with_bb_b2 = (
+                "Tune footprint with beam-beam effects for beam 2 and bunch "
+                + str(dic_with_bb["i_bunch_b2"])
+            )
+        else:
+            title_without_bb_b1 = (
+                "Tune footprint without beam-beam effects for beam 1 (bunch number unknown)"
+            )
+            title_without_bb_b2 = (
+                "Tune footprint without beam-beam effects for beam 2 (bunch number unknown)"
+            )
+            title_with_bb_b1 = (
+                "Tune footprint with beam-beam effects for beam 1 (bunch number unknown)"
+            )
+            title_with_bb_b2 = (
+                "Tune footprint with beam-beam effects for beam 2 (bunch number unknown)"
+            )
+
+        return [
+            plot.return_plot_footprint(
+                dic_without_bb["footprint_b1"],
+                dic_without_bb["dic_tw_b1"]["qx"],
+                dic_without_bb["dic_tw_b1"]["qy"],
+                title=title_without_bb_b1,
+            ),
+            plot.return_plot_footprint(
+                dic_without_bb["footprint_b2"],
+                dic_without_bb["dic_tw_b2"]["qx"],
+                dic_without_bb["dic_tw_b2"]["qy"],
+                title=title_without_bb_b2,
+            ),
+            plot.return_plot_footprint(
+                dic_with_bb["footprint_b1"],
+                dic_without_bb["dic_tw_b1"]["qx"],
+                dic_without_bb["dic_tw_b1"]["qy"],
+                title=title_with_bb_b1,
+            ),
+            plot.return_plot_footprint(
+                dic_with_bb["footprint_b2"],
+                dic_without_bb["dic_tw_b2"]["qx"],
+                dic_without_bb["dic_tw_b2"]["qy"],
+                title=title_with_bb_b2,
+            ),
+        ]

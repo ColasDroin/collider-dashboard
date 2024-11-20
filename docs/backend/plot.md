@@ -1,3 +1,0 @@
-# Plot
-
-::: dashboard.backend.plot

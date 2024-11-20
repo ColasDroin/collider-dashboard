@@ -25,7 +25,7 @@ def build_app(
     force_reload=False,
     ignore_footprint=False,
     simplify_tw=True,
-    type_particles="proton",
+    type_particles=None,
 ):
     # Load dashboard variables
     dic_without_bb, dic_with_bb = compute_globals.init_from_collider(

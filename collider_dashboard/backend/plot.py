@@ -1,5 +1,7 @@
 """Thid module contains all the functions used to produce graphs in the app."""
 
+import itertools
+
 # ==================================================================================================
 # --- Imports
 # ==================================================================================================
@@ -26,15 +28,12 @@ def return_radial_background_traces(df_sv):
     Returns a list of 4 scatter traces, representing the (background) radial lines of the collider.
         Useful when plotting the survey.
 
-    Parameters:
-    -----------
-    df_sv : pandas.DataFrame
-        A DataFrame containing the survey data of the collider.
+    Args:
+        df_sv (pandas.DataFrame): The survey DataFrame containing the X and Z coordinates of the
+            beam pipe.
 
     Returns:
-    --------
-    list
-        A list of plotly.graph_objs.Scattergl objects representing the radial traces.
+        list: A list of plotly.graph_objs.Scattergl objects representing the radial traces.
     """
     # Add 4 radial lines, each parametrized with a different set of x1, x2, y1, y2
     l_traces_background = []
@@ -150,7 +149,8 @@ def return_circular_multipole_trace(
     Returns a list of multipole traces (represented as a rectangle) in a 2D graph.
 
     Args:
-        df_elements (pandas.DataFrame): A DataFrame containing the elements of the accelerator lattice.
+        df_elements (pandas.DataFrame): A DataFrame containing the elements of the accelerator
+            lattice.
         df_sv (pandas.DataFrame): 1 DataFrame containing the survey data.
         order (int): The order of the multipoles to plot (0 for dipoles, 1 for quadrupoles, etc.).
         strength_magnification_factor (float, optional): Factor by which to (visually) magnify the
@@ -179,12 +179,14 @@ def return_circular_multipole_trace(
         color = px.colors.qualitative.Plotly[2]
         name = "Octupoles"
         strength_magnification_factor = strength_magnification_factor / 40
+    else:
+        raise ValueError("The order of the multipole is not recognized.")
 
     # Function to filter magnet strength
     def return_correct_strength(x):
         try:
             return x[order]
-        except:
+        except Exception:
             return float(x)
 
     # Get strength of all multipoles of the requested order
@@ -298,12 +300,14 @@ def return_flat_multipole_trace(
         color = px.colors.qualitative.Plotly[2]
         name = "Octupoles"
         strength_magnification_factor = strength_magnification_factor / 4
+    else:
+        raise ValueError("The order of the multipole is not recognized.")
 
     # Function to filter magnet strength
     def return_correct_strength(x):
         try:
             return x[order]
-        except:
+        except Exception:
             return float(x)
 
     # Get strength of all multipoles of the requested order
@@ -397,19 +401,14 @@ def return_flat_multipole_trace(
 
 def return_IP_trace(df_sv, add_ghost_trace=True):
     """
-    Returns a list of plotly traces representing the IP elements.
+    Args:
+        df_sv (pandas.DataFrame): The dataframe containing the survey data.
+        add_ghost_trace (bool, optional): Whether to add a ghost trace for the IP elements
+            (for the legend). Defaults to True.
 
-    Parameters:
-    -----------
-    df_sv : pandas.DataFrame
-        The dataframe containing the survey data.
-    add_ghost_trace : bool, optional
-        Whether to add a ghost trace for the IP elements (for the legend). Default to True.
-
-    Returns:
-    --------
-    list of plotly.graph_objs._scattergl.Scattergl
-        The list of plotly traces representing the IP elements.
+    Rreturns:
+        list of plotly.graph_objs._scattergl.Scattergl: The list of plotly traces representing
+            the IP elements.
     """
     # Get dataframe containing only IP elements
     df_ip = df_sv[df_sv["name"].str.startswith("ip")]
@@ -527,14 +526,10 @@ def return_optic_trace(
             exponent = 1.0
 
         case _:
-            print("The type of trace is not recognized.")
+            raise ValueError("The type of trace is not recognized.")
 
     # Correct for circular projection depending if x-coordinate has been reversed or not
-    if beam_2:
-        correction = -1
-    else:
-        correction = 1
-
+    correction = -1 if beam_2 else 1
     # Only keep requested indices
     if l_indices_to_keep is not None:
         df_sv_temp = df_sv[df_sv.index.isin(l_indices_to_keep)]
@@ -587,47 +582,47 @@ def add_multipoles_to_fig(
     """
     Add multipole traces to a given plotly figure.
 
-    Parameters
-    ----------
-    fig : plotly.graph_objs.Figure
-        The figure to which the multipole traces will be added.
-    df_elements : pandas.DataFrame
-        DataFrame containing the accelerator elements.
-    df_sv : pandas.DataFrame
-        DataFrame containing the accelerator survey.
-    l_indices_to_keep : list of int
-        List of indices of the elements to keep in the plot (to only represent part of the survey).
-    add_dipoles : bool
-        Whether to add dipoles to the plot.
-    add_quadrupoles : bool
-        Whether to add quadrupoles to the plot.
-    add_sextupoles : bool
-        Whether to add sextupoles to the plot.
-    add_octupoles : bool
-        Whether to add octupoles to the plot.
-    flat : bool, optional
-        Whether to make a 1D or 2D plot (default is False, i.e. 2D plot).
-    row : int, optional
-        The row index of the subplot to which the traces will be added (default is None).
-    col : int, optional
-        The column index of the subplot to which the traces will be added (default is None).
-    xaxis : str, optional
-        The x-axis type of the plot (default is None).
-    yaxis : str, optional
-        The y-axis type of the plot (default is None).
+    Args:
+        fig (plotly.graph_objs.Figure): The figure to which the multipole traces will be added.
+        df_elements (pandas.DataFrame): DataFrame containing the accelerator elements.
+        df_sv (pandas.DataFrame): DataFrame containing the accelerator survey.
+        l_indices_to_keep (list of int): List of indices of the elements to keep in the plot (to
+            only represent part of the survey).
+        add_dipoles (bool): Whether to add dipoles to the plot.
+        add_quadrupoles (bool): Whether to add quadrupoles to the plot.
+        add_sextupoles (bool): Whether to add sextupoles to the plot.
+        add_octupoles (bool): Whether to add octupoles to the plot.
+        flat (bool, optional): Whether to make a 1D or 2D plot (default is False, i.e. 2D plot).
+        row (int, optional): The row index of the subplot to which the traces will be added
+            (default is None).
+        col (int, optional): The column index of the subplot to which the traces will be added
+            (default is None).
+        xaxis (str, optional): The x-axis type of the plot (default is None).
+        yaxis (str, optional): The y-axis type of the plot (default is None).
 
-    Returns
-    -------
-    plotly.graph_objs.Figure
-        The updated figure with the multipole traces added.
+    Returns:
+        plotly.graph_objs.Figure: The updated figure with the multipole traces added.
     """
 
     for order, add in zip(
         [0, 1, 2, 3], [add_dipoles, add_quadrupoles, add_sextupoles, add_octupoles]
     ):
-        # Add multipole if requested
         if add:
-            if row is not None and col is not None:
+            if row is None or col is None:
+                fig.add_traces(
+                    return_multipole_trace(
+                        df_elements,
+                        df_sv,
+                        order=order,
+                        strength_magnification_factor=5000,
+                        l_indices_to_keep=l_indices_to_keep,
+                        flat=flat,
+                        xaxis=xaxis,
+                        yaxis=yaxis,
+                    )
+                )
+
+            else:
                 l_traces = return_multipole_trace(
                     df_elements,
                     df_sv,
@@ -644,20 +639,6 @@ def add_multipoles_to_fig(
                         row=row,
                         col=col,
                     )
-            else:
-                fig.add_traces(
-                    return_multipole_trace(
-                        df_elements,
-                        df_sv,
-                        order=order,
-                        strength_magnification_factor=5000,
-                        l_indices_to_keep=l_indices_to_keep,
-                        flat=flat,
-                        xaxis=xaxis,
-                        yaxis=yaxis,
-                    )
-                )
-
     return fig
 
 
@@ -677,35 +658,22 @@ def add_optics_to_fig(
     """
     Add optics traces to a plotly figure.
 
-    Parameters
-    ----------
-    fig : plotly.graph_objs._figure.Figure
-        The figure to which the traces will be added.
-    plot_horizontal_betatron : bool
-        Whether to add the horizontal betatron trace.
-    plot_vertical_betatron : bool
-        Whether to add the vertical betatron trace.
-    plot_horizontal_dispersion : bool
-        Whether to add the horizontal dispersion trace.
-    plot_vertical_dispersion : bool
-        Whether to add the vertical dispersion trace.
-    plot_horizontal_position : bool
-        Whether to add the horizontal position trace.
-    plot_vertical_position : bool
-        Whether to add the vertical position trace.
-    df_sv : pandas.DataFrame
-        The survey data.
-    df_tw : pandas.DataFrame
-        The twiss data.
-    beam_2 : bool, optional
-        Whether to represent the second beam (default is False).
-    l_indices_to_keep : list of int, optional
-        The indices of the elements to keep (to only represent part of the survey). Default to None.
+    Args:
+        fig (plotly.graph_objs._figure.Figure): The figure to which the traces will be added.
+        plot_horizontal_betatron (bool): Whether to add the horizontal betatron trace.
+        plot_vertical_betatron (bool): Whether to add the vertical betatron trace.
+        plot_horizontal_dispersion (bool): Whether to add the horizontal dispersion trace.
+        plot_vertical_dispersion (bool): Whether to add the vertical dispersion trace.
+        plot_horizontal_position (bool): Whether to add the horizontal position trace.
+        plot_vertical_position (bool): Whether to add the vertical position trace.
+        df_sv (pandas.DataFrame): The survey data.
+        df_tw (pandas.DataFrame): The twiss data.
+        beam_2 (bool, optional): Whether to represent the second beam. Defaults to False.
+        l_indices_to_keep (list of int, optional): The indices of the elements to keep (to only
+            represent part of the survey). Defaults to None.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        The figure with the added traces.
+    Returns:
+        plotly.graph_objs._figure.Figure: The figure with the added traces.
     """
 
     # Add horizontal betatron if requested
@@ -806,56 +774,47 @@ def return_plot_lattice_with_tracking(
     """
     Returns a Plotly figure showing the lattice of a particle accelerator, with beam tracking data.
 
-    Parameters:
-    -----------
-    df_sv : pandas.DataFrame
-        Dataframe containing the accelerator survey for beam 1.
-    df_elements : pandas.DataFrame
-        Dataframe containing the accelerator elements.
-    df_tw : pandas.DataFrame
-        Dataframe containing the twiss parameters of the accelerators for beam 1.
-    df_sv_2 : pandas.DataFrame, optional
-        Dataframe containing the accelerator survey for beam 2. Default to None.
-    df_tw_2 : pandas.DataFrame, optional
-        Dataframe containing the twiss parameters of the accelerators for beam 2. Default is None.
-    add_dipoles : bool, optional
-        Whether to add dipoles to the plot. Default is True.
-    add_quadrupoles : bool, optional
-        Whether to add quadrupoles to the plot. Default is True.
-    add_sextupoles : bool, optional
-        Whether to add sextupoles to the plot. Default is True.
-    add_octupoles : bool, optional
-        Whether to add octupoles to the plot. Default is True.
-    add_IP : bool, optional
-        Whether to add the interaction point to the plot. Default is True.
-    l_indices_to_keep : list of int, optional
-        List of indices of the elements to keep in the plot. Default is None (keep all elements).
-    plot_horizontal_betatron : bool, optional
-        Whether to plot the horizontal betatron function. Default is True.
-    plot_vertical_betatron : bool, optional
-        Whether to plot the vertical betatron function. Default is True.
-    plot_horizontal_dispersion : bool, optional
-        Whether to plot the horizontal dispersion. Default is True.
-    plot_vertical_dispersion : bool, optional
-        Whether to plot the vertical dispersion. Default is True.
-    plot_horizontal_position : bool, optional
-        Whether to plot the horizontal position. Default is True.
-    plot_vertical_position : bool, optional
-        Whether to plot the vertical position. Default is True.
-    add_optics_beam_2 : bool, optional
-        Whether to add optics traces for the second beam. Default is True.
+    Args:
+        df_sv (pandas.DataFrame): Dataframe containing the accelerator survey for beam 1.
+        df_elements (pandas.DataFrame): Dataframe containing the accelerator elements.
+        df_tw (pandas.DataFrame): Dataframe containing the twiss parameters of the accelerators for
+            beam 1.
+        df_sv_2 (pandas.DataFrame, optional): Dataframe containing the accelerator survey for beam 2.
+            Defaults to None.
+        df_tw_2 (pandas.DataFrame, optional): Dataframe containing the twiss parameters of the
+            accelerators for beam 2. Defaults to None.
+        add_dipoles (bool, optional): Whether to add dipoles to the plot. Defaults to True.
+        add_quadrupoles (bool, optional): Whether to add quadrupoles to the plot. Defaults to True.
+        add_sextupoles (bool, optional): Whether to add sextupoles to the plot. Defaults to True.
+        add_octupoles (bool, optional): Whether to add octupoles to the plot. Defaults to True.
+        add_IP (bool, optional): Whether to add the interaction point to the plot. Defaults to True.
+        l_indices_to_keep (list of int, optional): List of indices of the elements to keep in the
+            plot. Defaults to None (keep all elements).
+        plot_horizontal_betatron (bool, optional): Whether to plot the horizontal betatron function.
+            Defaults to True.
+        plot_vertical_betatron (bool, optional): Whether to plot the vertical betatron function.
+            Defaults to True.
+        plot_horizontal_dispersion (bool, optional): Whether to plot the horizontal dispersion.
+            Defaults to True.
+        plot_vertical_dispersion (bool, optional): Whether to plot the vertical dispersion.
+            Defaults to True.
+        plot_horizontal_position (bool, optional): Whether to plot the horizontal position.
+            Defaults to True.
+        plot_vertical_position (bool, optional): Whether to plot the vertical position.
+            Defaults to True.
+        add_optics_beam_2 (bool, optional): Whether to add optics traces for the second beam.
+            Defaults to True.
 
     Returns:
-    --------
-    fig : plotly.graph_objs._figure.Figure
-        The Plotly figure object representing the lattice with beam tracking data.
+        plotly.graph_objs._figure.Figure: The Plotly figure object representing the lattice with
+            beam tracking data.
     """
 
     # Center X coordinate (otherwise conversion to polar coordinates is not possible)
-    X_centered = df_sv["X"] - np.mean(df_sv["X"])
+    # X_centered = df_sv["X"] - np.mean(df_sv["X"])
 
     # Get corresponding angle
-    l_theta = np.arctan2(df_sv["Z"], X_centered)
+    # l_theta = np.arctan2(df_sv["Z"], X_centered)
 
     # Build plotly figure
     fig = go.Figure()
@@ -995,7 +954,7 @@ def add_scatter_trace(
             yaxis=yaxis,
             visible=visible,
             opacity=opacity,
-            line=dict(color=color) if not dashed else dict(color=color, dash="dash"),
+            line=dict(color=color, dash="dash") if dashed else dict(color=color),
             # Deactivate legendgroup for now as it doesn't work
             legendgroup=legendgroup,
         ),
@@ -1210,7 +1169,7 @@ def return_plot_optics(df_tw_b1, df_tw_b2, df_sv, df_elements, empty=False):
         # Add horizontal lines for all ips
         for ip in [1, 2, 5, 8]:
             fig.add_vline(
-                x=float(df_tw_b1[df_tw_b1["name"] == "ip" + str(ip)]["s"].iloc[0]),
+                x=float(df_tw_b1[df_tw_b1["name"] == f"ip{str(ip)}"]["s"].iloc[0]),
                 line_width=1,
                 line_dash="dash",
                 line_color="pink",
@@ -1246,23 +1205,16 @@ def return_plot_filling_scheme(array_b1, array_b2, i_bunch_b1, i_bunch_b2, beam_
     """
     Returns a Plotly figure object representing the filling scheme and number of Long-Range/Head-on.
 
-    Parameters:
-    -----------
-    array_b1 : numpy.ndarray
-        Filling scheme for beam 1.
-    array_b2 : numpy.ndarray
-        Filling scheme for beam 2.
-    i_bunch_b1 : int
-        Index of the selected bunch for tracking in beam 1.
-    i_bunch_b2 : int
-        Index of the selected bunch for tracking in beam 2.
-    beam_beam_schedule : pandas.DataFrame
-        Dataframe containing the beam-beam schedule information.
+    Args:
+        array_b1 (numpy.ndarray): Filling scheme for beam 1.
+        array_b2 (numpy.ndarray): Filling scheme for beam 2.
+        i_bunch_b1 (int): Index of the selected bunch for tracking in beam 1.
+        i_bunch_b2 (int): Index of the selected bunch for tracking in beam 2.
+        beam_beam_schedule (pandas.DataFrame): Dataframe containing the beam-beam schedule information.
 
     Returns:
-    --------
-    fig : plotly.graph_objs._figure.Figure
-        Plotly figure object representing the filling scheme and number beam-beam interactions.
+        plotly.graph_objs._figure.Figure: Plotly figure object representing the filling scheme and
+            number of beam-beam interactions.
     """
     # ! i_bunch_b2 is not used for now
 
@@ -1478,25 +1430,33 @@ def return_plot_separation(dic_separation_ip, plane):
     for idx, n_ip in enumerate([1, 2, 5, 8]):
         s = dic_separation_ip[f"ip{n_ip}"]["s"]
         l_scale_strength = dic_separation_ip[f"ip{n_ip}"]["l_scale_strength"]
-        if plane == "x" or plane == "y":
+        if plane in ["x", "y"]:
             sep = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_meter"])
             sep_sigma = np.abs(dic_separation_ip[f"ip{n_ip}"][f"d{plane}_sig"])
         elif plane == "xy":
+            sep = np.abs(
+                np.sqrt(
+                    dic_separation_ip[f"ip{n_ip}"]["dx_meter"] ** 2
+                    + dic_separation_ip[f"ip{n_ip}"]["dy_meter"] ** 2
+                )
+            )
             sep_sigma = np.abs(
                 np.sqrt(
                     dic_separation_ip[f"ip{n_ip}"]["dx_sig"] ** 2
                     + dic_separation_ip[f"ip{n_ip}"]["dy_sig"] ** 2
                 )
             )
+        else:
+            raise ValueError("plane should be 'x', 'y', or 'xy'")
 
-        if plane == "x" or plane == "y":
+        if plane in ["x", "y"]:
             # Do the plot
             fig.add_trace(
                 go.Scatter(
                     x=s,
                     y=sep,
-                    name="Separation at ip " + str(n_ip),
-                    legendgroup=" IP " + str(n_ip),
+                    name=f"Separation at ip {str(n_ip)}",
+                    legendgroup=f" IP {str(n_ip)}",
                     mode="lines+markers",
                     line=dict(color="coral", width=1),
                     marker=dict(opacity=l_scale_strength),
@@ -1511,15 +1471,15 @@ def return_plot_separation(dic_separation_ip, plane):
             go.Scatter(
                 x=s,
                 y=sep_sigma,
-                name="Normalized separation at ip " + str(n_ip),
-                legendgroup=" IP " + str(n_ip),
+                name=f"Normalized separation at ip {str(n_ip)}",
+                legendgroup=f" IP {str(n_ip)}",
                 mode="lines+markers",
                 line=dict(color="cyan", width=1),
                 marker=dict(opacity=l_scale_strength),
             ),
             row=idx // 2 + 1,
             col=idx % 2 + 1,
-            secondary_y=True if plane == "y" or plane == "x" else False,
+            secondary_y=plane in ["y", "x"],
         )
 
         # fig.add_trace(
@@ -1538,23 +1498,22 @@ def return_plot_separation(dic_separation_ip, plane):
         #     secondary_y=True,
         # )
 
-    for row in range(1, 3):
-        for column in range(1, 3):
-            fig.update_yaxes(
-                title_text=r"$\textrm{B-B separation }[m]$",
-                row=row,
-                col=column,
-                linecolor="coral",
-                secondary_y=False,
-            )
-            fig.update_yaxes(
-                title_text=r"$\textrm{B-B separation }[\sigma]$",
-                row=row,
-                col=column,
-                linecolor="cyan",
-                secondary_y=True if plane == "y" or plane == "x" else False,
-            )
-            fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
+    for row, column in itertools.product(range(1, 3), range(1, 3)):
+        fig.update_yaxes(
+            title_text=r"$\textrm{B-B separation }[m]$",
+            row=row,
+            col=column,
+            linecolor="coral",
+            secondary_y=False,
+        )
+        fig.update_yaxes(
+            title_text=r"$\textrm{B-B separation }[\sigma]$",
+            row=row,
+            col=column,
+            linecolor="cyan",
+            secondary_y=plane in ["y", "x"],
+        )
+        fig.update_xaxes(title_text=r"$s [m]$", row=row, col=column)
 
     # fig.update_yaxes(range=[0, 0.25], row = 1, col = 1, secondary_y= False)
     # Use white theme for graph, centered title
@@ -1573,17 +1532,16 @@ def return_plot_separation(dic_separation_ip, plane):
 
 def return_plot_separation_3D(dic_position_ip, ip="ip1"):
     """
-    Returns a 3D plotly figure showing the beam-beam separation at different interaction points (IPs).
+    Returns a 3D Plotly figure showing the beam-beam separation at different interaction points.
 
-    Parameters:
-    -----------
-    dic_position_ip : dict
-        A dictionary containing the beam position data for different IPs and beams.
+    Args:
+        dic_position_ip (dict): A dictionary containing the beam position data for different IPs and
+            beams.
+        ip (str, optional): The interaction point to plot. Defaults to "ip1".
 
     Returns:
-    --------
-    fig : plotly.graph_objs._figure.Figure
-        A plotly figure object containing the 3D beam-beam separation plot.
+        plotly.graph_objs._figure.Figure: A Plotly figure object containing the 3D beam-beam
+            separation plot.
     """
     logging.info("Starting computation 3D beam-beam separation")
 
@@ -1644,7 +1602,7 @@ def return_plot_separation_3D(dic_position_ip, ip="ip1"):
                 row=1,
                 col=1,
             )
-        for i in range(int(s.shape[0] / 2) - 18, int(s.shape[0] / 2) + 19, 1):
+        for i in range(int(s.shape[0] / 2) - 18, int(s.shape[0] / 2) + 19):
             fig.add_trace(
                 go.Scatter3d(
                     x=s[i : i + 3],
@@ -1686,34 +1644,29 @@ def return_plot_separation_3D(dic_position_ip, ip="ip1"):
 
 @lru_cache(maxsize=20)
 def compute_footprint_mesh():
-    # Get resonance lines first
-    traces = get_working_diagram(
-        Qx_range=[0.28, 0.35], Qy_range=[0.28, 0.35], order=12, color="white", alpha=0.1
+    """Compute the mesh for the footprint plot."""
+    return get_working_diagram(
+        Qx_range=[0.28, 0.35],
+        Qy_range=[0.28, 0.35],
+        order=12,
+        color="white",
+        alpha=0.1,
     )
-    return traces
 
 
 def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=False):
     """
     Returns a Plotly figure object representing the footprint of a particle beam in the Qx-Qy plane.
 
-    Parameters:
-    -----------
-    t_array_footprint : tuple of two 1D arrays
-        The Qx and Qy coordinates of the footprint mesh.
-    qx : float
-        The horizontal tune of the beam.
-    qy : float
-        The vertical tune of the beam.
-    title : str
-        The title of the plot.
-    plot_filtered_web : bool, optional
-        Whether to plot the filtered footprint mesh. Default to False.
+    Args:
+        t_array_footprint (tuple of two 1D arrays): The Qx and Qy coordinates of the footprint mesh.
+        qx (float): The horizontal tune of the beam.
+        qy (float): The vertical tune of the beam.
+        title (str): The title of the plot.
+        plot_filtered_web (bool, optional): Whether to plot the filtered footprint mesh. Defaults to False.
 
     Returns:
-    --------
-    fig : plotly.graph_objs._figure.Figure
-        The Plotly figure object representing the footprint plot.
+        plotly.graph_objs._figure.Figure: The Plotly figure object representing the footprint plot.
     """
     logging.info("Starting computation footprint figure")
     palette = sns.color_palette("Spectral", 10).as_hex()
@@ -1804,7 +1757,4 @@ def return_plot_footprint(t_array_footprint, qx, qy, title, plot_filtered_web=Fa
     )
 
     logging.info("Returning footprint figure")
-    return fig
-    logging.info("Returning footprint figure")
-    return fig
     return fig

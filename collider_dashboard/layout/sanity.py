@@ -309,32 +309,6 @@ def return_sanity_layout_tables(
     energy,
     cross_section_PU=81e-27,
 ):
-    """
-    Returns the tables for the sanity check page of the dashboard.
-
-    Args:
-        dic_tw_b1 : dict
-            A twiss dictionary for beam 1.
-        dic_tw_b2 : dict
-            A twiss dictionary for beam 2.
-        l_lumi : list
-            A list containing the luminosities for each interaction point.
-        array_b1 : numpy.ndarray
-            Beam schedule for beam 1.
-        array_b2 : numpy.ndarray
-            Beam schedule for beam 2.
-        polarity_alice : str
-            The polarity of the ALICE detector (+1 or -1).
-        polarity_lhcb : str
-            The polarity of the LHCb detector (+1 or -1).
-        energy : float
-            The energy of the beam.
-
-    Returns:
-        layout : dash.development.base_component.Component
-            The layout for the sanity check page of the dashboard.
-    """
-
     # Ensure that the polarities are defined
     polarity_alice = polarity_alice if polarity_alice is not None else "N/A"
     polarity_lhcb = polarity_lhcb if polarity_lhcb is not None else "N/A"
@@ -463,20 +437,6 @@ def return_sanity_layout_global(
     dic_with_bb,
     dic_without_bb,
 ):
-    """
-    Returns the layout for the sanity check page of the dashboard, for both beams.
-
-    Args:
-        dic_with_bb : dict
-            The dictionnary of global variables for beam 1 and beam 2 with beam-beam effects.
-        dic_without_bb : dict
-            The dictionnary of global variables for beam 1 and beam 2 without beam-beam effects.
-
-    Returns:
-        layout : dash.development.base_component.Component
-            The layout for the sanity check page of the dashboard.
-    """
-
     # First ensure that the beta-beat is below 10%
     alert_hbeat, alert_vbeat = compute_alert_beta_beating(dic_with_bb, dic_without_bb)
 

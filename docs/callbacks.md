@@ -1,3 +1,0 @@
-# Callbacks
-
-::: dashboard.callbacks

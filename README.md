@@ -70,7 +70,7 @@ app, server = build_app(path_to_collider.json,
                 )
 ```
 
-The dashboard can then be deployed e.g. with gunicorn:
+The dashboard can then be deployed, for instance, with gunicorn:
 
 ```bash
 gunicorn my-awesome-dashboard:server -b :8080

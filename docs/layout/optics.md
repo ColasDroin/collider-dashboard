@@ -1,3 +1,0 @@
-# Optics
-
-::: dashboard.layout.optics

@@ -1,3 +1,0 @@
-# Init
-
-::: dashboard.backend.init

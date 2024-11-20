@@ -1,3 +1,0 @@
-# Header
-
-::: dashboard.layout.header

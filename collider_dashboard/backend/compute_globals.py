@@ -40,7 +40,7 @@ def init_from_collider(
     force_reload=False,
     ignore_footprint=False,
     simplify_tw=True,
-    type_particles="proton",
+    type_particles=None,
 ):
     """
     Initializes a collider from a JSON file and computes global variables from collider checks.
@@ -176,19 +176,16 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
     """
     Initializes global variables used in the simulation dashboard.
 
-    Parameters:
-    -----------
-    collider_check : ColliderCheck
-        An instance of the ColliderCheck class containing the collider configuration.
-    compute_footprint : bool, optional
-        Whether to compute the collider footprint or not. Default is True.
-    simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by removing
-        duplicated elements to speed up computations. Defaults to True.
+    Args:
+        collider_check (ColliderCheck): An instance of the ColliderCheck class containing the
+            collider configuration.
+        compute_footprint (bool, optional): Whether to compute the collider footprint or not.
+            Default is True.
+        simplify_tw (bool, optional): If True, simplifies the Twiss and Survey dataframes by
+            removing duplicated elements to speed up computations. Defaults to True.
 
     Returns:
-    --------
-    dic_global_var : dict
-        A dictionary containing the initialized global variables.
+        dict: A dictionary containing the initialized global variables.
     """
 
     if collider_check.configuration is not None:
@@ -306,7 +303,7 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
             "dx_sig",
             "dy_sig",
         ]:
-            if variable_to_convert == "twiss_filtered" or variable_to_convert == "survey_filtered":
+            if variable_to_convert in ["twiss_filtered", "survey_filtered"]:
                 dic_separation_ip[f"ip{ip}"][variable_to_convert]["b1"] = dic_separation_ip[
                     f"ip{ip}"
                 ][variable_to_convert]["b1"].to_pandas()
@@ -390,8 +387,7 @@ def return_dataframe_elements_from_line(line):
     Returns:
     df_elements (pandas.DataFrame): A DataFrame containing the elements of the given line object.
     """
-    # df_elements = pd.DataFrame([x.to_dict() for x in line.elements])
-    df_elements = pd.DataFrame(
+    return pd.DataFrame(
         [
             {
                 varname: getattr(x, varname)
@@ -401,24 +397,18 @@ def return_dataframe_elements_from_line(line):
             for x in line.elements
         ]
     )
-    return df_elements
 
 
 def return_dataframe_corrected_for_thin_lens_approx(df_elements, df_tw):
     """
     Corrects the dataframe of elements for thin lens approximation.
 
-    Parameters:
-    -----------
-    df_elements : pandas.DataFrame
-        The dataframe of elements to be corrected.
-    df_tw : pandas.DataFrame
-        The corresponding Twiss from which the correction is computed.
+    Args:
+        df_elements (pandas.DataFrame): The dataframe of elements to be corrected.
+        df_tw (pandas.DataFrame): The corresponding Twiss from which the correction is computed.
 
     Returns:
-    --------
-    pandas.DataFrame
-        The corrected dataframe of elements.
+        pandas.DataFrame: The corrected dataframe of elements.
     """
 
     df_elements_corrected = df_elements.copy(deep=True)
@@ -668,6 +658,4 @@ def compute_knob_str(collider_check):
         whole_str = buf.getvalue()
 
     l_knob_str = whole_str.split("****\n")
-    d_knob_str = {knob: knob_str for knob, knob_str in zip(l_knobs, l_knob_str)}
-
-    return d_knob_str
+    return dict(zip(l_knobs, l_knob_str))

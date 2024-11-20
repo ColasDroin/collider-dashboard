@@ -1,3 +1,0 @@
-# Resonance
-
-::: dashboard.backend.resonance

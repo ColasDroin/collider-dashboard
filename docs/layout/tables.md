@@ -1,3 +1,0 @@
-# Tables
-
-::: dashboard.layout.tables

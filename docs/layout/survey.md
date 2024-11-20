@@ -1,3 +1,0 @@
-# Survey
-
-::: dashboard.layout.survey

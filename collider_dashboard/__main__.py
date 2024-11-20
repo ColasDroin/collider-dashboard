@@ -23,10 +23,9 @@ def main(
     force_reload=False,
     ignore_footprint=False,
     simplify_tw=True,
-    type_particles = 'proton',
+    type_particles=None,
     debug=False,
 ):
-
     # Log the initial configuration
     logging.info("Launching app with the following parameters:")
     logging.info(f"Collider path: {path_collider}")
@@ -46,16 +45,14 @@ def main(
         ignore_footprint=ignore_footprint,
         simplify_tw=simplify_tw,
         type_particles=type_particles,
-        
     )  # server not needed for local deployment
     app.run_server(debug=debug, host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":
-
     # Get the example collider path
     package_path = str(files("collider_dashboard"))
-    example_collider_path = package_path + "/data/collider.json"
+    example_collider_path = f"{package_path}/data/collider.json"
 
     # Get the collider path from the command line
     parser = argparse.ArgumentParser(
@@ -124,7 +121,7 @@ if __name__ == "__main__":
         type=str,
         help="Types of particles to consider (proton, lead).",
         required=False,
-        default='proton',
+        default=None,
     )
 
     args = parser.parse_args()

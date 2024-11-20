@@ -1,3 +1,0 @@
-# Filling
-
-::: dashboard.layout.filling

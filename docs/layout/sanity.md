@@ -1,3 +1,0 @@
-# Sanity
-
-::: dashboard.layout.sanity
