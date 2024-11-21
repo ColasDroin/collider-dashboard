@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collider-dashboard"
-version = "1.5.1.0"
+version = "1.5.2.0"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
@@ -19,7 +19,7 @@ dash-mantine-components = "^0.12.1"
 seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
-collider-check = "^0.3.0"
+collider-check = "^0.3.2"
 dash = "^2.18.2"
 
 

@@ -188,6 +188,18 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         dict: A dictionary containing the initialized global variables.
     """
 
+    if collider_check.path_filling_scheme is not None:
+        # Get number of LR per side
+        n_lr_per_side = collider_check.n_lr_per_side
+
+        # Get the beam-beam schedule
+        logging.info("Computing beam-beam schedule.")
+        patt = FillingPattern.from_json(collider_check.path_filling_scheme)
+        patt.compute_beam_beam_schedule(n_lr_per_side=n_lr_per_side)
+        bbs = patt.b1.bb_schedule
+    else:
+        bbs = None
+
     if collider_check.configuration is not None:
         # Get luminosity at each IP
         logging.info("Computing luminosity at each IP.")
@@ -209,15 +221,6 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
         energy = collider_check.energy
         cross_section = collider_check.cross_section
 
-        # Get number of LR per side
-        n_lr_per_side = collider_check.n_lr_per_side
-
-        # Get the beam-beam schedule
-        logging.info("Computing beam-beam schedule.")
-        patt = FillingPattern.from_json(collider_check.path_filling_scheme)
-        patt.compute_beam_beam_schedule(n_lr_per_side=n_lr_per_side)
-        bbs = patt.b1.bb_schedule
-
         # Get polarity Alice and LHCb
         polarity_alice, polarity_lhcb = collider_check.return_polarity_ip_2_8()
 
@@ -226,11 +229,10 @@ def initialize_global_variables(collider_check, compute_footprint=True, simplify
 
     else:
         l_lumi = None
-        array_b1 = None
-        array_b2 = None
-        i_bunch_b1 = None
-        i_bunch_b2 = None
-        bbs = None
+        array_b1 = collider_check.array_b1 if hasattr(collider_check, "array_b1") else None
+        array_b2 = collider_check.array_b2 if hasattr(collider_check, "array_b2") else None
+        i_bunch_b1 = collider_check.i_bunch_b1 if hasattr(collider_check, "i_bunch_b1") else None
+        i_bunch_b2 = collider_check.i_bunch_b2 if hasattr(collider_check, "i_bunch_b2") else None
         polarity_alice = None
         polarity_lhcb = None
         configuration_str = None

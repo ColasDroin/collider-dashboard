@@ -42,7 +42,7 @@ python -m collider_dashboard --collider-path path_to_collider.json --filling-pat
 ```
 
 - `--collider-path`, or `-c`, sets the path to the collider configuration file. Default value to the path of a dummy collider used for testing.
-- `--filling-path`, or `-f`, sets the path to the filling scheme, instead of using the one in the collider configuration file. Optional.
+- `--filling-path`, or `-f`, sets the path to the filling scheme, instead of using the one in the collider configuration file (which _must be_ absolute). Optional.
 - `--port`, or `-p`, sets the port on which the dashboard will be deployed. Default value to `8080``.
 - `--force-reload`, or `-r`,  sets a boolean indicating whether the collider dashboard data should be reloaded if already existing. Optional.
 - `--ignore-footprint`, or `-i`, sets a boolean indicating whether the footprint should be ignored to gain computation time. Optional.
@@ -79,7 +79,7 @@ Note that, as the dashboard deals with global variables, it is not thread-safe. 
 
 ## Collider metadata
 
-The dashboard will work with or without a configuration file embedded as metadata in the collider json file. If the metadata is present, the dashboard will use it to infer the type of particles, the filling scheme path, etc. Otherwise, some data and tabs might not be available.
+The dashboard will work with or without a configuration file embedded as metadata in the collider json file. If the metadata is present, the dashboard will use it to infer the type of particles, the filling scheme path, etc. Otherwise, some data and tabs might not be available. Note that the filling scheme tab will be available if the filling scheme is provided as an argument, even if the metadata is not present.
 
 ## License
 
