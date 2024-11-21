@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collider-dashboard"
-version = "1.5.0.0"
+version = "1.5.1.0"
 description = "A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite."
 authors = ["Colas Droin <colas.noe.droin@cern.ch>"]
 license = "MIT"
@@ -12,7 +12,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
-dash = "^2.14.1"
 numpy = "^2.1.2"
 pandas = "^2.2.3"
 xsuite = "^0.19.2"
@@ -21,8 +20,10 @@ seaborn = "^0.13.0"
 dash-iconify = "^0.1.2"
 argparse = "^1.4.0"
 collider-check = "^0.3.0"
-# xtrack = {git = "git@github.com:ColasDroin/xtrack", rev = "lumi_with_crabs"}
+dash = "^2.18.2"
 
+
+# xtrack = {git = "git@github.com:ColasDroin/xtrack", rev = "lumi_with_crabs"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"

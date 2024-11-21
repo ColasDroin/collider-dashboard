@@ -8,7 +8,7 @@
     <img src="https://badgen.net/static/Package%20Manager/Poetry/orange">
     </a>
     <a href="https://dash.plotly.com/">
-    <img src="https://badgen.net/static/Dash/2.14.1/green">
+    <img src="https://badgen.net/static/Dash/2.18.2/green">
     </a>
     <a href="https://black.readthedocs.io/en/stable/">
     <img src="https://badgen.net/static/Code%20style/Black/black">
@@ -16,7 +16,6 @@
     <img src="https://badgen.net/github/release/colasdroin/collider-dashboard">
     <img src="https://badgen.net/github/commits/colasdroin/collider-dashboard">
 </p>
-
 
 A Dash application to visualize the observables and parameters of a collider built and configured with Xsuite.
 
@@ -81,3 +80,7 @@ Note that, as the dashboard deals with global variables, it is not thread-safe. 
 ## Collider metadata
 
 The dashboard will work with or without a configuration file embedded as metadata in the collider json file. If the metadata is present, the dashboard will use it to infer the type of particles, the filling scheme path, etc. Otherwise, some data and tabs might not be available.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
